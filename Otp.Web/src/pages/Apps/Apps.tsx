@@ -73,7 +73,7 @@ const Apps = () => {
 	return (
 		<div>
 			<div className="flex flex-row justify-between">
-				<h1 className="text-4xl font-medium mb-6">Apps</h1>
+				<h1 className="text-4xl font-bold mb-6">Apps</h1>
 				{query.data && query.data.items.length > 0 && <CreateAppButton />}
 			</div>
 

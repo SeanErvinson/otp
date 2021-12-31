@@ -19,10 +19,10 @@ dayjs.extend(relativeTime);
 const AppRowItem = ({ app }: Props) => {
 	return (
 		<tr className="">
-			<td className="flex flex-col">
-				<span className="font-bold">{app.name}</span>
+			<td className="flex flex-col h-full">
+				<span className="font-semibold">{app.name}</span>
 				<span className="text-md opacity-75">
-					{truncate(app.description ?? '', maxDescriptionLength)}
+					{app.description ? truncate(app.description, maxDescriptionLength) : '---'}
 				</span>
 			</td>
 			<td>{dayjs().to(dayjs.utc(app.createdAt).local())}</td>

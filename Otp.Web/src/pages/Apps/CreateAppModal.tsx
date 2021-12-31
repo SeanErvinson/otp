@@ -18,10 +18,10 @@ type FormData = {
 };
 
 const CreateAppModal = (props: Props) => {
-	const { handleSubmit, register } = useForm<FormData>();
 	const [isLoading, setIsLoading] = useState(false);
-	const [createAppResponse, setCreateAppResponse] = useState({} as CreateAppResponse);
 	const [isSuccess, setIsSuccess] = useState(false);
+	const { handleSubmit, register, reset } = useForm<FormData>();
+	const [createAppResponse, setCreateAppResponse] = useState({} as CreateAppResponse);
 
 	const mutation = useMutation(createApp, {
 		onMutate: () => {
@@ -44,6 +44,8 @@ const CreateAppModal = (props: Props) => {
 
 	const onClose = () => {
 		setIsLoading(false);
+		setIsSuccess(false);
+		reset();
 		props.onClose();
 	};
 
@@ -94,8 +96,8 @@ const CreateAppModal = (props: Props) => {
 			id="createAppModal"
 			className={`modal ${props.showCreateAppModal ? 'modal-open' : ''}`}>
 			<div
-				className={`modal-box min-h-[21rem] flex flex-col justify-between ${
-					isSuccess ? 'animate__animated animate__flipInY' : ''
+				className={`modal-box flex flex-col justify-between ${
+					isSuccess ? 'animate__animated animate__flipInY min-h-[21rem]' : ''
 				}`}>
 				{defaultComponent}
 			</div>

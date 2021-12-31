@@ -8,8 +8,7 @@ import { Home } from '@/pages/Home';
 import { Billing } from '@/pages/Billing';
 import { Apps } from '@/pages/Apps';
 import { App } from '@/pages/Apps/App';
-import { Key } from '@/pages/Apps/App/Key';
-import { Branding } from '@/pages/Apps/App/Branding';
+import { Settings } from '@/pages/Apps/App/Settings';
 import { loginRequest } from '@/services/auth/authConfig';
 
 const Root = () => {
@@ -27,8 +26,7 @@ const Root = () => {
 				<Route path="/" element={<Home />} />
 				<Route path="/apps" element={<Apps />} />
 				<Route path="/apps/:appId" element={<App />}>
-					<Route path="key" element={<Key />} />
-					<Route path="branding" element={<Branding />} />
+					<Route path="" element={<Settings />} />
 				</Route>
 				<Route path="/billing" element={<Billing />} />
 			</Routes>

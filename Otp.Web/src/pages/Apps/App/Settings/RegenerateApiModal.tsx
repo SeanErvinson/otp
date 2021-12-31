@@ -22,8 +22,6 @@ const RegenerateApiModal = (props: Props) => {
 			setIsLoading(true);
 		},
 		onSuccess: response => {
-			console.log(response);
-
 			setCreateAppResponse(response);
 			setIsLoading(false);
 			setIsSuccess(true);
@@ -76,8 +74,8 @@ const RegenerateApiModal = (props: Props) => {
 			id="createAppModal"
 			className={`modal ${props.showCreateAppModal ? 'modal-open' : ''}`}>
 			<div
-				className={`modal-box min-h-[21rem] flex flex-col justify-between ${
-					isSuccess ? 'animate__animated animate__flipInY' : ''
+				className={`modal-box  flex flex-col justify-between ${
+					isSuccess ? 'animate__animated animate__flipInY min-h-[21rem]' : ''
 				}`}>
 				{defaultComponent}
 			</div>
