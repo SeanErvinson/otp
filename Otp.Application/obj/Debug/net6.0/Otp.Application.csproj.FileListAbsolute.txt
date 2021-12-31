@@ -1,0 +1,15 @@
+C:\Users\ervin\RiderProjects\Otp\Otp.Application\bin\Debug\net6.0\Otp.Application.deps.json
+C:\Users\ervin\RiderProjects\Otp\Otp.Application\bin\Debug\net6.0\Otp.Application.dll
+C:\Users\ervin\RiderProjects\Otp\Otp.Application\bin\Debug\net6.0\ref\Otp.Application.dll
+C:\Users\ervin\RiderProjects\Otp\Otp.Application\bin\Debug\net6.0\Otp.Application.pdb
+C:\Users\ervin\RiderProjects\Otp\Otp.Application\bin\Debug\net6.0\Otp.Core.dll
+C:\Users\ervin\RiderProjects\Otp\Otp.Application\bin\Debug\net6.0\Otp.Core.pdb
+C:\Users\ervin\RiderProjects\Otp\Otp.Application\obj\Debug\net6.0\Otp.Application.csproj.AssemblyReference.cache
+C:\Users\ervin\RiderProjects\Otp\Otp.Application\obj\Debug\net6.0\Otp.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ervin\RiderProjects\Otp\Otp.Application\obj\Debug\net6.0\Otp.Application.AssemblyInfoInputs.cache
+C:\Users\ervin\RiderProjects\Otp\Otp.Application\obj\Debug\net6.0\Otp.Application.AssemblyInfo.cs
+C:\Users\ervin\RiderProjects\Otp\Otp.Application\obj\Debug\net6.0\Otp.Application.csproj.CoreCompileInputs.cache
+C:\Users\ervin\RiderProjects\Otp\Otp.Application\obj\Debug\net6.0\Otp.Application.csproj.CopyComplete
+C:\Users\ervin\RiderProjects\Otp\Otp.Application\obj\Debug\net6.0\Otp.Application.dll
+C:\Users\ervin\RiderProjects\Otp\Otp.Application\obj\Debug\net6.0\ref\Otp.Application.dll
+C:\Users\ervin\RiderProjects\Otp\Otp.Application\obj\Debug\net6.0\Otp.Application.pdb

@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "vrSWRbxpak7nl6YO5WeQVTTI2NAdPRmSfkgkpSJD/to=",
+  "Source": "Otp.Api",
+  "BasePath": "_content/Otp.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

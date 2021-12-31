@@ -1,0 +1,13 @@
+﻿services:
+  db:
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: P@ssword1
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: always
+    ports:
+      - "1433:1433"
+    volumes:
+      - $USERPROFILE/mssql/data:/var/opt/mssql/data
+      - $USERPROFILE/mssql/log:/var/opt/mssql/log
+      - $USERPROFILE/mssql/secrets:/var/opt/mssql/secretsd
