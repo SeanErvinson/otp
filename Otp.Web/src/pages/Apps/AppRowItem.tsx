@@ -1,10 +1,11 @@
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import utc from 'dayjs/plugin/utc';
 import { nanoid } from 'nanoid';
 import { Link } from 'react-router-dom';
 
 import { GetAppsApp } from '@/api/otpApi';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import { truncate } from '@/utils/stringUtils';
 
 interface Props {
 	app: GetAppsApp;
@@ -50,7 +51,3 @@ const AppRowItem = ({ app }: Props) => {
 };
 
 export default AppRowItem;
-
-function truncate(str: string, n: number) {
-	return str.length > n ? str.slice(0, n) + '...' : str;
-}

@@ -1,4 +1,5 @@
 import instance from '@/api/https';
+import axios from 'axios';
 
 export const getApps = async (pageIndex: number): Promise<GetAppsResponse | null> => {
 	const response = await instance.get('/apps', {
@@ -44,6 +45,10 @@ export const createApp = async (request: CreateAppRequest): Promise<CreateAppRes
 	return response.data;
 };
 
+export const updateAppCallback = async (request: UpdateCallbackRequest): Promise<void> => {
+	await instance.put(`apps/${request.id}/callback`, request);
+};
+
 export const regenerateAppApiKey = async (
 	id: string | undefined,
 ): Promise<RegenerateApiKeyResponse> => {
@@ -63,6 +68,12 @@ type CreateAppRequest = {
 export type CreateAppResponse = {
 	id: string;
 	apiKey: string;
+};
+
+type UpdateCallbackRequest = {
+	id: string;
+	callbackUrl: string;
+	endpointSecret: string;
 };
 
 export type RegenerateApiKeyResponse = {

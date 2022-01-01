@@ -1,5 +1,8 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
+using Otp.Core.Domains;
 using Otp.Core.Utils;
 
 namespace Otp.Application.App.Commands.CreateApp;
@@ -19,6 +22,12 @@ public record CreateAppCommand(string Name, string? Description) : IRequest<Crea
 
 		public async Task<CreateAppCommandDto> Handle(CreateAppCommand request, CancellationToken cancellationToken)
 		{
+			var count = await _applicationDbContext.Apps.CountAsync(app => app.PrincipalId == _currentUserService.PrincipalId 
+																			&& app.Name == request.Name 
+																			&& app.Status != AppStatus.Deleted, cancellationToken);
+			if (count != 0)
+				throw new InvalidRequestException("App already exists."); 
+					
 			var generatedApiKey = CryptoUtil.GenerateKey();
 			var newApp = new Core.Domains.App(_currentUserService.PrincipalId, request.Name, generatedApiKey, request.Description);
 			var result = await _applicationDbContext.Apps.AddAsync(newApp, cancellationToken);

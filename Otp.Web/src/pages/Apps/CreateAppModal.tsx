@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useFormState, useWatch } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import 'animate.css';
 
 import { createApp, CreateAppResponse } from '@/api/otpApi';
+import ErrorIcon from '@/components/misc/ErrorIcon';
 
 import ApiKeyPreview from './ApiKeyPreview';
+import { AxiosError } from 'axios';
 
 interface Props {
 	showCreateAppModal: boolean;
@@ -18,20 +20,30 @@ type FormData = {
 };
 
 const CreateAppModal = (props: Props) => {
+	const [error, setError] = useState<string | undefined>();
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
-	const { handleSubmit, register, reset } = useForm<FormData>();
+	const { handleSubmit, register, reset, control } = useForm<FormData>();
+	const { errors } = useFormState<FormData>({
+		control,
+	});
 	const [createAppResponse, setCreateAppResponse] = useState({} as CreateAppResponse);
+	const descriptionWatch = useWatch({ control, name: 'description', defaultValue: '' });
 
 	const mutation = useMutation(createApp, {
 		onMutate: () => {
+			setError(undefined);
 			setIsLoading(true);
 		},
 		onSuccess: response => {
-			console.log(response);
+			if (response instanceof Error) return;
 			setCreateAppResponse(response);
 			setIsSuccess(true);
 			setIsLoading(false);
+		},
+		onError: (response: AxiosError) => {
+			setIsLoading(false);
+			setError(response.response?.data.detail);
 		},
 	});
 
@@ -60,19 +72,55 @@ const CreateAppModal = (props: Props) => {
 					<input
 						type="text"
 						placeholder="best-app"
-						className="input input-bordered"
-						{...register('name')}
+						className={`input input-bordered ${errors.name ? 'input-error' : ''}`}
+						{...register('name', {
+							required: true,
+							minLength: 5,
+							maxLength: 64,
+							pattern: {
+								value: /[\w-]/,
+								message: 'Name should only contain alphanumeric, -, or _',
+							},
+						})}
 					/>
+
+					{errors.name && (
+						<label className="label">
+							<span className="label-text-alt text-error">{errors.name.message}</span>
+						</label>
+					)}
 				</div>
 				<div className="form-control">
-					<label className="label">
-						<span className="label-text">Description</span>
-					</label>
+					<div className="flex flex-row items-center justify-between">
+						<label className="label">
+							<span className="label-text">Description</span>
+						</label>
+						<span className="label-text">{128 - descriptionWatch.length}</span>
+					</div>
 					<textarea
-						className="textarea h-24 textarea-bordered"
+						className={`textarea h-24 textarea-bordered ${
+							errors.description ? 'input-error' : ''
+						}`}
 						placeholder="Greatest description of all time"
-						{...register('description')}></textarea>
+						{...register('description', {
+							maxLength: 128,
+						})}></textarea>
+					{errors.description && (
+						<label className="label">
+							<span className="label-text-alt text-error">
+								{errors.description.message}
+							</span>
+						</label>
+					)}
 				</div>
+				{error && (
+					<div className="alert alert-error mt-2">
+						<div className="flex-1">
+							<ErrorIcon />
+							<label>{error}</label>
+						</div>
+					</div>
+				)}
 				<div className="modal-action">
 					<button
 						className={`btn btn-accent ${isLoading ? 'loading' : ''}`}

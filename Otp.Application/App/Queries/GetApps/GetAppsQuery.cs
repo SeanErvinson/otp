@@ -23,6 +23,7 @@ public record GetAppsQuery(int PageIndex, int PageSize) : IRequest<PaginatedResu
 		{
 			var apps = await _applicationDbContext.Apps.Where(app => app.PrincipalId == _currentUserService.PrincipalId 
 																	&& app.Status != AppStatus.Deleted)
+												.OrderByDescending(app => app.CreatedAt)
 											.Select(app => new GetAppSimpleDto(app.Id, app.Name, app.Description, app.CreatedAt, app.Tags))
 											.PaginatedResultAsync(request.PageIndex, request.PageSize);
 

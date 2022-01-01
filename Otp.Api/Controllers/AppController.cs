@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Otp.Application.App.Commands.CreateApp;
 using Otp.Application.App.Commands.DeleteApp;
 using Otp.Application.App.Commands.RegenerateApiKey;
+using Otp.Application.App.Commands.UpdateCallback;
 using Otp.Application.App.Queries.GetApp;
 using Otp.Application.App.Queries.GetApps;
 using Otp.Application.Otp.Commands.RequestOtp;
@@ -35,13 +36,26 @@ public class AppsController : ControllerBase
 		var result = await _mediator.Send(request);
 		return Created(Url.RouteUrl(nameof(GetApp), new { id = result.Id }), result);
 	}
+	
+	[HttpPut("{id:guid}/callback")]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	public async Task<IActionResult> UpdateCallback(Guid id, [FromBody] UpdateCallbackRequest request)
+	{
+		await _mediator.Send(new UpdateCallbackCommand(id, request.CallbackUrl, request.EndpointSecret));
+		return NoContent();
+	}
+
 
 	[HttpPatch("{id:guid}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RequestOtpDto))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	public async Task<IActionResult> UpdateApp(Guid Id, [FromBody] RequestOtpEmailRequest request)
+	public async Task<IActionResult> UpdateApp(Guid id, [FromBody] RequestOtpEmailRequest request)
 	{
 		var result = await _mediator.Send(RequestOtpCommand.Email(request.EmailAddress, request.SuccessUrl, request.CancelUrl));
 		return Ok(result);
@@ -52,9 +66,9 @@ public class AppsController : ControllerBase
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	public async Task<IActionResult> RegenerateApiKey(Guid Id)
+	public async Task<IActionResult> RegenerateApiKey(Guid id)
 	{
-		var result = await _mediator.Send(new RegenerateApiKeyCommand(Id));
+		var result = await _mediator.Send(new RegenerateApiKeyCommand(id));
 		return Ok(result);
 	}
 
