@@ -21,13 +21,11 @@ public record GetAppsQuery(int PageIndex, int PageSize) : IRequest<PaginatedResu
 
 		public async Task<PaginatedResult<GetAppSimpleDto>> Handle(GetAppsQuery request, CancellationToken cancellationToken)
 		{
-			var apps = await _applicationDbContext.Apps.Where(app => app.PrincipalId == _currentUserService.PrincipalId 
+			var apps = await _applicationDbContext.Apps.Where(app => app.PrincipalId == _currentUserService.PrincipalId
 																	&& app.Status != AppStatus.Deleted)
 												.OrderByDescending(app => app.CreatedAt)
-											.Select(app => new GetAppSimpleDto(app.Id, app.Name, app.Description, app.CreatedAt, app.Tags))
-											.PaginatedResultAsync(request.PageIndex, request.PageSize);
-
-
+												.Select(app => new GetAppSimpleDto(app.Id, app.Name, app.Description, app.CreatedAt, app.Tags))
+												.PaginatedResultAsync(request.PageIndex, request.PageSize);
 			return apps;
 		}
 	}

@@ -12,14 +12,14 @@ public class AppConfiguration : BaseEntityConfiguration<App>
 		base.Configure(builder);
 		builder.Property(c => c.Status)
 				.HasConversion<string>();
-		// builder.Property(c => c.Tags)
-		// 		.HasConversion(
-		// 			v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null!),
-		// 			v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null!)!,
-		// 			new ValueComparer<ICollection<string>>(
-		// 				(c1, c2) => c1.SequenceEqual(c2),
-		// 				c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-		// 				c => c.ToList()));
+		builder.Property(c => c.Tags)
+				.HasConversion(
+					v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null!),
+					v => JsonSerializer.Deserialize<IReadOnlyCollection<string>>(v, (JsonSerializerOptions)null!)!,
+					new ValueComparer<IReadOnlyCollection<string>>(
+						(c1, c2) => c1.SequenceEqual(c2),
+						c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+						c => c.ToList()));
 		builder.HasIndex(c => new { c.Name, c.PrincipalId }).IsUnique();
 	}
 }

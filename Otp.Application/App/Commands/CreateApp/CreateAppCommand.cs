@@ -7,7 +7,7 @@ using Otp.Core.Utils;
 
 namespace Otp.Application.App.Commands.CreateApp;
 
-public record CreateAppCommand(string Name, string? Description) : IRequest<CreateAppCommandDto>
+public record CreateAppCommand(string Name, string? Description, IEnumerable<string>? Tags) : IRequest<CreateAppCommandDto>
 {
 	public class Handler : IRequestHandler<CreateAppCommand, CreateAppCommandDto>
 	{
@@ -22,14 +22,14 @@ public record CreateAppCommand(string Name, string? Description) : IRequest<Crea
 
 		public async Task<CreateAppCommandDto> Handle(CreateAppCommand request, CancellationToken cancellationToken)
 		{
-			var count = await _applicationDbContext.Apps.CountAsync(app => app.PrincipalId == _currentUserService.PrincipalId 
-																			&& app.Name == request.Name 
+			var count = await _applicationDbContext.Apps.CountAsync(app => app.PrincipalId == _currentUserService.PrincipalId
+																			&& app.Name == request.Name
 																			&& app.Status != AppStatus.Deleted, cancellationToken);
 			if (count != 0)
-				throw new InvalidRequestException("App already exists."); 
-					
+				throw new InvalidRequestException("App already exists.");
+
 			var generatedApiKey = CryptoUtil.GenerateKey();
-			var newApp = new Core.Domains.App(_currentUserService.PrincipalId, request.Name, generatedApiKey, request.Description);
+			var newApp = new Core.Domains.App(_currentUserService.PrincipalId, request.Name, generatedApiKey, request.Tags?.ToList(), request.Description);
 			var result = await _applicationDbContext.Apps.AddAsync(newApp, cancellationToken);
 			await _applicationDbContext.SaveChangesAsync(cancellationToken);
 

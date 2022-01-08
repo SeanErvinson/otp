@@ -5,19 +5,19 @@ namespace Otp.Core.Domains;
 
 public class App : AuditableEntity
 {
-	private readonly List<string> _tags = new();
-
 	private App()
 	{
 	}
 
-	public App(Guid principalId, string name, string apiKey, string? description = null)
+	public App(Guid principalId, string name, string apiKey, ICollection<string>? tags, string? description = null)
 	{
 		PrincipalId = principalId;
 		Name = name;
 		HashedApiKey = CryptoUtil.HashKey(apiKey);
 		Status = AppStatus.Active;
 		Description = description;
+		if (tags?.Any() == true)
+			_tags.AddRange(tags);
 	}
 
 	public Guid PrincipalId { get; set; }
@@ -25,11 +25,13 @@ public class App : AuditableEntity
 	public string? Description { get; private set; }
 	public string? CallbackUrl { get; private set; }
 	public string HashedApiKey { get; private set; }
+
+	private readonly List<string>? _tags = new();
 	public string? EndpointSecret { get; private set; }
 
 	public bool IsDeleted => Status == AppStatus.Deleted;
 
-	public IReadOnlyCollection<string> Tags => _tags.AsReadOnly();
+	public IReadOnlyCollection<string>? Tags => _tags?.AsReadOnly();
 
 	public Principal Principal { get; set; }
 

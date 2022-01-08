@@ -62,6 +62,7 @@ export const deleteApp = async (id: string): Promise<void> => {
 
 type CreateAppRequest = {
 	name: string;
+	tags: string[];
 	description: string;
 };
 
@@ -84,7 +85,7 @@ export type GetAppResponse = {
 	id: string;
 	name: string;
 	description: string;
-	tags: string[];
+	tags?: string[];
 	callbackUrl: string;
 	createdAt: Date;
 	updatedAt: Date;
