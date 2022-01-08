@@ -11,64 +11,90 @@ using Otp.Api.Services;
 using Otp.Application;
 using Otp.Application.Common.Interfaces;
 using Otp.Infrastructure;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+			.WriteTo.Console()
+			.CreateBootstrapLogger();
 
-builder.Services.AddApiVersioning(options =>
+try
 {
-	options.DefaultApiVersion = new ApiVersion(1, 0);
-	options.AssumeDefaultVersionWhenUnspecified = true;
-	options.ReportApiVersions = true;
-	options.ApiVersionReader = new HeaderApiVersionReader("api-version");
-});
+	var builder = WebApplication.CreateBuilder(args);
+	builder.Host.UseSerilog(((context, services, configuration) =>
+	{
+		configuration.WriteTo.Console()
+					.Enrich.FromLogContext()
+					.ReadFrom.Services(services)
+					.ReadFrom.Configuration(context.Configuration);
+	}));
 
-builder.Services.AddHealthChecks();
+	builder.Services.AddApiVersioning(options =>
+	{
+		options.DefaultApiVersion = new ApiVersion(1, 0);
+		options.AssumeDefaultVersionWhenUnspecified = true;
+		options.ReportApiVersions = true;
+		options.ApiVersionReader = new HeaderApiVersionReader("api-version");
+	});
 
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+	builder.Services.AddHealthChecks();
 
-builder.Services.AddRouting(option =>
-{
-	option.LowercaseUrls = true;
-	option.LowercaseQueryStrings = true;
-});
+	builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddControllers()
-		.AddJsonOptions(option =>
-		{
-			option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-			option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-		})
-		.AddFluentValidation();
+	builder.Services.AddRouting(option =>
+	{
+		option.LowercaseUrls = true;
+		option.LowercaseQueryStrings = true;
+	});
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwagger();
-builder.Services.AddJwtBearerAuthentication(builder.Configuration, builder.Environment);
+	builder.Services.AddControllers()
+			.AddJsonOptions(option =>
+			{
+				option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+				option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+			})
+			.AddFluentValidation();
 
-builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddApplication(builder.Configuration);
+	builder.Services.AddEndpointsApiExplorer();
+	builder.Services.AddSwagger();
+	builder.Services.AddJwtBearerAuthentication(builder.Configuration, builder.Environment);
 
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+	builder.Services.AddInfrastructure(builder.Configuration);
+	builder.Services.AddApplication(builder.Configuration);
 
-var app = builder.Build();
+	builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+	builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-if (app.Environment.IsDevelopment())
-{
-	app.UseSwagger();
-	app.UseSwaggerUI();
-	app.UseDeveloperExceptionPage();
-	app.UseMigrationsEndPoint();
+	var app = builder.Build();
+
+	if (app.Environment.IsDevelopment())
+	{
+		app.UseSwagger();
+		app.UseSwaggerUI();
+		app.UseDeveloperExceptionPage();
+		app.UseMigrationsEndPoint();
+	}
+
+	app.UseHttpsRedirection();
+
+	app.UseCors(config => config.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+
+	app.UseAuthentication();
+	app.UseAuthorization();
+
+	app.UseMiddleware<CustomExceptionMiddleware>();
+
+	app.MapControllers();
+
+	app.Run();
+	return 0;
 }
-
-app.UseHttpsRedirection();
-
-app.UseCors(config => config.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.UseMiddleware<CustomExceptionMiddleware>();
-
-app.MapControllers();
-
-app.Run();
+catch (Exception ex)
+{
+	Log.Fatal(ex, "Host terminated unexpectedly");
+	return 1;
+}
+finally
+{
+	Log.Information("Host is shutting down");
+	Log.CloseAndFlush();
+}
