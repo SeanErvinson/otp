@@ -3,9 +3,10 @@ import { useMsalAuthentication } from '@azure/msal-react';
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import Sidebar from '@/components/Sidebar';
+import { Sidebar } from '@/components/Sidebar';
 import { Home } from '@/pages/Home';
 import { Billing } from '@/pages/Billing';
+import { Usage } from '@/pages/Usage';
 import { Apps } from '@/pages/Apps';
 import { App } from '@/pages/Apps/App';
 import { Settings } from '@/pages/Apps/App/Settings';
@@ -29,6 +30,7 @@ const Root = () => {
 					<Route path="" element={<Settings />} />
 				</Route>
 				<Route path="/billing" element={<Billing />} />
+				<Route path="/usage" element={<Usage />} />
 			</Routes>
 		</Sidebar>
 	);

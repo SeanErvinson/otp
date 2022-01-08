@@ -20,7 +20,7 @@ const Apps = () => {
 	};
 
 	let defaultComponent = (
-		<div className="border-2 flex flex-col gap-3 items-center p-6 mx-8">
+		<article className="border-2 flex flex-col gap-3 items-center p-6 mx-8">
 			{query.isLoading && <button className="btn btn-lg btn-ghost loading">loading</button>}
 			{query.isSuccess && (
 				<>
@@ -31,12 +31,12 @@ const Apps = () => {
 					<CreateAppButton />
 				</>
 			)}
-		</div>
+		</article>
 	);
 
 	if (query.isSuccess && query.data && query.data.items.length > 0) {
 		defaultComponent = (
-			<div className="flex flex-col gap-6">
+			<article className="flex flex-col gap-6">
 				<div className="overflow-x-auto">
 					<table className="table w-full bg-base-300">
 						<thead>
@@ -66,19 +66,19 @@ const Apps = () => {
 						</button>
 					)}
 				</div>
-			</div>
+			</article>
 		);
 	}
 
 	return (
-		<div>
+		<main id="apps">
 			<div className="flex flex-row justify-between">
 				<h1 className="text-4xl font-bold mb-6">Apps</h1>
 				{query.data && query.data.items.length > 0 && <CreateAppButton />}
 			</div>
 
 			{defaultComponent}
-		</div>
+		</main>
 	);
 };
 

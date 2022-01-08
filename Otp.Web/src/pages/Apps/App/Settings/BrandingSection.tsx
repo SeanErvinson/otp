@@ -20,10 +20,6 @@ const BrandingSection = () => {
 					<div className="flex justify-center px-4 py-16 bg-neutral h-full">Hello!</div>
 				</div>
 			</div>
-
-			<button className="btn btn-success" type="button">
-				Update App
-			</button>
 		</div>
 	);
 };

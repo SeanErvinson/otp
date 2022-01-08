@@ -5,6 +5,7 @@ import 'animate.css';
 
 import { createApp, CreateAppResponse } from '@/api/otpApi';
 import ErrorIcon from '@/components/misc/ErrorIcon';
+import { TagInput } from '@/components/TagInput';
 
 import ApiKeyPreview from './ApiKeyPreview';
 import { AxiosError } from 'axios';
@@ -23,6 +24,7 @@ const CreateAppModal = (props: Props) => {
 	const [error, setError] = useState<string | undefined>();
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
+	const [tags, setTags] = useState<string[]>([]);
 	const { handleSubmit, register, reset, control } = useForm<FormData>();
 	const { errors } = useFormState<FormData>({
 		control,
@@ -50,6 +52,7 @@ const CreateAppModal = (props: Props) => {
 	const onSubmit = (data: FormData) => {
 		mutation.mutate({
 			name: data.name,
+			tags: tags,
 			description: data.description,
 		});
 	};
@@ -112,6 +115,12 @@ const CreateAppModal = (props: Props) => {
 							</span>
 						</label>
 					)}
+				</div>
+				<div className="form-control">
+					<label className="label">
+						<span className="label-text">Tags</span>
+					</label>
+					<TagInput onUpdate={setTags} />
 				</div>
 				{error && (
 					<div className="alert alert-error mt-2">
