@@ -21,25 +21,30 @@ const CallbackSection = ({ appId, callbackUrl }: Props) => {
 	const [enableChangeSecret, setEnableChangeSecret] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
+
+	const { handleSubmit, register, resetField, control, getValues } = useForm<FormData>({
+		defaultValues: {
+			callbackUrl: callbackUrl ?? '',
+			secret: '',
+		},
+	});
+	const { isDirty, errors, dirtyFields } = useFormState<FormData>({
+		control,
+	});
 	const mutation = useMutation(updateAppCallback, {
 		onMutate: () => {
 			setIsLoading(true);
 		},
 		onSuccess: () => {
 			resetField('secret');
+			resetField('callbackUrl', {
+				keepDirty: false,
+				defaultValue: getValues('callbackUrl'),
+			});
 			setIsLoading(false);
 			setIsSuccess(true);
 			setEnableChangeSecret(false);
 		},
-	});
-	const { handleSubmit, register, reset, resetField, control } = useForm<FormData>({
-		defaultValues: {
-			callbackUrl: callbackUrl ?? '',
-			secret: '',
-		},
-	});
-	const { isDirty, errors } = useFormState<FormData>({
-		control,
 	});
 	const generateId = useGeneratedId();
 
@@ -86,28 +91,7 @@ const CallbackSection = ({ appId, callbackUrl }: Props) => {
 					<label htmlFor={generateId('secret')} className="label">
 						<span className="label-text">Secret</span>
 					</label>
-					{!callbackUrl || enableChangeSecret ? (
-						<>
-							<div className="flex space-x-2">
-								<input
-									type="text"
-									id={generateId('secret')}
-									className="input"
-									{...register('secret')}
-								/>
-								{enableChangeSecret ? (
-									<button
-										className="btn btn-ghost"
-										type="button"
-										onClick={onCancelChangeSecret}>
-										Cancel
-									</button>
-								) : (
-									<></>
-								)}
-							</div>
-						</>
-					) : (
+					{!!callbackUrl && !enableChangeSecret ? (
 						<div className="alert alert-warning">
 							<div className="flex-1">
 								<WarningIcon />
@@ -117,11 +101,30 @@ const CallbackSection = ({ appId, callbackUrl }: Props) => {
 									updated. —<span>&nbsp;</span>
 									<span
 										className="link"
-										onClick={() => setEnableChangeSecret(!enableChangeSecret)}>
+										onClick={() => setEnableChangeSecret(true)}>
 										Change Secret
 									</span>
 								</p>
 							</div>
+						</div>
+					) : (
+						<div className="flex space-x-2">
+							<input
+								type="text"
+								id={generateId('secret')}
+								className="input"
+								{...register('secret')}
+							/>
+							{enableChangeSecret ? (
+								<button
+									className="btn btn-ghost"
+									type="button"
+									onClick={onCancelChangeSecret}>
+									Cancel
+								</button>
+							) : (
+								<></>
+							)}
 						</div>
 					)}
 				</div>

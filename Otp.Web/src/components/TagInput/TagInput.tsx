@@ -21,6 +21,9 @@ const TagInput = ({ onUpdate, initialTags }: Props) => {
 
 	const addTags = (event: React.KeyboardEvent<HTMLInputElement>) => {
 		const cleanedValue = value.trim();
+		if (event.key === 'Enter') {
+			event.preventDefault();
+		}
 		if (event.key === 'Enter' && cleanedValue && !tags.includes(cleanedValue)) {
 			event.preventDefault();
 			setTags(prev => [...prev, cleanedValue]);
@@ -45,7 +48,7 @@ const TagInput = ({ onUpdate, initialTags }: Props) => {
 			<ul className="flex items-center">
 				{tags.map(tag => (
 					<li key={nanoid()} className="badge badge-lg flex">
-						{tag}{' '}
+						{tag}&nbsp;
 						<span
 							className="pl-1 self-center cursor-pointer"
 							onClick={() => removeTag(tag)}>
