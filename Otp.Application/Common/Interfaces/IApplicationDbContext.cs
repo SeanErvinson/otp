@@ -1,13 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Otp.Core.Domains;
+using Otp.Core.Domains.Entities;
 
 namespace Otp.Application.Common.Interfaces;
 
 public interface IApplicationDbContext
 {
-	DbSet<Core.Domains.App> Apps { get; set; }
+	DbSet<Core.Domains.Entities.App> Apps { get; set; }
 
-	DbSet<Core.Domains.Principal> Principals { get; set; }
-	// DbSet<Domains.OtpRequest> OtpRequests { get; set; }
+	DbSet<Core.Domains.Entities.Principal> Principals { get; set; }
+	DbSet<OtpRequest> OtpRequests { get; set; }
 
 	Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
