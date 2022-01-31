@@ -1,8 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Otp.Application.Common.Interfaces;
+using Otp.Application.Services;
 using Otp.Infrastructure.Persistence;
+using Otp.Infrastructure.Services;
+using Otp.Infrastructure.Services.Sender;
+using Otp.Infrastructure.Services.Sender.EmailProviders;
+using Otp.Infrastructure.Services.Sender.SmsProviders;
 
 namespace Otp.Infrastructure;
 
@@ -18,5 +24,21 @@ public static class DependencyInjection
 																							b.MigrationsAssembly(
 																								typeof(ApplicationDbContext).Assembly.FullName)));
 		services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+
+		services.TryAddEnumerable(new []
+		{
+			ServiceDescriptor.Transient<ISenderFactory, SmsSenderFactory>(), 
+			ServiceDescriptor.Transient<ISenderFactory, EmailSenderFactory>(), 
+		});
+		
+		services.TryAddEnumerable(new []
+		{
+			ServiceDescriptor.Transient<ISmsProvider, PhilippinesSmsProvider>(), 
+			ServiceDescriptor.Transient<ISmsProvider, AustraliaSmsProvider>(),
+		});
+		services.AddTransient<ISenderService, SenderService>();
+		services.AddTransient<IEmailProvider, SendGridEmailProvider>();
+
+		services.AddTransient<IDomainEventService, DomainEventService>();
 	}
 }
