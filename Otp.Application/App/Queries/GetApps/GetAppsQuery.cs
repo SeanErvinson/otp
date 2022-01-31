@@ -3,6 +3,7 @@ using Otp.Application.Common;
 using Otp.Application.Common.Extensions;
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains;
+using Otp.Core.Domains.Entities;
 
 namespace Otp.Application.App.Queries.GetApps;
 

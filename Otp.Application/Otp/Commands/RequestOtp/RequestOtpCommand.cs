@@ -1,6 +1,11 @@
 ﻿using MediatR;
-using Otp.Core.Domains;
+using Microsoft.EntityFrameworkCore;
+using Otp.Application.Common.Exceptions;
+using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Common;
+using Otp.Core.Domains.Entities;
+using Serilog;
+using Serilog.Context;
 
 namespace Otp.Application.Otp.Commands.RequestOtp;
 
@@ -40,14 +45,37 @@ public record RequestOtpCommand : IRequest<RequestOtpDto>
 
 	public class Handler : IRequestHandler<RequestOtpCommand, RequestOtpDto>
 	{
+		private readonly IAppContextService _appContextService;
+		private readonly IApplicationDbContext _dbContext;
+		
+		public Handler(IAppContextService appContextService, IApplicationDbContext dbContext)
+		{
+			_appContextService = appContextService;
+			_dbContext = dbContext;
+		}
+
 		public async Task<RequestOtpDto> Handle(RequestOtpCommand request, CancellationToken cancellationToken)
 		{
-			var newOtpRequest = new OtpRequest(request.Contact, request.Mode, request.SuccessUrl, request.CancelUrl);
+			using (LogContext.PushProperty("Mode", request.Mode))
+			{
+				Log.Information("Requesting otp");
+				
+				var appId = await _dbContext.Apps.Where(app => app.HashedApiKey == _appContextService.HashApiKey && app.Status == AppStatus.Active)
+											.Select(app => app.Id)
+											.FirstOrDefaultAsync(cancellationToken);
+				if (appId == Guid.Empty)
+				{
+					Log.Error("Api key is not associated with any active application");
+					throw new NotFoundException("App does not exists");
+				}
 
-			//TODO: Save to database
-			//TODO: Get the base url of the frontend append /ui/ <- as a configurable
-
-			return new RequestOtpDto(newOtpRequest.Id, new Uri(new Uri("http://localhost:8080/"), newOtpRequest.RequestPath));
+				var otpRequest = new OtpRequest(appId, request.Contact, request.Mode, request.SuccessUrl, request.CancelUrl);
+			
+				var result = await _dbContext.OtpRequests.AddAsync(otpRequest, cancellationToken);
+				await _dbContext.SaveChangesAsync(cancellationToken);
+				
+				return new RequestOtpDto(result.Entity.Id, new Uri(new Uri("http://localhost:8080/"), otpRequest.RequestPath));
+			}
 		}
 	}
 }
