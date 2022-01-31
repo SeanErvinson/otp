@@ -10,5 +10,6 @@ public class BaseEntityConfiguration<T> : IEntityTypeConfiguration<T> where T : 
 	{
 		builder.HasKey(c => c.Id);
 		builder.HasIndex(c => c.Id).IsUnique();
+		builder.Ignore(c => c.DomainEvents);
 	}
 }

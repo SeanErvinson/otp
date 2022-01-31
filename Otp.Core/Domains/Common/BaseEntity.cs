@@ -1,11 +1,18 @@
 ﻿namespace Otp.Core.Domains.Common;
 
-public abstract class BaseEntity
+public abstract class BaseEntity : IHasDomainEvent
 {
+	public Guid Id { get; }
+	private readonly List<DomainEvent> _domainEvents = new();
+	public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.Where(domainEvent => !domainEvent.IsPublished).ToList().AsReadOnly();
+
 	protected BaseEntity()
 	{
 		Id = Guid.NewGuid();
 	}
 
-	public Guid Id { get; }
+	protected void AddDomainEvent(DomainEvent domainEvent)
+	{
+		_domainEvents.Add(domainEvent);
+	}
 }

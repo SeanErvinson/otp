@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Otp.Core.Domains;
+using Otp.Core.Domains.Entities;
 
 namespace Otp.Infrastructure.Persistence.Configurations;
 
@@ -10,6 +10,7 @@ public class AppConfiguration : BaseEntityConfiguration<App>
 	public override void Configure(EntityTypeBuilder<App> builder)
 	{
 		base.Configure(builder);
+		builder.Property(c => c.Description).HasMaxLength(500);
 		builder.Property(c => c.Status)
 				.HasConversion<string>();
 		builder.Property(c => c.Tags)

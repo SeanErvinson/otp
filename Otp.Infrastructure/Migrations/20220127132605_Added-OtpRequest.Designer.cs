@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Otp.Infrastructure.Persistence;
 
@@ -11,9 +12,10 @@ using Otp.Infrastructure.Persistence;
 namespace Otp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220127132605_Added-OtpRequest")]
+    partial class AddedOtpRequest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +24,7 @@ namespace Otp.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Otp.Core.Domains.Entities.App", b =>
+            modelBuilder.Entity("Otp.Core.Domains.App", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -42,8 +44,7 @@ namespace Otp.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EndpointSecret")
                         .HasColumnType("nvarchar(max)");
@@ -88,48 +89,7 @@ namespace Otp.Infrastructure.Migrations
                     b.ToTable("Apps");
                 });
 
-            modelBuilder.Entity("Otp.Core.Domains.Entities.CallbackEvent", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Contact")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Mode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("RequestId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ResponseMessage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StatusCode")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.ToTable("CallbackEvent");
-                });
-
-            modelBuilder.Entity("Otp.Core.Domains.Entities.OtpRequest", b =>
+            modelBuilder.Entity("Otp.Core.Domains.OtpRequest", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -138,39 +98,17 @@ namespace Otp.Infrastructure.Migrations
                     b.Property<Guid>("AppId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CancelUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Contact")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ErrorMessage")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ExpiresOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Mode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Retries")
-                        .HasColumnType("int");
-
                     b.Property<string>("Secret")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("State")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -178,14 +116,7 @@ namespace Otp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SuccessUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("VerifiedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -198,7 +129,7 @@ namespace Otp.Infrastructure.Migrations
                     b.ToTable("OtpRequests");
                 });
 
-            modelBuilder.Entity("Otp.Core.Domains.Entities.Principal", b =>
+            modelBuilder.Entity("Otp.Core.Domains.Principal", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -243,9 +174,9 @@ namespace Otp.Infrastructure.Migrations
                     b.ToTable("Principals");
                 });
 
-            modelBuilder.Entity("Otp.Core.Domains.Entities.App", b =>
+            modelBuilder.Entity("Otp.Core.Domains.App", b =>
                 {
-                    b.HasOne("Otp.Core.Domains.Entities.Principal", "Principal")
+                    b.HasOne("Otp.Core.Domains.Principal", "Principal")
                         .WithMany()
                         .HasForeignKey("PrincipalId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -254,9 +185,9 @@ namespace Otp.Infrastructure.Migrations
                     b.Navigation("Principal");
                 });
 
-            modelBuilder.Entity("Otp.Core.Domains.Entities.OtpRequest", b =>
+            modelBuilder.Entity("Otp.Core.Domains.OtpRequest", b =>
                 {
-                    b.HasOne("Otp.Core.Domains.Entities.App", "App")
+                    b.HasOne("Otp.Core.Domains.App", "App")
                         .WithMany()
                         .HasForeignKey("AppId")
                         .OnDelete(DeleteBehavior.Cascade)

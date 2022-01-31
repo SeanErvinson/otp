@@ -1,6 +1,6 @@
 ﻿using Otp.Core.Domains.Common;
 
-namespace Otp.Core.Domains;
+namespace Otp.Core.Domains.Entities;
 
 public class Principal : AuditableEntity
 {
