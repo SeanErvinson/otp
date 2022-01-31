@@ -22,12 +22,11 @@ try
 	var builder = WebApplication.CreateBuilder(args);
 	builder.Host.UseSerilog(((context, services, configuration) =>
 	{
-		configuration.WriteTo.Console()
-					.Enrich.FromLogContext()
+		configuration.ReadFrom.Configuration(context.Configuration)
 					.ReadFrom.Services(services)
-					.ReadFrom.Configuration(context.Configuration);
+					.Enrich.FromLogContext();
 	}));
-
+	builder.Services.AddHttpClient();
 	builder.Services.AddApiVersioning(options =>
 	{
 		options.DefaultApiVersion = new ApiVersion(1, 0);
@@ -62,6 +61,7 @@ try
 	builder.Services.AddApplication(builder.Configuration);
 
 	builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+	builder.Services.AddScoped<IAppContextService, AppContextService>();
 	builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 	var app = builder.Build();

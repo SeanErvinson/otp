@@ -1,9 +1,11 @@
 ﻿using System.Net.Mime;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Otp.Api.Filters;
 using Otp.Application.Otp.Commands.RequestOtp;
+using Otp.Application.Otp.Commands.ResendOtpRequest;
+using Otp.Application.Otp.Commands.VerifyCode;
+using Otp.Application.Otp.Queries.GetOtpRequest;
 
 namespace Otp.Api.Controllers;
 
@@ -44,29 +46,31 @@ public class OtpController : ControllerBase
 		return Ok(result);
 	}
 	
-	[HttpPost("send")]
-	[Authorize]
-	public async Task<IActionResult> SendMode()
+	[HttpGet("{id:guid}")]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetOtpRequestQueryDto))]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> GetRequest([FromRoute] Guid id, [FromQuery] GetOtpRequestQueryRequest request)
 	{
-
-		return Ok();
-	}
-
-	[HttpPost("resend")]
-	[Authorize]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RequestOtpDto))]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)] //Return bad request if resend too fast
-	public async Task<IActionResult> RequestResend()
-	{
-
-		return Ok();
+		var result = await _mediator.Send(new GetOtpRequestQuery(id, request.Secret));
+		return Ok(result);
 	}
 	
-	[HttpPost("change-email")]
-	[Authorize]
-	public async Task<IActionResult> ChangeEmail()
-	{
+    [HttpPost("verify")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> VerifyCode([FromBody] VerifyCodeCommand request)
+    {
+        await _mediator.Send(request);
+        return NoContent();
+    }
 
-		return Ok();
+	[HttpPost("resend")]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)] //TODO: Return bad request if resend too fast
+	public async Task<IActionResult> RequestResend([FromBody] ResendOtpRequest request)
+	{
+		await _mediator.Send(request);
+		return NoContent();
 	}
 }

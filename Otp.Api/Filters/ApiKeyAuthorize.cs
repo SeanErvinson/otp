@@ -10,11 +10,10 @@ namespace Otp.Api.Filters;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class ApiKeyAuthorize : Attribute, IAsyncAuthorizationFilter
 {
-	private const string ApiHeaderKey = "api-key";
-
 	public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
 	{
-		if (!context.HttpContext.Request.Headers.TryGetValue(ApiHeaderKey, out var apiKey))
+		var appContext = context.HttpContext.RequestServices.GetRequiredService<IAppContextService>();
+		if (string.IsNullOrEmpty(appContext.HashApiKey))
 		{
 			context.Result = new ContentResult
 			{
@@ -26,7 +25,7 @@ public class ApiKeyAuthorize : Attribute, IAsyncAuthorizationFilter
 		}
 
 		var applicationDbContext = context.HttpContext.RequestServices.GetRequiredService<IApplicationDbContext>();
-		if (await applicationDbContext.Apps.SingleOrDefaultAsync(c => c.HashedApiKey == CryptoUtil.HashKey(apiKey)) is null)
+		if (await applicationDbContext.Apps.SingleOrDefaultAsync(c => c.HashedApiKey == appContext.HashApiKey) is null)
 			context.Result = new ContentResult
 			{
 				StatusCode = StatusCodes.Status401Unauthorized,
