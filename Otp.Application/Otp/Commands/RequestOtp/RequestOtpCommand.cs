@@ -74,7 +74,7 @@ public record RequestOtpCommand : IRequest<RequestOtpDto>
 				var result = await _dbContext.OtpRequests.AddAsync(otpRequest, cancellationToken);
 				await _dbContext.SaveChangesAsync(cancellationToken);
 				
-				return new RequestOtpDto(result.Entity.Id, new Uri(new Uri("http://localhost:8080/"), otpRequest.RequestPath));
+				return new RequestOtpDto(result.Entity.Id, new Uri(new Uri("http://localhost:3000/"), otpRequest.RequestPath));
 			}
 		}
 	}

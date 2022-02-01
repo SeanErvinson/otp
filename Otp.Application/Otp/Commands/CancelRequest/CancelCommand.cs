@@ -5,11 +5,11 @@ using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Entities;
 using Serilog.Context;
 
-namespace Otp.Application.Otp.Commands.VerifyCode;
+namespace Otp.Application.Otp.Commands.CancelRequest;
 
-public record VerifyCodeCommand(Guid Id, string Secret, string Code) : IRequest<VerifyCodeCommandResponse>
+public record CancelRequestCommand(Guid Id, string Secret) : IRequest<CancelRequestCommandResponse>
 {
-	public class Handler : IRequestHandler<VerifyCodeCommand, VerifyCodeCommandResponse>
+	public class Handler : IRequestHandler<CancelRequestCommand, CancelRequestCommandResponse>
 	{
 		private readonly IApplicationDbContext _dbContext;
 
@@ -18,7 +18,7 @@ public record VerifyCodeCommand(Guid Id, string Secret, string Code) : IRequest<
 			_dbContext = dbContext;
 		}
 
-		public async Task<VerifyCodeCommandResponse> Handle(VerifyCodeCommand request, CancellationToken cancellationToken)
+		public async Task<CancelRequestCommandResponse> Handle(CancelRequestCommand request, CancellationToken cancellationToken)
 		{
 			using (LogContext.PushProperty("OtpRequestId", request.Id))
 			{
@@ -46,22 +46,15 @@ public record VerifyCodeCommand(Guid Id, string Secret, string Code) : IRequest<
 				{
 					throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
 				}
-				
-				if (otpRequest.Code != request.Code)
-				{
-					app.TriggerFailedCallback(otpRequest);
-					await _dbContext.SaveChangesAsync(cancellationToken);
-					throw new UnauthorizedAccessException("Code provided was incorrect");
-				}
 
-				app.TriggerSuccessCallback(otpRequest);
-				otpRequest.SuccessfullyClaimed();
+				app.TriggerCanceledCallback(otpRequest);
+				otpRequest.FailedClaimed("Request was canceled");
 				await _dbContext.SaveChangesAsync(cancellationToken);
 
-				return new VerifyCodeCommandResponse(otpRequest.SuccessUrl);
+				return new CancelRequestCommandResponse(otpRequest.CancelUrl);
 			}
 		}
 	}
 }
 
-public record VerifyCodeCommandResponse(string SuccessUrl); 
+public record CancelRequestCommandResponse(string CancelUrl); 

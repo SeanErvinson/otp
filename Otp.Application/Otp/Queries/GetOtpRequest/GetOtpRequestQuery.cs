@@ -8,9 +8,9 @@ namespace Otp.Application.Otp.Queries.GetOtpRequest;
 
 public record GetOtpRequestQueryRequest(string Secret);
 
-public record GetOtpRequestQuery(Guid Id, string Secret) : IRequest<GetOtpRequestQueryDto>
+public record GetOtpRequestQuery(Guid Id, string Secret) : IRequest<GetOtpRequestQueryResponse>
 {
-	public class Handler : IRequestHandler<GetOtpRequestQuery, GetOtpRequestQueryDto>
+	public class Handler : IRequestHandler<GetOtpRequestQuery, GetOtpRequestQueryResponse>
 	{
 		private readonly IApplicationDbContext _dbContext;
 
@@ -19,7 +19,7 @@ public record GetOtpRequestQuery(Guid Id, string Secret) : IRequest<GetOtpReques
 			_dbContext = dbContext;
 		}
 
-		public async Task<GetOtpRequestQueryDto> Handle(GetOtpRequestQuery request, CancellationToken cancellationToken)
+		public async Task<GetOtpRequestQueryResponse> Handle(GetOtpRequestQuery request, CancellationToken cancellationToken)
 		{
 			var otpRequest =
 				await _dbContext.OtpRequests.AsNoTracking()
@@ -35,7 +35,7 @@ public record GetOtpRequestQuery(Guid Id, string Secret) : IRequest<GetOtpReques
 				throw new NotFoundException($"Otp request {request.Id} does not exist");
 			}
 			
-			if (otpRequest.ExpiresOn > DateTime.UtcNow)
+			if (otpRequest.ExpiresOn < DateTime.UtcNow)
 			{
 				throw new InvalidOperationException("Otp request has expired");
 			}
@@ -47,23 +47,19 @@ public record GetOtpRequestQuery(Guid Id, string Secret) : IRequest<GetOtpReques
 				throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
 			}
 
-			return new GetOtpRequestQueryDto
+			return new GetOtpRequestQueryResponse
 			{
 				BackgroundUri = app.BackgroundUri,
 				LogoUri = app.LogoUri,
-				SuccessUrl = otpRequest.SuccessUrl,
-				CancelUrl = otpRequest.CancelUrl,
 				Contact = otpRequest.Contact
 			};
 		}
 	}
 }
 
-public record GetOtpRequestQueryDto
+public record GetOtpRequestQueryResponse
 {
 	public string? BackgroundUri { get; init; }
 	public string? LogoUri { get; init; }
 	public string Contact { get; init; } = default!;
-	public string SuccessUrl { get; init; } = default!;
-	public string CancelUrl { get; init; } = default!;
 }

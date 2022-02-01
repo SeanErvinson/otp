@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Otp.Api.Filters;
+using Otp.Application.Otp.Commands.CancelRequest;
 using Otp.Application.Otp.Commands.RequestOtp;
 using Otp.Application.Otp.Commands.ResendOtpRequest;
 using Otp.Application.Otp.Commands.VerifyCode;
@@ -47,7 +48,7 @@ public class OtpController : ControllerBase
 	}
 	
 	[HttpGet("{id:guid}")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetOtpRequestQueryDto))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetOtpRequestQueryResponse))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetRequest([FromRoute] Guid id, [FromQuery] GetOtpRequestQueryRequest request)
@@ -57,13 +58,24 @@ public class OtpController : ControllerBase
 	}
 	
     [HttpPost("verify")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(VerifyCodeCommandResponse))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> VerifyCode([FromBody] VerifyCodeCommand request)
     {
-        await _mediator.Send(request);
-        return NoContent();
+        var result = await _mediator.Send(request);
+        return Ok(result);
     }
+	
+	[HttpPost("cancel")]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CancelRequestCommandResponse))]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> Cancel([FromBody] CancelRequestCommand request)
+	{
+		var result = await _mediator.Send(request);
+		return Ok(result);
+	}
 
 	[HttpPost("resend")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]

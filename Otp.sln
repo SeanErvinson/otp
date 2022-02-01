@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otp.Application", "Otp.Appl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otp.Core", "Otp.Core\Otp.Core.csproj", "{814CAE74-579C-45F1-A415-8CD40D2EE1F5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otp.ConsumerApi", "Otp.ConsumerApi\Otp.ConsumerApi.csproj", "{2DBE9E77-1220-42B2-93FE-C2B23E648950}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{814CAE74-579C-45F1-A415-8CD40D2EE1F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{814CAE74-579C-45F1-A415-8CD40D2EE1F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{814CAE74-579C-45F1-A415-8CD40D2EE1F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DBE9E77-1220-42B2-93FE-C2B23E648950}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DBE9E77-1220-42B2-93FE-C2B23E648950}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DBE9E77-1220-42B2-93FE-C2B23E648950}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DBE9E77-1220-42B2-93FE-C2B23E648950}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
