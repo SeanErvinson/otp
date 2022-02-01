@@ -1,8 +1,8 @@
-import { FunctionComponent, ReactChild, ReactChildren } from 'react';
+import { FunctionComponent, ReactChild, ReactChildren, ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 
 interface Props {
-	children: ReactChildren | ReactChild;
+	children: ReactChildren | ReactNode;
 }
 
 const Sidebar: FunctionComponent<Props> = props => {

@@ -13,3 +13,9 @@ export const isValidUrl = (value: string) => {
 export const truncate = (str: string, n: number) => {
 	return str.length > n ? str.slice(0, n) + '...' : str;
 };
+
+export const isValidGuid = (value: string) => {
+	const guidPattern =
+		/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+	return guidPattern.test(value);
+};
