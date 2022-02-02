@@ -52,6 +52,7 @@ public class CallbackTriggeredEventHandler : INotificationHandler<DomainEventNot
 		var httpClient = _httpClientFactory.CreateClient();
 		var response = await httpClient.SendAsync(httpMessage, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 		domainEvent.CallbackEvent.SetResponse((int) response.StatusCode, response.ReasonPhrase);
+		await _dbContext.CallbackEvents.AddAsync(domainEvent.CallbackEvent, cancellationToken);
 		await _dbContext.SaveChangesAsync(cancellationToken);
 	}
 

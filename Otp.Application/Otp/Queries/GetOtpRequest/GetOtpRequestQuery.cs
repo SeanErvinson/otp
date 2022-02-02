@@ -37,7 +37,7 @@ public record GetOtpRequestQuery(Guid Id, string Secret) : IRequest<GetOtpReques
 			
 			if (otpRequest.ExpiresOn < DateTime.UtcNow)
 			{
-				throw new InvalidOperationException("Otp request has expired");
+				throw new ExpiredResourceException("Otp request has expired");
 			}
 			
 			var app = await _dbContext.Apps.AsNoTracking().FirstOrDefaultAsync(app => app.Id == otpRequest.AppId, cancellationToken);

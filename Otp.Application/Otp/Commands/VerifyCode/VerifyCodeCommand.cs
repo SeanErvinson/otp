@@ -37,7 +37,7 @@ public record VerifyCodeCommand(Guid Id, string Secret, string Code) : IRequest<
 
 				if (otpRequest.ExpiresOn < DateTime.UtcNow)
 				{
-					throw new InvalidOperationException("Otp request has expired");
+					throw new ExpiredResourceException("Otp request has expired");
 				}
 
 				var app = await _dbContext.Apps.FirstOrDefaultAsync(app => app.Id == otpRequest.AppId && app.Status == AppStatus.Active, cancellationToken);
@@ -51,7 +51,7 @@ public record VerifyCodeCommand(Guid Id, string Secret, string Code) : IRequest<
 				{
 					app.TriggerFailedCallback(otpRequest);
 					await _dbContext.SaveChangesAsync(cancellationToken);
-					throw new UnauthorizedAccessException("Code provided was incorrect");
+					throw new InvalidRequestException("Code provided was incorrect");
 				}
 
 				app.TriggerSuccessCallback(otpRequest);
