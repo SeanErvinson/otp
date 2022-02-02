@@ -10,6 +10,7 @@ public interface IApplicationDbContext
 
 	DbSet<Core.Domains.Entities.Principal> Principals { get; set; }
 	DbSet<OtpRequest> OtpRequests { get; set; }
+	DbSet<CallbackEvent> CallbackEvents { get; set; }
 
 	Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
