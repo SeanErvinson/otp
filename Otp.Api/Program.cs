@@ -75,8 +75,10 @@ try
 	}
 
 	app.UseHttpsRedirection();
-
-	app.UseCors(config => config.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+	if (app.Environment.IsDevelopment())
+	{
+		app.UseCors(config => config.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+	}
 
 	app.UseAuthentication();
 	app.UseAuthorization();

@@ -1,23 +1,19 @@
 ﻿name: api
 
-on:
-  push:
-    paths:
-      - 'Otp.Api/**'
-      - 'Otp.Application/**'
-      - 'Otp.Core/**'
-      - 'Otp.Infrastructure/**'
-  pull_request:
-    paths:
-      - 'Otp.Api/**'
-      - 'Otp.Application/**'
-      - 'Otp.Core/**'
-      - 'Otp.Infrastructure/**'
-        
-jobs: 
+on: workflow_dispatch
+
+env:
+  PROJECT_NAME: Otp.Api
+  ARTIFACT_NAME: drop
+  PUBLISH_PATH: ${{ github.workspace }}/artifact
+
+jobs:
   build:
     name: build
     runs-on: ubuntu-latest
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
     steps:
       - uses: actions/checkout@v2
       - name: Install .NET
@@ -25,7 +21,13 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore ${{ env.PROJECT_NAME }}
       - name: Build
-        run: dotnet build --no-restore
-    
+        run: dotnet build --no-restore ${{ env.PROJECT_NAME }}
+      - name: Publish
+        run: dotnet publish --no-restore -c Release -o ${{ env.PUBLISH_PATH }} ${{ env.PROJECT_NAME }}
+      - uses: actions/upload-artifact@v2
+        name: Upload artifact
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ${{ env.PUBLISH_PATH }}
