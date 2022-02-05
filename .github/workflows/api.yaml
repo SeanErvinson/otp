@@ -1,6 +1,12 @@
 ﻿name: api
 
 on:
+  push:
+    paths:
+      - 'Otp.Api/**'
+      - 'Otp.Application/**'
+      - 'Otp.Core/**'
+      - 'Otp.Infrastructure/**'
   pull_request:
     paths:
       - 'Otp.Api/**'
