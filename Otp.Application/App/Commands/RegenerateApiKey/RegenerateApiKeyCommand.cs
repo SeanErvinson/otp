@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
-using Otp.Core.Utils;
 
 namespace Otp.Application.App.Commands.RegenerateApiKey;
 
@@ -25,12 +24,11 @@ public record RegenerateApiKeyCommand(Guid Id) : IRequest<RegenerateApiKeyDto>
 																			cancellationToken);
 			if (app is null) throw new NotFoundException(nameof(app));
 
-			var generatedKey = CryptoUtil.GenerateKey();
-			app.UpdateHashedApiKey(generatedKey);
+			var apiKey = app.RegenerateApiKey();
 
 			await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-			return new RegenerateApiKeyDto(generatedKey);
+			return new RegenerateApiKeyDto(apiKey);
 		}
 	}
 }
