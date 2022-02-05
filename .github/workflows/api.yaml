@@ -1,4 +1,4 @@
-﻿name: api
+name: api
 
 on: workflow_dispatch
 
