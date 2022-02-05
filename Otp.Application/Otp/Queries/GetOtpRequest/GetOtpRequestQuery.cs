@@ -23,6 +23,7 @@ public record GetOtpRequestQuery(Guid Id, string Secret) : IRequest<GetOtpReques
 		{
 			var otpRequest =
 				await _dbContext.OtpRequests.AsNoTracking()
+								.Include(otpRequest => otpRequest.App)
 								.FirstOrDefaultAsync(otpRequest =>
 														otpRequest.Id == request.Id
 														&& otpRequest.Secret == request.Secret
@@ -39,18 +40,16 @@ public record GetOtpRequestQuery(Guid Id, string Secret) : IRequest<GetOtpReques
 			{
 				throw new ExpiredResourceException("Otp request has expired");
 			}
-			
-			var app = await _dbContext.Apps.AsNoTracking().FirstOrDefaultAsync(app => app.Id == otpRequest.AppId, cancellationToken);
 
-			if (app is null)
+			if (otpRequest.App.IsDeleted)
 			{
 				throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
 			}
 
 			return new GetOtpRequestQueryResponse
 			{
-				BackgroundUri = app.BackgroundUri,
-				LogoUri = app.LogoUri,
+				BackgroundUri = otpRequest.App.BackgroundUri,
+				LogoUri = otpRequest.App.LogoUri,
 				Contact = otpRequest.Contact
 			};
 		}

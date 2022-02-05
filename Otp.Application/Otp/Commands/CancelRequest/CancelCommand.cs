@@ -23,12 +23,14 @@ public record CancelRequestCommand(Guid Id, string Secret) : IRequest<CancelRequ
 			using (LogContext.PushProperty("OtpRequestId", request.Id))
 			{
 				var otpRequest =
-					await _dbContext.OtpRequests.FirstOrDefaultAsync(req =>
-																		req.Id == request.Id
-																		&& req.Secret == request.Secret
-																		&& req.State == OtpRequestState.Available
-																		&& req.Status == OtpRequestStatus.Success,
-																	cancellationToken);
+					await _dbContext.OtpRequests
+									.Include(otpRequest => otpRequest.App)
+									.FirstOrDefaultAsync(req =>
+															req.Id == request.Id
+															&& req.Secret == request.Secret
+															&& req.State == OtpRequestState.Available
+															&& req.Status == OtpRequestStatus.Success,
+														cancellationToken);
 
 				if (otpRequest is null)
 				{
@@ -40,14 +42,12 @@ public record CancelRequestCommand(Guid Id, string Secret) : IRequest<CancelRequ
 					throw new ExpiredResourceException("Otp request has expired");
 				}
 
-				var app = await _dbContext.Apps.FirstOrDefaultAsync(app => app.Id == otpRequest.AppId && app.Status == AppStatus.Active, cancellationToken);
-
-				if (app is null)
+				if (otpRequest.App.IsDeleted)
 				{
 					throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
 				}
 
-				app.TriggerCanceledCallback(otpRequest);
+				otpRequest.App.TriggerCanceledCallback(otpRequest);
 				otpRequest.FailedClaimed("Request was canceled");
 				await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -57,4 +57,4 @@ public record CancelRequestCommand(Guid Id, string Secret) : IRequest<CancelRequ
 	}
 }
 
-public record CancelRequestCommandResponse(string CancelUrl); 
+public record CancelRequestCommandResponse(string CancelUrl);

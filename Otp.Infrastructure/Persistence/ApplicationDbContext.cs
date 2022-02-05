@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Otp.Application.Common.Interfaces;
-using Otp.Core.Domains.Common;
+using Otp.Core.Domains.Common.Models;
 using Otp.Core.Domains.Entities;
 
 namespace Otp.Infrastructure.Persistence;
@@ -22,6 +22,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 	public DbSet<Principal> Principals { get; set; } = default!;
 	public DbSet<OtpRequest> OtpRequests { get; set; } = default!;
 	public DbSet<CallbackEvent> CallbackEvents { get; set; } = default!;
+	public DbSet<ChannelPrice> ChannelPrices { get; set; } = default!;
+	// public DbSet<Discount> Discounts { get; set; } = default!;
 
 	public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{
