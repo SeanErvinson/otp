@@ -1,6 +1,7 @@
 ﻿name: api
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'Otp.Api/**'
