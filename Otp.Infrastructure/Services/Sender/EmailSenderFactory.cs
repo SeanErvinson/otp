@@ -1,9 +1,6 @@
 ﻿using Otp.Application.Common.Interfaces;
-using Otp.Application.Services;
-using Otp.Core.Domains;
-using Otp.Core.Domains.Common;
+using Otp.Core.Domains.Common.Enums;
 using Otp.Core.Domains.Entities;
-using Otp.Infrastructure.Services.Sender.EmailProviders;
 
 namespace Otp.Infrastructure.Services.Sender;
 
@@ -16,7 +13,7 @@ public class EmailSenderFactory : ISenderFactory
 		_emailProvider = emailProvider;
 	}
 
-	public Mode SupportedMode => Mode.Email;
+	public Channel SupportedChannel => Channel.Email;
 
 	public async Task Send(OtpRequest request, CancellationToken cancellationToken)
 	{

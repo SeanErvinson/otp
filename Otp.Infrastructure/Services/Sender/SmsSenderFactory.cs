@@ -1,7 +1,6 @@
 using Otp.Application.Common.Interfaces;
 using Otp.Application.Common.Utils;
-using Otp.Application.Services;
-using Otp.Core.Domains.Common;
+using Otp.Core.Domains.Common.Enums;
 using Otp.Core.Domains.Entities;
 
 namespace Otp.Infrastructure.Services.Sender;
@@ -15,7 +14,7 @@ public class SmsSenderFactory : ISenderFactory
 		_smsProviders = smsProviders;
 	}
 
-	public Mode SupportedMode => Mode.SMS;
+	public Channel SupportedChannel => Channel.Sms;
 
 	public async Task Send(OtpRequest request, CancellationToken cancellationToken = default)
 	{

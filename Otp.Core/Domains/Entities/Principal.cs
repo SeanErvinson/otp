@@ -1,4 +1,4 @@
-﻿using Otp.Core.Domains.Common;
+﻿using Otp.Core.Domains.Common.Models;
 
 namespace Otp.Core.Domains.Entities;
 

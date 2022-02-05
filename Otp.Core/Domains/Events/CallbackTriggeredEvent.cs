@@ -1,4 +1,4 @@
-﻿using Otp.Core.Domains.Common;
+﻿using Otp.Core.Domains.Common.Models;
 using Otp.Core.Domains.Entities;
 
 namespace Otp.Core.Domains.Events;

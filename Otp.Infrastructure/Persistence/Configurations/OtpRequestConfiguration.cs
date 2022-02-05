@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Otp.Core.Domains;
 using Otp.Core.Domains.Entities;
 
 namespace Otp.Infrastructure.Persistence.Configurations;
@@ -14,7 +13,7 @@ public class OtpRequestConfiguration : BaseEntityConfiguration<OtpRequest>
 		builder.Property(otpRequest => otpRequest.Status)
 				.HasConversion<string>();
 		builder.Property(otpRequest => otpRequest.ExpiresOn).ValueGeneratedNever();
-		builder.Property(otpRequest => otpRequest.Mode)
+		builder.Property(otpRequest => otpRequest.Channel)
 				.HasConversion<string>();
 		builder.Ignore(otpRequest => otpRequest.RequestPath);
 	}

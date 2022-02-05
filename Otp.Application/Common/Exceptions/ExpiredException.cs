@@ -2,6 +2,7 @@
 
 namespace Otp.Application.Common.Exceptions;
 
+[Serializable]
 public class ExpiredResourceException : Exception
 {
 	public ExpiredResourceException(string message) : base(message)

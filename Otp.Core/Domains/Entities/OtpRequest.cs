@@ -1,4 +1,5 @@
-﻿using Otp.Core.Domains.Common;
+﻿using Otp.Core.Domains.Common.Enums;
+using Otp.Core.Domains.Common.Models;
 using Otp.Core.Domains.Events;
 using Otp.Core.Utils;
 
@@ -11,7 +12,7 @@ public class OtpRequest : TimedEntity
 	public string SuccessUrl { get; private set; }
 	public string CancelUrl { get; private set; }
 	public string Contact { get; private set; }
-	public Mode Mode { get; }
+	public Channel Channel { get; }
 
 	public DateTime? VerifiedAt { get; private set; }
 	public DateTime ExpiresOn { get; } = DateTime.UtcNow.AddMinutes(5);
@@ -20,7 +21,7 @@ public class OtpRequest : TimedEntity
 	public OtpRequestState State { get; private set; }
 	public OtpRequestStatus Status { get; private set; }
 	public string? ErrorMessage { get; private set; }
-	public string RequestPath => new($"/{Enum.GetName(Mode)?.ToLower()}/{Id.ToString()}#{Secret}/");
+	public string RequestPath => new($"/{Enum.GetName(Channel)?.ToLower()}/{Id.ToString()}#{Secret}/");
 
 	public App App { get; set; }
 
@@ -28,11 +29,11 @@ public class OtpRequest : TimedEntity
 	{
 	}
 
-	public OtpRequest(Guid appId, string contact, Mode mode, string successUrl, string cancelUrl)
+	public OtpRequest(Guid appId, string contact, Channel channel, string successUrl, string cancelUrl)
 	{
 		AppId = appId;
 		Contact = contact;
-		Mode = mode;
+		Channel = channel;
 		SuccessUrl = successUrl;
 		CancelUrl = cancelUrl;
 		Code = OtpUtil.GenerateCode();

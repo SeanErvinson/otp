@@ -10,7 +10,7 @@ public class CallbackEventConfiguration : BaseEntityConfiguration<CallbackEvent>
 		base.Configure(builder);
 		builder.Property(c => c.Type)
 				.HasConversion<string>();
-		builder.Property(c => c.Mode)
+		builder.Property(c => c.Channel)
 				.HasConversion<string>();
 	}
 }

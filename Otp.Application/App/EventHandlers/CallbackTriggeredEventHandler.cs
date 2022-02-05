@@ -4,7 +4,7 @@ using System.Text.Json;
 using MediatR;
 using Otp.Application.Common.Interfaces;
 using Otp.Application.Common.Models;
-using Otp.Core.Domains.Common;
+using Otp.Core.Domains.Common.Enums;
 using Otp.Core.Domains.Entities;
 using Otp.Core.Domains.Events;
 using Otp.Core.Utils;
@@ -33,7 +33,7 @@ public class CallbackTriggeredEventHandler : INotificationHandler<DomainEventNot
 		{
 			RequestId = domainEvent.CallbackEvent.RequestId,
 			Contact = domainEvent.CallbackEvent.Contact,
-			Mode = domainEvent.CallbackEvent.Mode,
+			Channel = domainEvent.CallbackEvent.Channel,
 			Type = domainEvent.CallbackEvent.Type
 		});
 
@@ -59,7 +59,7 @@ public class CallbackTriggeredEventHandler : INotificationHandler<DomainEventNot
 	public record CallbackEventResponse
 	{
 		public Guid RequestId { get; init; }
-		public Mode Mode { get; init; }
+		public Channel Channel { get; init; }
 		public string Contact { get; init; }
 		public CallbackEventType Type { get; init; }
 	};

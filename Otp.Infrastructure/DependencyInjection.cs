@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Otp.Application.Common.Interfaces;
-using Otp.Application.Services;
 using Otp.Infrastructure.Persistence;
 using Otp.Infrastructure.Services;
 using Otp.Infrastructure.Services.Sender;

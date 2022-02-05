@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
-using Otp.Core.Domains;
 using Otp.Core.Domains.Entities;
 using Otp.Core.Utils;
 
