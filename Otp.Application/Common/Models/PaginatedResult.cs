@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Otp.Application.Common;
+namespace Otp.Application.Common.Models;
 
 public class PaginatedResult<T>
 {

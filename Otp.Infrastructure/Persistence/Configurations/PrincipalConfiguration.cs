@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Otp.Core.Domains;
 using Otp.Core.Domains.Entities;
 
 namespace Otp.Infrastructure.Persistence.Configurations;

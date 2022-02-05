@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Otp.Application.Common.Interfaces;
-using Otp.Core.Utils;
 
 namespace Otp.Api.Filters;
 
