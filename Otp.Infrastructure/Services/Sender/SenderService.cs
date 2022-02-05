@@ -1,5 +1,5 @@
-using Otp.Application.Services;
-using Otp.Core.Domains.Common;
+using Otp.Application.Common.Interfaces;
+using Otp.Core.Domains.Common.Enums;
 
 namespace Otp.Infrastructure.Services.Sender;
 
@@ -12,12 +12,12 @@ public class SenderService : ISenderService
 		_senderFactories = senderFactories;
 	}
 
-	public ISenderFactory GetSenderFactory(Mode mode)
+	public ISenderFactory GetSenderFactory(Channel channel)
 	{
-		var senderFactory = _senderFactories.SingleOrDefault(sender => sender.SupportedMode == mode);
+		var senderFactory = _senderFactories.SingleOrDefault(sender => sender.SupportedChannel == channel);
 
 		if (senderFactory is null)
-			throw new NotSupportedException($"{mode} is not supported by factory");
+			throw new NotSupportedException($"{channel} is not supported by factory");
 		
 		return senderFactory;
 	}

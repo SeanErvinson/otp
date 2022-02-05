@@ -1,11 +1,12 @@
-﻿using Otp.Core.Domains.Common;
+﻿using Otp.Core.Domains.Common.Enums;
+using Otp.Core.Domains.Common.Models;
 
 namespace Otp.Core.Domains.Entities;
 
 public class CallbackEvent : TimedEntity
 {
 	public Guid RequestId { get; set; }
-	public Mode Mode { get; set; }
+	public Channel Channel { get; set; }
 	public string Contact { get; set; }
 	public CallbackEventType Type { get; set; }
 	public int StatusCode { get; private set; }

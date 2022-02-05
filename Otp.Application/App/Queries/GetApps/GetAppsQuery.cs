@@ -1,8 +1,7 @@
 ﻿using MediatR;
-using Otp.Application.Common;
 using Otp.Application.Common.Extensions;
 using Otp.Application.Common.Interfaces;
-using Otp.Core.Domains;
+using Otp.Application.Common.Models;
 using Otp.Core.Domains.Entities;
 
 namespace Otp.Application.App.Queries.GetApps;

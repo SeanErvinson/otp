@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Otp.Application.Common.Interfaces;
 using Otp.Application.Common.Utils;
-using Otp.Core.Domains.Common;
+using Otp.Core.Domains.Common.Enums;
 
 namespace Otp.Application.Otp.Commands.RequestOtp;
 
@@ -11,8 +11,8 @@ public class RequestOtpCommandValidator : AbstractValidator<RequestOtpCommand>
 	{
 		var supportedCountryCodes = smsProviders.SelectMany(c => c.SupportedCountryCodes);
 		RuleFor(c => c.Contact).NotEmpty();
-		When(c => c.Mode == Mode.Email, () => { RuleFor(c => c.Contact).EmailAddress().WithMessage("Email provided is not a valid one."); });
-		When(c => c.Mode == Mode.SMS,
+		When(c => c.Channel == Channel.Email, () => { RuleFor(c => c.Contact).EmailAddress().WithMessage("Email provided is not a valid one."); });
+		When(c => c.Channel == Channel.Sms,
 			() =>
 			{
 				RuleFor(c => PhoneUtils.ExtractCountryCode(c.Contact))

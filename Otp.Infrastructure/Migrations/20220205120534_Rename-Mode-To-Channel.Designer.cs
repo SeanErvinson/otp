@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Otp.Infrastructure.Persistence;
 
@@ -11,9 +12,10 @@ using Otp.Infrastructure.Persistence;
 namespace Otp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220205120534_Rename-Mode-To-Channel")]
+    partial class RenameModeToChannel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,40 +129,6 @@ namespace Otp.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("CallbackEvents");
-                });
-
-            modelBuilder.Entity("Otp.Core.Domains.Entities.ChannelPrice", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("EmailPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Origin")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("SmsPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.ToTable("ChannelPrices");
                 });
 
             modelBuilder.Entity("Otp.Core.Domains.Entities.OtpRequest", b =>

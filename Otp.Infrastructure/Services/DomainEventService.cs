@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Otp.Application.Common.Interfaces;
 using Otp.Application.Common.Models;
-using Otp.Core.Domains.Common;
+using Otp.Core.Domains.Common.Models;
 using Serilog;
 using Serilog.Context;
 

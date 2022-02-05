@@ -1,4 +1,4 @@
-﻿namespace Otp.Core.Domains.Common;
+﻿namespace Otp.Core.Domains.Common.Models;
 
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]

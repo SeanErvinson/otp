@@ -1,8 +1,8 @@
-import instance from '@/api/https';
+import { oauthInstance, headerAuthInstance } from '@/api/https';
 
 export const getApps = async (pageIndex: number): Promise<GetAppsResponse | null> => {
 	const pageSize = 7;
-	const response = await instance.get('/apps', {
+	const response = await oauthInstance.get('/apps', {
 		params: {
 			pageIndex: pageIndex,
 			pageSize: pageSize,
@@ -16,7 +16,7 @@ export const getApp = async (id: string | undefined): Promise<GetAppResponse | n
 	if (!id) {
 		return null;
 	}
-	const response = await instance.get(`/apps/${id}`);
+	const response = await oauthInstance.get(`/apps/${id}`);
 	if (response.status === 404) {
 		return null;
 	}
@@ -24,7 +24,7 @@ export const getApp = async (id: string | undefined): Promise<GetAppResponse | n
 };
 
 export const getOtpRequest = async (id: string, secret: string): Promise<GetOtpRequestResponse> => {
-	const response = await instance.get(`/otp/${id}`, {
+	const response = await headerAuthInstance.get(`/otp/${id}`, {
 		params: {
 			secret: decodeURI(secret),
 		},
@@ -33,38 +33,38 @@ export const getOtpRequest = async (id: string, secret: string): Promise<GetOtpR
 };
 
 export const verifyOtp = async (request: VerifyOtpRequest): Promise<VerifyOtpResponse> => {
-	const response = await instance.post(`/otp/verify`, request);
+	const response = await headerAuthInstance.post(`/otp/verify`, request);
 	return response.data;
 };
 
 export const cancelOtp = async (request: CancelOtpRequest): Promise<CancelOtpResponse> => {
-	const response = await instance.post(`/otp/cancel`, request);
+	const response = await headerAuthInstance.post(`/otp/cancel`, request);
 	return response.data;
 };
 
 export const resendOtp = async (request: ResendRequest) => {
-	const response = await instance.post(`/otp/resend`, request);
+	const response = await headerAuthInstance.post(`/otp/resend`, request);
 	return response.data;
 };
 
 export const createApp = async (request: CreateAppRequest): Promise<CreateAppResponse> => {
-	const response = await instance.post('/apps', request);
+	const response = await oauthInstance.post('/apps', request);
 	return response.data;
 };
 
 export const updateAppCallback = async (request: UpdateCallbackRequest): Promise<void> => {
-	await instance.put(`apps/${request.id}/callback`, request);
+	await oauthInstance.put(`apps/${request.id}/callback`, request);
 };
 
 export const regenerateAppApiKey = async (
 	id: string | undefined,
 ): Promise<RegenerateApiKeyResponse> => {
-	const response = await instance.post(`/apps/${id}/regenerate-api-key`);
+	const response = await oauthInstance.post(`/apps/${id}/regenerate-api-key`);
 	return response.data;
 };
 
 export const deleteApp = async (id: string): Promise<void> => {
-	await instance.delete(`/apps/${id}`);
+	await oauthInstance.delete(`/apps/${id}`);
 };
 
 export type VerifyOtpRequest = {

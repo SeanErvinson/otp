@@ -1,5 +1,4 @@
 ﻿using Otp.Application.Common.Interfaces;
-using Otp.Core.Domains;
 using Otp.Core.Domains.Entities;
 
 namespace Otp.Infrastructure.Services.Sender.EmailProviders;

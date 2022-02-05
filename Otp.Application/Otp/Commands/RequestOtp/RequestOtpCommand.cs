@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
-using Otp.Core.Domains.Common;
+using Otp.Core.Domains.Common.Enums;
 using Otp.Core.Domains.Entities;
 using Serilog;
 using Serilog.Context;
@@ -11,7 +11,7 @@ namespace Otp.Application.Otp.Commands.RequestOtp;
 
 public record RequestOtpCommand : IRequest<RequestOtpDto>
 {
-	public Mode Mode { get; init; }
+	public Channel Channel { get; init; }
 	public string Contact { get; init; } = default!;
 	public string SuccessUrl { get; init; } = default!;
 	public string CancelUrl { get; init; } = default!;
@@ -25,7 +25,7 @@ public record RequestOtpCommand : IRequest<RequestOtpDto>
 	{
 		return new RequestOtpCommand
 		{
-			Mode = Mode.SMS,
+			Channel = Channel.Sms,
 			Contact = contact,
 			SuccessUrl = successUrl,
 			CancelUrl = cancelUrl
@@ -36,7 +36,7 @@ public record RequestOtpCommand : IRequest<RequestOtpDto>
 	{
 		return new RequestOtpCommand
 		{
-			Mode = Mode.Email,
+			Channel = Channel.Email,
 			Contact = contact,
 			SuccessUrl = successUrl,
 			CancelUrl = cancelUrl
@@ -56,7 +56,7 @@ public record RequestOtpCommand : IRequest<RequestOtpDto>
 
 		public async Task<RequestOtpDto> Handle(RequestOtpCommand request, CancellationToken cancellationToken)
 		{
-			using (LogContext.PushProperty("Mode", request.Mode))
+			using (LogContext.PushProperty("Channel", request.Channel))
 			{
 				Log.Information("Requesting otp");
 				
@@ -69,7 +69,7 @@ public record RequestOtpCommand : IRequest<RequestOtpDto>
 					throw new NotFoundException("App does not exists");
 				}
 
-				var otpRequest = new OtpRequest(appId, request.Contact, request.Mode, request.SuccessUrl, request.CancelUrl);
+				var otpRequest = new OtpRequest(appId, request.Contact, request.Channel, request.SuccessUrl, request.CancelUrl);
 			
 				var result = await _dbContext.OtpRequests.AddAsync(otpRequest, cancellationToken);
 				await _dbContext.SaveChangesAsync(cancellationToken);

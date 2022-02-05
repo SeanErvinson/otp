@@ -1,4 +1,6 @@
-﻿namespace Otp.Application.Common.Extensions;
+﻿using Otp.Application.Common.Models;
+
+namespace Otp.Application.Common.Extensions;
 
 public static class QueryableExtensions
 {

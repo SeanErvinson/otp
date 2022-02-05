@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Otp.Core.Domains.Common;
+namespace Otp.Core.Domains.Common.Models;
 
 public abstract class ValueObject : IEquatable<ValueObject>
 {

@@ -23,12 +23,14 @@ public record VerifyCodeCommand(Guid Id, string Secret, string Code) : IRequest<
 			using (LogContext.PushProperty("OtpRequestId", request.Id))
 			{
 				var otpRequest =
-					await _dbContext.OtpRequests.FirstOrDefaultAsync(req =>
-																		req.Id == request.Id
-																		&& req.Secret == request.Secret
-																		&& req.State == OtpRequestState.Available
-																		&& req.Status == OtpRequestStatus.Success,
-																	cancellationToken);
+					await _dbContext.OtpRequests
+									.Include(otpRequest => otpRequest.App)
+									.FirstOrDefaultAsync(req =>
+															req.Id == request.Id
+															&& req.Secret == request.Secret
+															&& req.State == OtpRequestState.Available
+															&& req.Status == OtpRequestStatus.Success,
+														cancellationToken);
 
 				if (otpRequest is null)
 				{
@@ -37,24 +39,22 @@ public record VerifyCodeCommand(Guid Id, string Secret, string Code) : IRequest<
 
 				if (otpRequest.ExpiresOn < DateTime.UtcNow)
 				{
-					throw new InvalidOperationException("Otp request has expired");
+					throw new ExpiredResourceException("Otp request has expired");
 				}
 
-				var app = await _dbContext.Apps.FirstOrDefaultAsync(app => app.Id == otpRequest.AppId && app.Status == AppStatus.Active, cancellationToken);
-
-				if (app is null)
+				if (otpRequest.App.IsDeleted)
 				{
 					throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
 				}
-				
+
 				if (otpRequest.Code != request.Code)
 				{
-					app.TriggerFailedCallback(otpRequest);
+					otpRequest.App.TriggerFailedCallback(otpRequest);
 					await _dbContext.SaveChangesAsync(cancellationToken);
-					throw new UnauthorizedAccessException("Code provided was incorrect");
+					throw new InvalidRequestException("Code provided was incorrect");
 				}
 
-				app.TriggerSuccessCallback(otpRequest);
+				otpRequest.App.TriggerSuccessCallback(otpRequest);
 				otpRequest.SuccessfullyClaimed();
 				await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -64,4 +64,4 @@ public record VerifyCodeCommand(Guid Id, string Secret, string Code) : IRequest<
 	}
 }
 
-public record VerifyCodeCommandResponse(string SuccessUrl); 
+public record VerifyCodeCommandResponse(string SuccessUrl);

@@ -1,9 +1,11 @@
-﻿using Otp.Core.Domains.Common;
+﻿using System.Diagnostics;
+using Otp.Core.Domains.Common.Models;
 using Otp.Core.Domains.Events;
 using Otp.Core.Utils;
 
 namespace Otp.Core.Domains.Entities;
 
+[DebuggerDisplay("{Name} - {Status}")]
 public class App : AuditableEntity
 {
 	public Guid PrincipalId { get; }
@@ -47,9 +49,11 @@ public class App : AuditableEntity
 		EndpointSecret = endpointSecret; //TODO: Probably needs to be salted since it is coming from the user
 	}
 
-	public void UpdateHashedApiKey(string value)
+	public string RegenerateApiKey()
 	{
-		HashedApiKey = CryptoUtil.HashKey(value);
+		var generatedKey = CryptoUtil.GenerateKey();
+		HashedApiKey = CryptoUtil.HashKey(generatedKey);
+		return generatedKey;
 	}
 	
 	public void TriggerFailedCallback(OtpRequest request)
@@ -73,7 +77,7 @@ public class App : AuditableEntity
 		
 		AddDomainEvent(new CallbackTriggeredEvent(new CallbackEvent
 		{
-			Mode = request.Mode,
+			Channel = request.Channel,
 			Contact = request.Contact,
 			RequestId =request.Id,
 			Type = type
@@ -83,6 +87,11 @@ public class App : AuditableEntity
 	public void MarkAsDeleted()
 	{
 		Status = AppStatus.Deleted;
+	}
+
+	public override string ToString()
+	{
+		return Name;
 	}
 }
 

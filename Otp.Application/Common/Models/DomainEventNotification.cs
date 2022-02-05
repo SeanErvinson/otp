@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Otp.Core.Domains.Common;
+using Otp.Core.Domains.Common.Models;
 
 namespace Otp.Application.Common.Models;
 

@@ -3,11 +3,15 @@ import axios from 'axios';
 import msalClient from '@/services/auth/msalClient';
 import { InteractionRequiredAuthError } from '@azure/msal-browser';
 
-const instance = axios.create({
+const oauthInstance = axios.create({
 	baseURL: import.meta.env.VITE_OTP_API_BASE_URL,
 });
 
-instance.interceptors.request.use(async config => {
+const headerAuthInstance = axios.create({
+	baseURL: import.meta.env.VITE_OTP_API_BASE_URL,
+});
+
+oauthInstance.interceptors.request.use(async config => {
 	var token = await acquireAccessToken();
 
 	if (!!token) {
@@ -21,7 +25,16 @@ instance.interceptors.request.use(async config => {
 	return config;
 });
 
-export default instance;
+headerAuthInstance.interceptors.request.use(async config => {
+	// config.headers = {
+	// 	Authorization: `Bearer ${token}`,
+	// 	Accept: 'application/json',
+	// 	'Content-Type': 'application/json;charset=UTF-8',
+	// };
+	return config;
+});
+
+export { oauthInstance, headerAuthInstance };
 
 const acquireAccessToken = async (): Promise<string | null> => {
 	const activeAccount = msalClient.getActiveAccount();

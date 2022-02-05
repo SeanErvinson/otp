@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Otp.Application.Common.Interfaces;
 using Otp.Application.Common.Models;
-using Otp.Application.Services;
 using Otp.Core.Domains.Events;
 using Serilog;
 using Serilog.Context;
@@ -24,9 +23,9 @@ public class OtpRequestedEventHandler : INotificationHandler<DomainEventNotifica
 		var otpRequest = notification.DomainEvent.OtpRequest;
 
 		using (LogContext.PushProperty("OtpRequestId", otpRequest.Id))
-		using (LogContext.PushProperty("OtpRequestMode", otpRequest.Mode))
+		using (LogContext.PushProperty("OtpRequestChannel", otpRequest.Channel))
 		{
-			var sender = _senderService.GetSenderFactory(otpRequest.Mode);
+			var sender = _senderService.GetSenderFactory(otpRequest.Channel);
 
 			using (LogContext.PushProperty("SenderType", sender.GetType().Name))
 			{

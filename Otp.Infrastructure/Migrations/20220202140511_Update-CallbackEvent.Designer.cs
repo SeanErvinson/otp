@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Otp.Infrastructure.Persistence;
 
@@ -11,9 +12,10 @@ using Otp.Infrastructure.Persistence;
 namespace Otp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220202140511_Update-CallbackEvent")]
+    partial class UpdateCallbackEvent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,16 +96,16 @@ namespace Otp.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Channel")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Contact")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Mode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("RequestId")
                         .HasColumnType("uniqueidentifier");
@@ -129,40 +131,6 @@ namespace Otp.Infrastructure.Migrations
                     b.ToTable("CallbackEvents");
                 });
 
-            modelBuilder.Entity("Otp.Core.Domains.Entities.ChannelPrice", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("EmailPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Origin")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("SmsPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.ToTable("ChannelPrices");
-                });
-
             modelBuilder.Entity("Otp.Core.Domains.Entities.OtpRequest", b =>
                 {
                     b.Property<Guid>("Id")
@@ -173,10 +141,6 @@ namespace Otp.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CancelUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Channel")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -196,6 +160,10 @@ namespace Otp.Infrastructure.Migrations
 
                     b.Property<DateTime>("ExpiresOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Mode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Retries")
                         .HasColumnType("int");

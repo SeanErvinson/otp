@@ -19,7 +19,9 @@ public class CustomExceptionMiddleware
 		_exceptionHandlers = new Dictionary<Type, Func<HttpContext, Exception, Task>>
 		{
 			{ typeof(NotFoundException), HandleNotFoundException },
-			{ typeof(InvalidRequestException), HandleInvalidRequestException }
+			{ typeof(InvalidRequestException), HandleInvalidRequestException },
+			{ typeof(ExpiredResourceException), HandleExpiredResourceException },
+			{ typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException }
 		};
 	}
 
@@ -73,6 +75,35 @@ public class CustomExceptionMiddleware
 
 		var details = new ValidationProblemDetails
 		{
+			Detail = exception.Message
+		};
+		var result = JsonSerializer.Serialize(details, new JsonSerializerOptions { WriteIndented = true });
+		await context.Response.WriteAsync(result);
+	}
+	
+	private async Task HandleUnauthorizedAccessException(HttpContext context, Exception ex)
+	{
+		context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+		var exception = ex as UnauthorizedAccessException;
+
+		var details = new ValidationProblemDetails
+		{
+			Title = "Unauthorized access",
+			Detail = exception.Message
+		};
+		var result = JsonSerializer.Serialize(details, new JsonSerializerOptions { WriteIndented = true });
+		await context.Response.WriteAsync(result);
+	}	
+	
+	private async Task HandleExpiredResourceException(HttpContext context, Exception ex)
+	{
+		context.Response.StatusCode = StatusCodes.Status410Gone;
+		var exception = ex as ExpiredResourceException;
+
+		var details = new ValidationProblemDetails
+		{
+			Type = "https://tools.ietf.org/html/rfc7231#section-6.5.9",
+			Title = "Resource has expired or is no longer available.",
 			Detail = exception.Message
 		};
 		var result = JsonSerializer.Serialize(details, new JsonSerializerOptions { WriteIndented = true });
