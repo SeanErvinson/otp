@@ -15,7 +15,6 @@ on:
     types:
       - synchronize
       - auto_merge_enabled
-      - closed
       - opened
     paths:
       - ".github/**"
