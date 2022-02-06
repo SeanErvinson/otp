@@ -2,18 +2,11 @@
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - "main"
-    paths:
-      - 'Otp.Api/**'
-      - 'Otp.Application/**'
-      - 'Otp.Core/**'
-      - 'Otp.Infrastructure/**'
   pull_request:
     types:
       - synchronize
       - auto_merge_enabled
+      - closed
     paths:
       - 'Otp.Api/**'
       - 'Otp.Application/**'
