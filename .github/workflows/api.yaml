@@ -11,12 +11,15 @@ on:
       - 'Otp.Core/**'
       - 'Otp.Infrastructure/**'
   pull_request:
+    types:
+      - synchronize
+      - auto_merge_enabled
     paths:
       - 'Otp.Api/**'
       - 'Otp.Application/**'
       - 'Otp.Core/**'
       - 'Otp.Infrastructure/**'
-        
+
 env:
   PROJECT_NAME: Otp.Api
   ARTIFACT_NAME: drop
@@ -37,9 +40,9 @@ jobs:
           dotnet-version: 6.0.x
       - name: Restore dependencies
         run: dotnet restore ${{ env.PROJECT_NAME }}
-      - name: Build
+      - name: Build ${{ env.PROJECT_NAME }}
         run: dotnet build --no-restore ${{ env.PROJECT_NAME }}
-      - name: Publish
+      - name: Publish ${{ env.PROJECT_NAME }}
         if: ${{ github.event_name == 'workflow_dispatch' || github.head_ref == 'main' }}
         run: dotnet publish --no-restore -c Release -o ${{ env.PUBLISH_PATH }} ${{ env.PROJECT_NAME }}
       - name: Upload artifact
