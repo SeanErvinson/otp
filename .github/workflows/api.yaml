@@ -18,6 +18,7 @@ on:
 env:
   PROJECT_NAME: Otp.Api
   ARTIFACT_NAME: drop
+  DOTNET_VERSION: 6.0.x
   PUBLISH_PATH: ${{ github.workspace }}/artifact
 
 jobs:
@@ -29,10 +30,10 @@ jobs:
       DOTNET_CLI_TELEMETRY_OPTOUT: true
     steps:
       - uses: actions/checkout@v2
-      - name: Install .NET
+      - name: Install .NET ${{ env.DOTNET_VERSION }}
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Restore dependencies
         run: dotnet restore ${{ env.PROJECT_NAME }}
       - name: Build ${{ env.PROJECT_NAME }}
