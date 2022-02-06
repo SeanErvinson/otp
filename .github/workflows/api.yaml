@@ -7,7 +7,9 @@ on:
       - synchronize
       - auto_merge_enabled
       - closed
+      - opened
     paths:
+      - ".github/**"
       - 'Otp.Api/**'
       - 'Otp.Application/**'
       - 'Otp.Core/**'
