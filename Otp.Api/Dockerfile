@@ -6,8 +6,14 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["Otp.Api/Otp.Api.csproj", "Otp.Api/"]
+COPY ["Otp.Application/Otp.Application.csproj", "Otp.Application/"]
+COPY ["Otp.Core/Otp.Core.csproj", "Otp.Core/"]
+COPY ["Otp.Infrastructure/Otp.Infrastructure.csproj", "Otp.Infrastructure/"]
 RUN dotnet restore "Otp.Api/Otp.Api.csproj"
-COPY . .
+COPY ["Otp.Api/", "Otp.Api/"]
+COPY ["Otp.Application/", "Otp.Application/"]
+COPY ["Otp.Core/", "Otp.Core/"]
+COPY ["Otp.Infrastructure/", "Otp.Infrastructure/"]
 WORKDIR "/src/Otp.Api"
 RUN dotnet build "Otp.Api.csproj" -c Release -o /app/build
 

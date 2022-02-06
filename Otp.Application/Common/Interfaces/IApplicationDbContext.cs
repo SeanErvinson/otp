@@ -11,7 +11,8 @@ public interface IApplicationDbContext
 	DbSet<OtpRequest> OtpRequests { get; set; }
 	DbSet<CallbackEvent> CallbackEvents { get; set; }
 	DbSet<ChannelPrice> ChannelPrices { get; set; }
-	// DbSet<Discount> Discounts { get; set; }
+	DbSet<Discount> Discounts { get; set; }
+	DbSet<Subscription> Subscriptions { get; set; }
 
 	Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

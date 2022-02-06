@@ -1,4 +1,6 @@
-﻿namespace Otp.Core.Domains;
+﻿using Otp.Core.Domains.Entities;
+
+namespace Otp.Core.Domains;
 
 public class Branding
 {
