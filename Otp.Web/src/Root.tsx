@@ -6,7 +6,7 @@ import { Outlet, Route, Routes } from 'react-router-dom';
 import { Sidebar } from '@/components/Sidebar';
 import { Home } from '@/pages/Home';
 import { Billing } from '@/pages/Billing';
-import { Mode } from '@/pages/Mode';
+import { Channel } from '@/pages/Channel';
 import { Usage } from '@/pages/Usage';
 import { Apps } from '@/pages/Apps';
 import { NotFound } from '@/pages/NotFound';
@@ -46,8 +46,8 @@ const Root = () => {
 				<Route path="usage" element={<Usage />} />
 			</Route>
 			<Route path="*" element={<NotFound />} />
-			<Route path="/sms/:requestId" element={<Mode />} />
-			<Route path="/email/:requestId" element={<Mode />} />
+			<Route path="/sms/:requestId" element={<Channel />} />
+			<Route path="/email/:requestId" element={<Channel />} />
 		</Routes>
 	);
 };

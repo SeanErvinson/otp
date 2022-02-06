@@ -1,6 +1,7 @@
-import { oauthInstance, headerAuthInstance } from '@/api/https';
+import { oauthInstance, otpInstance } from '@/api/https';
+import { App, AppDetail, OtpRequest, PagedResult } from '@/common/types';
 
-export const getApps = async (pageIndex: number): Promise<GetAppsResponse | null> => {
+export const getApps = async (pageIndex: number): Promise<PagedResult<App> | null> => {
 	const pageSize = 7;
 	const response = await oauthInstance.get('/apps', {
 		params: {
@@ -12,7 +13,7 @@ export const getApps = async (pageIndex: number): Promise<GetAppsResponse | null
 	return response.data;
 };
 
-export const getApp = async (id: string | undefined): Promise<GetAppResponse | null> => {
+export const getApp = async (id: string | undefined): Promise<AppDetail | null> => {
 	if (!id) {
 		return null;
 	}
@@ -23,27 +24,38 @@ export const getApp = async (id: string | undefined): Promise<GetAppResponse | n
 	return response.data;
 };
 
-export const getOtpRequest = async (id: string, secret: string): Promise<GetOtpRequestResponse> => {
-	const response = await headerAuthInstance.get(`/otp/${id}`, {
+export const getOtpRequest = async (id: string, key: string): Promise<OtpRequest> => {
+	const response = await otpInstance(key).get(`/otp/${id}`, {
 		params: {
-			secret: decodeURI(secret),
+			key: decodeURI(key),
 		},
 	});
 	return response.data;
 };
 
-export const verifyOtp = async (request: VerifyOtpRequest): Promise<VerifyOtpResponse> => {
-	const response = await headerAuthInstance.post(`/otp/verify`, request);
+export const verifyOtp = async (
+	id: string,
+	key: string,
+	code: string,
+): Promise<VerifyOtpResponse> => {
+	const response = await otpInstance(key).post(`/otp/verify`, {
+		id: id,
+		code: code,
+	});
 	return response.data;
 };
 
-export const cancelOtp = async (request: CancelOtpRequest): Promise<CancelOtpResponse> => {
-	const response = await headerAuthInstance.post(`/otp/cancel`, request);
+export const cancelOtp = async (id: string, key: string): Promise<CancelOtpResponse> => {
+	const response = await otpInstance(key).post(`/otp/cancel`, {
+		id: id,
+	});
 	return response.data;
 };
 
-export const resendOtp = async (request: ResendRequest) => {
-	const response = await headerAuthInstance.post(`/otp/resend`, request);
+export const resendOtp = async (id: string, key: string) => {
+	const response = await otpInstance(key).post(`/otp/resend`, {
+		id: id,
+	});
 	return response.data;
 };
 
@@ -67,24 +79,8 @@ export const deleteApp = async (id: string): Promise<void> => {
 	await oauthInstance.delete(`/apps/${id}`);
 };
 
-export type VerifyOtpRequest = {
-	id: string;
-	secret: string;
-	code: string;
-};
-
 export type VerifyOtpResponse = {
 	successUrl: string;
-};
-
-export type ResendRequest = {
-	id: string;
-	secret: string;
-};
-
-type CancelOtpRequest = {
-	id: string;
-	secret: string;
 };
 
 export type CancelOtpResponse = {
@@ -110,37 +106,4 @@ type UpdateCallbackRequest = {
 
 export type RegenerateApiKeyResponse = {
 	apiKey: string;
-};
-
-export type GetOtpRequestResponse = {
-	backgroundUri?: string;
-	logoUri?: string;
-	contact: string;
-};
-
-export type GetAppResponse = {
-	id: string;
-	name: string;
-	description: string;
-	tags?: string[];
-	callbackUrl: string;
-	createdAt: Date;
-	updatedAt: Date;
-};
-
-type GetAppsResponse = {
-	items: GetAppsApp[];
-	pageNumber: number;
-	totalPages: number;
-	totalCount: number;
-	hasPreviousPage: boolean;
-	hasNextPage: boolean;
-};
-
-export type GetAppsApp = {
-	id: string;
-	name: string;
-	description?: string | undefined;
-	createdAt: Date;
-	tags: string[];
 };

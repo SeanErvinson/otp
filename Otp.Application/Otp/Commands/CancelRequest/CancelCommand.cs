@@ -7,15 +7,17 @@ using Serilog.Context;
 
 namespace Otp.Application.Otp.Commands.CancelRequest;
 
-public record CancelRequestCommand(Guid Id, string Secret) : IRequest<CancelRequestCommandResponse>
+public record CancelRequestCommand(Guid Id) : IRequest<CancelRequestCommandResponse>
 {
 	public class Handler : IRequestHandler<CancelRequestCommand, CancelRequestCommandResponse>
 	{
 		private readonly IApplicationDbContext _dbContext;
+		private readonly IOtpContextService _otpContextService;
 
-		public Handler(IApplicationDbContext dbContext)
+		public Handler(IApplicationDbContext dbContext, IOtpContextService otpContextService)
 		{
 			_dbContext = dbContext;
+			_otpContextService = otpContextService;
 		}
 
 		public async Task<CancelRequestCommandResponse> Handle(CancelRequestCommand request, CancellationToken cancellationToken)
@@ -27,7 +29,7 @@ public record CancelRequestCommand(Guid Id, string Secret) : IRequest<CancelRequ
 									.Include(otpRequest => otpRequest.App)
 									.FirstOrDefaultAsync(req =>
 															req.Id == request.Id
-															&& req.Secret == request.Secret
+															&& req.Key == _otpContextService.Key
 															&& req.State == OtpRequestState.Available
 															&& req.Status == OtpRequestStatus.Success,
 														cancellationToken);

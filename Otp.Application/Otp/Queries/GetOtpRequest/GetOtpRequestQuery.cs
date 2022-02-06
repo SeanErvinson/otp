@@ -6,9 +6,9 @@ using Otp.Core.Domains.Entities;
 
 namespace Otp.Application.Otp.Queries.GetOtpRequest;
 
-public record GetOtpRequestQueryRequest(string Secret);
+public record GetOtpRequestQueryRequest(string Key);
 
-public record GetOtpRequestQuery(Guid Id, string Secret) : IRequest<GetOtpRequestQueryResponse>
+public record GetOtpRequestQuery(Guid Id, string Key) : IRequest<GetOtpRequestQueryResponse>
 {
 	public class Handler : IRequestHandler<GetOtpRequestQuery, GetOtpRequestQueryResponse>
 	{
@@ -26,7 +26,7 @@ public record GetOtpRequestQuery(Guid Id, string Secret) : IRequest<GetOtpReques
 								.Include(otpRequest => otpRequest.App)
 								.FirstOrDefaultAsync(otpRequest =>
 														otpRequest.Id == request.Id
-														&& otpRequest.Secret == request.Secret
+														&& otpRequest.Key == request.Key
 														&& otpRequest.State == OtpRequestState.Available
 														&& otpRequest.Status == OtpRequestStatus.Success,
 													cancellationToken);

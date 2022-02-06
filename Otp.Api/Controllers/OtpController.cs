@@ -46,28 +46,30 @@ public class OtpController : ControllerBase
 		var result = await _mediator.Send(RequestOtpCommand.Sms(request.PhoneNumber, request.SuccessUrl, request.CancelUrl));
 		return Ok(result);
 	}
-	
+
 	[HttpGet("{id:guid}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetOtpRequestQueryResponse))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetRequest([FromRoute] Guid id, [FromQuery] GetOtpRequestQueryRequest request)
 	{
-		var result = await _mediator.Send(new GetOtpRequestQuery(id, request.Secret));
+		var result = await _mediator.Send(new GetOtpRequestQuery(id, request.Key));
 		return Ok(result);
 	}
-	
-    [HttpPost("verify")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(VerifyCodeCommandResponse))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> VerifyCode([FromBody] VerifyCodeCommand request)
-    {
-        var result = await _mediator.Send(request);
-        return Ok(result);
-    }
-	
+
+	[HttpPost("verify")]
+	[OtpKeyAuthorize]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(VerifyCodeCommandResponse))]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> VerifyCode([FromBody] VerifyCodeCommand request)
+	{
+		var result = await _mediator.Send(request);
+		return Ok(result);
+	}
+
 	[HttpPost("cancel")]
+	[OtpKeyAuthorize]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CancelRequestCommandResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -78,6 +80,7 @@ public class OtpController : ControllerBase
 	}
 
 	[HttpPost("resend")]
+	[OtpKeyAuthorize]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)] //TODO: Return bad request if resend too fast
 	public async Task<IActionResult> RequestResend([FromBody] ResendOtpRequest request)

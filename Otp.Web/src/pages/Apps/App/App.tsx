@@ -33,13 +33,13 @@ const App = () => {
 	const [showTagInput, setShowTagInput] = useState(false);
 	const [tags, setTags] = useState<string[]>([]);
 
-	const test = (values: string[]) => {
+	const handleOnTagInput = (values: string[]) => {
 		if (values.length <= 0) return;
 		setTags(values);
 		setValue('tags', values, { shouldDirty: true });
 	};
 
-	const test2 = () => {
+	const handleOnTagCancel = () => {
 		setShowTagInput(!showTagInput);
 		resetField('tags');
 	};
@@ -120,11 +120,14 @@ const App = () => {
 								</div>
 							) : (
 								<div className="flex flex-row gap-2 items-center">
-									<TagInput onUpdate={test} initialTags={query.data?.tags} />
+									<TagInput
+										onUpdate={handleOnTagInput}
+										initialTags={query.data?.tags}
+									/>
 
 									<button
 										className="btn btn-outline btn-xs border-dashed"
-										onClick={test2}>
+										onClick={handleOnTagCancel}>
 										<XIcon />
 										Cancel
 									</button>

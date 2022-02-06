@@ -7,28 +7,28 @@ using Otp.Application.Common.Interfaces;
 namespace Otp.Api.Filters;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-public class ApiKeyAuthorize : Attribute, IAsyncAuthorizationFilter
+public class OtpKeyAuthorize : Attribute, IAsyncAuthorizationFilter
 {
 	public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
 	{
-		var appContext = context.HttpContext.RequestServices.GetRequiredService<IAppContextService>();
-		if (string.IsNullOrEmpty(appContext.HashApiKey))
+		var otpContextService = context.HttpContext.RequestServices.GetRequiredService<IOtpContextService>();
+		if (string.IsNullOrEmpty(otpContextService.Key))
 		{
 			context.Result = new ContentResult
 			{
 				StatusCode = StatusCodes.Status401Unauthorized,
-				Content = "Api key header was missing",
+				Content = "Otp key header was missing",
 				ContentType = MediaTypeNames.Application.Json
 			};
 			return;
 		}
 
 		var applicationDbContext = context.HttpContext.RequestServices.GetRequiredService<IApplicationDbContext>();
-		if (await applicationDbContext.Apps.CountAsync(c => c.HashedApiKey == appContext.HashApiKey) == 0)
+		if (await applicationDbContext.OtpRequests.CountAsync(c => c.Key == otpContextService.Key) == 0)
 			context.Result = new ContentResult
 			{
 				StatusCode = StatusCodes.Status401Unauthorized,
-				Content = "Invalid api key",
+				Content = "Invalid otp request",
 				ContentType = MediaTypeNames.Application.Json
 			};
 	}
