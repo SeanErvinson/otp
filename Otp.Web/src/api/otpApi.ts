@@ -24,10 +24,10 @@ export const getApp = async (id: string | undefined): Promise<AppDetail | null> 
 	return response.data;
 };
 
-export const getOtpRequest = async (id: string, secret: string): Promise<OtpRequest> => {
-	const response = await otpInstance(secret).get(`/otp/${id}`, {
+export const getOtpRequest = async (id: string, key: string): Promise<OtpRequest> => {
+	const response = await otpInstance(key).get(`/otp/${id}`, {
 		params: {
-			secret: decodeURI(secret),
+			key: decodeURI(key),
 		},
 	});
 	return response.data;
@@ -35,25 +35,25 @@ export const getOtpRequest = async (id: string, secret: string): Promise<OtpRequ
 
 export const verifyOtp = async (
 	id: string,
-	secret: string,
+	key: string,
 	code: string,
 ): Promise<VerifyOtpResponse> => {
-	const response = await otpInstance(secret).post(`/otp/verify`, {
+	const response = await otpInstance(key).post(`/otp/verify`, {
 		id: id,
 		code: code,
 	});
 	return response.data;
 };
 
-export const cancelOtp = async (id: string, secret: string): Promise<CancelOtpResponse> => {
-	const response = await otpInstance(secret).post(`/otp/cancel`, {
+export const cancelOtp = async (id: string, key: string): Promise<CancelOtpResponse> => {
+	const response = await otpInstance(key).post(`/otp/cancel`, {
 		id: id,
 	});
 	return response.data;
 };
 
-export const resendOtp = async (id: string, secret: string) => {
-	const response = await otpInstance(secret).post(`/otp/resend`, {
+export const resendOtp = async (id: string, key: string) => {
+	const response = await otpInstance(key).post(`/otp/resend`, {
 		id: id,
 	});
 	return response.data;

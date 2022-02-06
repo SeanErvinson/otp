@@ -16,12 +16,12 @@ const Channel = () => {
 	const navigate = useNavigate();
 	const { hash, pathname } = useLocation();
 	const [channel] = useState<string>(pathname.split('/')[1]);
-	const [secret] = useState<string>(hash.substring(1, hash.length - 1));
+	const [key] = useState<string>(hash.substring(1, hash.length - 1));
 	const [code, setCode] = useState<string>('');
 	const [isValidOtp, setIsValidOtp] = useState(false);
 	const query = useQuery(
 		['getOtpRequest', requestId, hash],
-		() => getOtpRequest(requestId!, secret),
+		() => getOtpRequest(requestId!, key),
 		{
 			keepPreviousData: true,
 			enabled: !!requestId,
@@ -46,8 +46,8 @@ const Channel = () => {
 	);
 
 	const verifyMutation = useMutation(
-		['verifyApp', requestId, secret, code],
-		() => verifyOtp(requestId!, secret, code),
+		['verifyApp', requestId, key, code],
+		() => verifyOtp(requestId!, key, code),
 		{
 			onSuccess: response => {
 				window.location.replace(response.successUrl);
@@ -55,13 +55,13 @@ const Channel = () => {
 		},
 	);
 
-	const resendMutation = useMutation(['resendOtp', requestId, secret], () =>
-		resendOtp(requestId!, secret),
+	const resendMutation = useMutation(['resendOtp', requestId, key], () =>
+		resendOtp(requestId!, key),
 	);
 
 	const cancelMutation = useMutation(
-		['cancelOtp', requestId, secret],
-		() => cancelOtp(requestId!, secret),
+		['cancelOtp', requestId, key],
+		() => cancelOtp(requestId!, key),
 		{
 			// onSuccess: response => {
 			// 	window.location.replace(response.cancelUrl);

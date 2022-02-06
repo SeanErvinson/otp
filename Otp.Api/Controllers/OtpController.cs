@@ -53,7 +53,7 @@ public class OtpController : ControllerBase
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetRequest([FromRoute] Guid id, [FromQuery] GetOtpRequestQueryRequest request)
 	{
-		var result = await _mediator.Send(new GetOtpRequestQuery(id, request.Secret));
+		var result = await _mediator.Send(new GetOtpRequestQuery(id, request.Key));
 		return Ok(result);
 	}
 

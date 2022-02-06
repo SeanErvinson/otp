@@ -16,7 +16,7 @@ public class OtpRequest : TimedEntity
 	public string Contact { get; } = default!;
 	public Channel Channel { get; }
 	public DateTime? VerifiedAt { get; private set; }
-	public string Secret { get; } = default!;
+	public string Key { get; } = default!;
 	public int Retries { get; private set; }
 	public OtpRequestState State { get; private set; }
 	public OtpRequestStatus Status { get; private set; }
@@ -24,7 +24,7 @@ public class OtpRequest : TimedEntity
 	public DateTime ExpiresOn { get; } = DateTime.UtcNow.AddMinutes(5);
 	public App App { get; private set; } = default!;
 	
-	public string RequestPath => new($"/{Enum.GetName(Channel)?.ToLower()}/{Id.ToString()}#{Secret}/");
+	public string RequestPath => new($"/{Enum.GetName(Channel)?.ToLower()}/{Id.ToString()}#{Key}/");
 	
 	private OtpRequest()
 	{
@@ -38,7 +38,7 @@ public class OtpRequest : TimedEntity
 		SuccessUrl = successUrl;
 		CancelUrl = cancelUrl;
 		Code = OtpUtil.GenerateCode();
-		Secret = CryptoUtil.HashKey(CryptoUtil.GenerateKey());
+		Key = CryptoUtil.HashKey(CryptoUtil.GenerateKey());
 		State = OtpRequestState.Available;
 		
 		AddDomainEvent(new OtpRequestedEvent(this));

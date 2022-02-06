@@ -10,7 +10,7 @@ public class OtpRequestConfiguration : BaseEntityConfiguration<OtpRequest>
 		base.Configure(builder);
 		builder.Property(otpRequest => otpRequest.SuccessUrl);
 		builder.Property(otpRequest => otpRequest.CancelUrl);
-		builder.Property(otpRequest => otpRequest.Secret);
+		builder.Property(otpRequest => otpRequest.Key);
 		builder.Property(otpRequest => otpRequest.ExpiresOn);
 		builder.Property(otpRequest => otpRequest.Contact);
 		

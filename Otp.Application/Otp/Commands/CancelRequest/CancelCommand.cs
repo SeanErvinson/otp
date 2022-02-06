@@ -29,7 +29,7 @@ public record CancelRequestCommand(Guid Id) : IRequest<CancelRequestCommandRespo
 									.Include(otpRequest => otpRequest.App)
 									.FirstOrDefaultAsync(req =>
 															req.Id == request.Id
-															&& req.Secret == _otpContextService.Key
+															&& req.Key == _otpContextService.Key
 															&& req.State == OtpRequestState.Available
 															&& req.Status == OtpRequestStatus.Success,
 														cancellationToken);

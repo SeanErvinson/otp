@@ -27,7 +27,7 @@ public record ResendOtpRequest(Guid Id) : IRequest
 				var otpRequest =
 					await _dbContext.OtpRequests.FirstOrDefaultAsync(otpRequest =>
 																		otpRequest.Id == request.Id
-																		&& otpRequest.Secret == _otpContextService.Key
+																		&& otpRequest.Key == _otpContextService.Key
 																		&& otpRequest.ExpiresOn > DateTime.UtcNow
 																		&& otpRequest.Status == OtpRequestStatus.Success,
 																	cancellationToken);

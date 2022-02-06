@@ -24,7 +24,7 @@ public class OtpKeyAuthorize : Attribute, IAsyncAuthorizationFilter
 		}
 
 		var applicationDbContext = context.HttpContext.RequestServices.GetRequiredService<IApplicationDbContext>();
-		if (await applicationDbContext.OtpRequests.CountAsync(c => c.Secret == otpContextService.Key) == 0)
+		if (await applicationDbContext.OtpRequests.CountAsync(c => c.Key == otpContextService.Key) == 0)
 			context.Result = new ContentResult
 			{
 				StatusCode = StatusCodes.Status401Unauthorized,
