@@ -62,6 +62,7 @@ try
 
 	builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 	builder.Services.AddScoped<IAppContextService, AppContextService>();
+	builder.Services.AddScoped<IOtpContextService, OtpContextService>();
 	builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 	var app = builder.Build();

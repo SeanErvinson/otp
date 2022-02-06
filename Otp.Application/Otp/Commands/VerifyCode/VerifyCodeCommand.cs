@@ -7,15 +7,17 @@ using Serilog.Context;
 
 namespace Otp.Application.Otp.Commands.VerifyCode;
 
-public record VerifyCodeCommand(Guid Id, string Secret, string Code) : IRequest<VerifyCodeCommandResponse>
+public record VerifyCodeCommand(Guid Id, string Code) : IRequest<VerifyCodeCommandResponse>
 {
 	public class Handler : IRequestHandler<VerifyCodeCommand, VerifyCodeCommandResponse>
 	{
 		private readonly IApplicationDbContext _dbContext;
+		private readonly IOtpContextService _otpContextService;
 
-		public Handler(IApplicationDbContext dbContext)
+		public Handler(IApplicationDbContext dbContext, IOtpContextService otpContextService)
 		{
 			_dbContext = dbContext;
+			_otpContextService = otpContextService;
 		}
 
 		public async Task<VerifyCodeCommandResponse> Handle(VerifyCodeCommand request, CancellationToken cancellationToken)
@@ -27,7 +29,7 @@ public record VerifyCodeCommand(Guid Id, string Secret, string Code) : IRequest<
 									.Include(otpRequest => otpRequest.App)
 									.FirstOrDefaultAsync(req =>
 															req.Id == request.Id
-															&& req.Secret == request.Secret
+															&& req.Secret == _otpContextService.Key
 															&& req.State == OtpRequestState.Available
 															&& req.Status == OtpRequestStatus.Success,
 														cancellationToken);

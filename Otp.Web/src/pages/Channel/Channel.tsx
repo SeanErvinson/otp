@@ -17,7 +17,7 @@ const Channel = () => {
 	const { hash, pathname } = useLocation();
 	const [channel] = useState<string>(pathname.split('/')[1]);
 	const [secret] = useState<string>(hash.substring(1, hash.length - 1));
-	const [value, setValue] = useState<string>('');
+	const [code, setCode] = useState<string>('');
 	const [isValidOtp, setIsValidOtp] = useState(false);
 	const query = useQuery(
 		['getOtpRequest', requestId, hash],
@@ -44,54 +44,49 @@ const Channel = () => {
 			},
 		},
 	);
-	const verifyMutation = useMutation(verifyOtp);
-	const resendMutation = useMutation(resendOtp);
-	const cancelMutation = useMutation(cancelOtp);
+
+	const verifyMutation = useMutation(
+		['verifyApp', requestId, secret, code],
+		() => verifyOtp(requestId!, secret, code),
+		{
+			onSuccess: response => {
+				window.location.replace(response.successUrl);
+			},
+		},
+	);
+
+	const resendMutation = useMutation(['resendOtp', requestId, secret], () =>
+		resendOtp(requestId!, secret),
+	);
+
+	const cancelMutation = useMutation(
+		['cancelOtp', requestId, secret],
+		() => cancelOtp(requestId!, secret),
+		{
+			// onSuccess: response => {
+			// 	window.location.replace(response.cancelUrl);
+			// },
+		},
+	);
 
 	const handleOnSubmmit = (event: FormEvent) => {
 		event.preventDefault();
-		verifyMutation.mutate(
-			{
-				id: requestId!,
-				secret: secret,
-				code: value,
-			},
-			{
-				onSuccess: response => {
-					window.location.replace(response.successUrl);
-				},
-			},
-		);
+		verifyMutation.mutate();
 	};
 
 	const handleOnResend = (event: React.MouseEvent<HTMLSpanElement>) => {
 		event.preventDefault();
-
-		resendMutation.mutate({
-			id: requestId!,
-			secret: secret,
-		});
+		resendMutation.mutate();
 	};
 
 	const handleOnCancel = (event: React.MouseEvent<HTMLSpanElement>) => {
 		event.preventDefault();
-
-		cancelMutation.mutate(
-			{
-				id: requestId!,
-				secret: secret,
-			},
-			{
-				// onSuccess: response => {
-				// 	window.location.replace(response.cancelUrl);
-				// },
-			},
-		);
+		cancelMutation.mutate();
 	};
 
 	useEffect(() => {
-		value?.length === otpInputLength ? setIsValidOtp(true) : setIsValidOtp(false);
-	}, [value]);
+		code?.length === otpInputLength ? setIsValidOtp(true) : setIsValidOtp(false);
+	}, [code]);
 
 	useEffect(() => {
 		if (!requestId || !isValidGuid(requestId) || !hash) {
@@ -115,7 +110,7 @@ const Channel = () => {
 								<div className="my-4 mx-auto text-center">
 									<form onSubmit={handleOnSubmmit}>
 										<div className="flex justify-between">
-											<OtpInputGroup onSetValue={setValue} />
+											<OtpInputGroup onSetValue={setCode} />
 										</div>
 										{verifyMutation.isError && (
 											<span className="label-text-alt text-sm text-error">
@@ -128,8 +123,12 @@ const Channel = () => {
 										<button
 											type="submit"
 											disabled={!isValidOtp}
-											className="btn btn-primary px-4 w-full mt-2">
-											Verify OTP!
+											className={`btn btn-primary px-4 w-full mt-2 ${
+												verifyMutation.isLoading ? 'loading' : ''
+											}`}>
+											{!verifyMutation.isLoading
+												? 'Verify OTP!'
+												: 'Verifying OTP'}
 										</button>
 										<button
 											type="button"
