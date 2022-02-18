@@ -124,7 +124,7 @@ const Channel = () => {
 											type="submit"
 											disabled={!isValidOtp}
 											className={`btn btn-primary px-4 w-full mt-2 ${
-												verifyMutation.isLoading ? 'loading' : ''
+												verifyMutation.isLoading && 'loading'
 											}`}>
 											{!verifyMutation.isLoading
 												? 'Verify OTP!'

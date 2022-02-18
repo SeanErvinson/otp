@@ -75,7 +75,7 @@ const CreateAppModal = (props: Props) => {
 					<input
 						type="text"
 						placeholder="best-app"
-						className={`input input-bordered ${errors.name ? 'input-error' : ''}`}
+						className={`input input-bordered ${errors.name && 'input-error'}`}
 						{...register('name', {
 							required: true,
 							minLength: 5,
@@ -102,7 +102,7 @@ const CreateAppModal = (props: Props) => {
 					</div>
 					<textarea
 						className={`textarea h-24 textarea-bordered ${
-							errors.description ? 'input-error' : ''
+							errors.description && 'input-error'
 						}`}
 						placeholder="Greatest description of all time"
 						{...register('description', {
@@ -132,7 +132,7 @@ const CreateAppModal = (props: Props) => {
 				)}
 				<div className="modal-action">
 					<button
-						className={`btn btn-accent ${isLoading ? 'loading' : ''}`}
+						className={`btn btn-accent ${isLoading && 'loading'}`}
 						disabled={isLoading ? true : false}
 						type="submit">
 						{!isLoading ? 'Create' : 'Creating'}
@@ -149,12 +149,10 @@ const CreateAppModal = (props: Props) => {
 	}
 
 	return (
-		<div
-			id="createAppModal"
-			className={`modal ${props.showCreateAppModal ? 'modal-open' : ''}`}>
+		<div id="createAppModal" className={`modal ${props.showCreateAppModal && 'modal-open'}`}>
 			<div
 				className={`modal-box flex flex-col justify-between ${
-					isSuccess ? 'animate__animated animate__flipInY min-h-[21rem]' : ''
+					isSuccess && 'animate__animated animate__flipInY min-h-[21rem]'
 				}`}>
 				{defaultComponent}
 			</div>

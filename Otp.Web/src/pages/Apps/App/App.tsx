@@ -148,7 +148,7 @@ const App = () => {
 								to=""
 								end
 								className={({ isActive }) =>
-									`tab tab-lifted ${isActive ? 'tab-active' : ''}`
+									`tab tab-lifted ${isActive && 'tab-active'}`
 								}>
 								Settings
 							</NavLink>

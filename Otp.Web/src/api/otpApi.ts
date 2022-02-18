@@ -10,6 +10,40 @@ export const getApps = async (pageIndex: number): Promise<PagedResult<App> | nul
 		},
 	});
 
+	// return {
+	// 	hasNextPage: false,
+	// 	hasPreviousPage: false,
+	// 	pageNumber: 1,
+	// 	totalCount: 4,
+	// 	totalPages: 1,
+	// 	items: [
+	// 		{
+	// 			id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf6',
+	// 			createdAt: new Date(),
+	// 			tags: ['Hello'],
+	// 			name: 'Willow',
+	// 		},
+	// 		{
+	// 			id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cba6',
+	// 			createdAt: new Date(),
+	// 			tags: ['Hello'],
+	// 			name: 'Microsoft',
+	// 		},
+	// 		{
+	// 			id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf1',
+	// 			createdAt: new Date(),
+	// 			tags: ['Hello'],
+	// 			name: 'Twitter',
+	// 		},
+	// 		{
+	// 			id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf3',
+	// 			createdAt: new Date(),
+	// 			tags: ['Hello'],
+	// 			name: 'Google',
+	// 		},
+	// 	],
+	// };
+
 	return response.data;
 };
 
