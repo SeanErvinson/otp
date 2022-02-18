@@ -35,9 +35,7 @@ const DeleteAppModal = (props: Props) => {
 	};
 
 	return (
-		<div
-			id="createAppModal"
-			className={`modal ${props.showCreateAppModal ? 'modal-open' : ''}`}>
+		<div id="createAppModal" className={`modal ${props.showCreateAppModal && 'modal-open'}`}>
 			<div className="modal-box">
 				<h3 className="text-xl font-semibold">Are you sure you want to delete this app?</h3>
 				<br />

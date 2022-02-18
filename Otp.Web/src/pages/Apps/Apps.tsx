@@ -4,8 +4,8 @@ import { useQuery } from 'react-query';
 import { getApps } from '@/api/otpApi';
 import EmptyIcon from '@/components/misc/EmptyIcon';
 
-import AppRowItem from './AppRowItem';
 import CreateAppButton from './CreateAppButton';
+import AppTable from './AppTable';
 
 const Apps = () => {
 	const [page, setPage] = useState(1);
@@ -22,6 +22,7 @@ const Apps = () => {
 	let defaultComponent = (
 		<article className="border-2 flex flex-col gap-3 items-center p-6 mx-8">
 			{query.isLoading && <button className="btn btn-lg btn-ghost loading">loading</button>}
+			{query.isError && <h1>Error</h1>}
 			{query.isSuccess && (
 				<>
 					<EmptyIcon height={200} />
@@ -38,21 +39,7 @@ const Apps = () => {
 		defaultComponent = (
 			<article className="flex flex-col gap-6">
 				<div className="overflow-x-auto">
-					<table className="table w-full bg-base-300">
-						<thead>
-							<tr>
-								<th className="bg-base-300">Name</th>
-								<th className="bg-base-300">Created</th>
-								<th className="bg-base-300">Tags</th>
-								<th className="bg-base-300"></th>
-							</tr>
-						</thead>
-						<tbody>
-							{query.data?.items.map(app => (
-								<AppRowItem key={app.id} app={app} />
-							))}
-						</tbody>
-					</table>
+					<AppTable apps={query.data.items} />
 				</div>
 				<div className="btn-group justify-center">
 					{query.data.hasPreviousPage && (

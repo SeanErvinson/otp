@@ -39,9 +39,7 @@ const RegenerateApiModal = (props: Props) => {
 	};
 
 	let defaultComponent = !isSuccess ? (
-		<div
-			id="createAppModal"
-			className={`modal ${props.showCreateAppModal ? 'modal-open' : ''}`}>
+		<div id="createAppModal" className={`modal ${props.showCreateAppModal && 'modal-open'}`}>
 			<div className="modal-box">
 				<h3 className="text-xl font-semibold">
 					Are you sure you want to regenerate this key?
@@ -70,12 +68,10 @@ const RegenerateApiModal = (props: Props) => {
 	);
 
 	return (
-		<div
-			id="createAppModal"
-			className={`modal ${props.showCreateAppModal ? 'modal-open' : ''}`}>
+		<div id="createAppModal" className={`modal ${props.showCreateAppModal && 'modal-open'}`}>
 			<div
 				className={`modal-box  flex flex-col justify-between ${
-					isSuccess ? 'animate__animated animate__flipInY min-h-[21rem]' : ''
+					isSuccess && 'animate__animated animate__flipInY min-h-[21rem]'
 				}`}>
 				{defaultComponent}
 			</div>

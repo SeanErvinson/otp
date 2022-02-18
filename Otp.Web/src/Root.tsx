@@ -25,30 +25,34 @@ const SidebarLayout = () => {
 	}, []);
 
 	return (
-		<MsalProvider instance={msalClient}>
-			<Sidebar>
-				<Outlet />
-			</Sidebar>
-		</MsalProvider>
+		<Sidebar>
+			<Outlet />
+		</Sidebar>
 	);
 };
 
 const Root = () => {
 	return (
-		<Routes>
-			<Route path="/" element={<SidebarLayout />}>
-				<Route path="" element={<Home />} />
-				<Route path="apps" element={<Apps />} />
-				<Route path="apps/:appId" element={<App />}>
-					<Route path="" element={<Settings />} />
-				</Route>
-				<Route path="billing" element={<Billing />} />
-				<Route path="usage" element={<Usage />} />
-			</Route>
-			<Route path="*" element={<NotFound />} />
-			<Route path="/sms/:requestId" element={<Channel />} />
-			<Route path="/email/:requestId" element={<Channel />} />
-		</Routes>
+		<>
+			<MsalProvider instance={msalClient}>
+				<Routes>
+					<Route path="/" element={<SidebarLayout />}>
+						<Route path="" element={<Home />} />
+						<Route path="apps" element={<Apps />} />
+						<Route path="apps/:appId" element={<App />}>
+							<Route path="" element={<Settings />} />
+						</Route>
+						<Route path="billing" element={<Billing />} />
+						<Route path="usage" element={<Usage />} />
+					</Route>
+				</Routes>
+			</MsalProvider>
+			<Routes>
+				<Route path="*" element={<NotFound />} />
+				<Route path="/sms/:requestId" element={<Channel />} />
+				<Route path="/email/:requestId" element={<Channel />} />
+			</Routes>
+		</>
 	);
 };
 

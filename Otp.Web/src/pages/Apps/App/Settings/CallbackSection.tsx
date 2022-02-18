@@ -76,7 +76,7 @@ const CallbackSection = ({ appId, callbackUrl }: Props) => {
 							validate: value =>
 								isValidUrl(value) || 'This doesn’t look like a valid URL.',
 						})}
-						className={`input ${errors.callbackUrl ? 'input-error' : ''}`}
+						className={`input ${errors.callbackUrl && 'input-error'}`}
 					/>
 
 					{errors.callbackUrl && (
@@ -131,7 +131,7 @@ const CallbackSection = ({ appId, callbackUrl }: Props) => {
 
 				{isDirty && (
 					<button
-						className={`btn btn-success ${isLoading ? 'loading' : ''}`}
+						className={`btn btn-success ${isLoading && 'loading'}`}
 						disabled={isLoading ? true : false}
 						type="submit">
 						{!isLoading ? 'Save' : 'Saving'}
