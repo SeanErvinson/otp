@@ -12,8 +12,8 @@ using Otp.Infrastructure.Persistence;
 namespace Otp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220205120534_Rename-Mode-To-Channel")]
-    partial class RenameModeToChannel
+    [Migration("20220218131931_Initial-Migration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,9 +29,6 @@ namespace Otp.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("BackgroundUri")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CallbackUrl")
                         .HasColumnType("nvarchar(max)");
@@ -52,9 +49,6 @@ namespace Otp.Infrastructure.Migrations
 
                     b.Property<string>("HashedApiKey")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LogoUri")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -165,12 +159,12 @@ namespace Otp.Infrastructure.Migrations
                     b.Property<DateTime>("ExpiresOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Retries")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Secret")
+                    b.Property<string>("Key")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Retries")
+                        .HasColumnType("int");
 
                     b.Property<string>("State")
                         .IsRequired()
@@ -245,12 +239,86 @@ namespace Otp.Infrastructure.Migrations
                     b.ToTable("Principals");
                 });
 
+            modelBuilder.Entity("Otp.Core.Domains.Entities.Subscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PeriodEnd")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("PeriodEnd");
+
+                    b.Property<DateTime>("PeriodStart")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("PeriodStart");
+
+                    b.Property<Guid>("PrincipalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("TieredPlan")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("PrincipalId");
+
+                    b.ToTable("Subscriptions", (string)null);
+
+                    b.ToTable(tb => tb.IsTemporal(ttb =>
+                        {
+                            ttb
+                                .HasPeriodStart("PeriodStart")
+                                .HasColumnName("PeriodStart");
+                            ttb
+                                .HasPeriodEnd("PeriodEnd")
+                                .HasColumnName("PeriodEnd");
+                        }
+                    ));
+                });
+
             modelBuilder.Entity("Otp.Core.Domains.Entities.App", b =>
                 {
                     b.HasOne("Otp.Core.Domains.Entities.Principal", "Principal")
                         .WithMany()
                         .HasForeignKey("PrincipalId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Otp.Core.Domains.ValueObjects.Branding", "Branding", b1 =>
+                        {
+                            b1.Property<Guid>("AppId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("BackgroundUrl")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("LogoUrl")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("SmsMessageTemplate")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("AppId");
+
+                            b1.ToTable("Apps");
+
+                            b1.WithOwner()
+                                .HasForeignKey("AppId");
+                        });
+
+                    b.Navigation("Branding")
                         .IsRequired();
 
                     b.Navigation("Principal");
@@ -265,6 +333,17 @@ namespace Otp.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("App");
+                });
+
+            modelBuilder.Entity("Otp.Core.Domains.Entities.Subscription", b =>
+                {
+                    b.HasOne("Otp.Core.Domains.Entities.Principal", "Principal")
+                        .WithMany()
+                        .HasForeignKey("PrincipalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Principal");
                 });
 #pragma warning restore 612, 618
         }

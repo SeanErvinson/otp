@@ -13,6 +13,7 @@ public class AppConfiguration : BaseEntityConfiguration<App>
 		builder.Property(c => c.Description).HasMaxLength(500);
 		builder.Property(c => c.Status)
 				.HasConversion<string>();
+		builder.OwnsOne(c => c.Branding);
 		builder.Property(c => c.Tags)
 				.HasConversion(
 					v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null!),
