@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Otp.Core.Domains.Common.Models;
 using Otp.Core.Domains.Events;
+using Otp.Core.Domains.ValueObjects;
 using Otp.Core.Utils;
 
 namespace Otp.Core.Domains.Entities;
@@ -10,8 +11,7 @@ public class App : AuditableEntity
 {
 	public Guid PrincipalId { get; }
 	public string Name { get; }
-	public string? BackgroundUri { get; private set; }
-	public string? LogoUri { get; private set; }
+	public Branding Branding { get; private set; }
 	public string? Description { get; private set; }
 	public string? CallbackUrl { get; private set; }
 	public string HashedApiKey { get; private set; }

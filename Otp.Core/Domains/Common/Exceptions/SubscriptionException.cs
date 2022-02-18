@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using Otp.Core.Domains.Common.Enums;
 using Otp.Core.Domains.Entities;
 
 namespace Otp.Core.Domains.Common.Exceptions;
@@ -14,8 +15,8 @@ public class SubscriptionException : Exception
 	{
 	}
 
-	public static SubscriptionException AlreadySubscribed(Plan plan)
+	public static SubscriptionException AlreadySubscribed(TieredPlan tieredPlan)
 	{
-		return new SubscriptionException($"Entity is already subscribed to {plan}");
+		return new SubscriptionException($"Entity is already subscribed to {tieredPlan}");
 	}
 }
