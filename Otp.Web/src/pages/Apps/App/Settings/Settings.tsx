@@ -1,6 +1,6 @@
 import { useOutletContext } from 'react-router-dom';
 
-import { GetAppResponse } from '@/api/otpApi';
+import { AppDetail } from '@/common/types';
 import Spinner from '@/components/misc/Spinner';
 
 import SettingsSection from './SettingsSection';
@@ -9,7 +9,7 @@ import ApiKeySection from './ApiKeySection';
 import CallbackSection from './CallbackSection';
 
 const Settings = () => {
-	const app = useOutletContext<GetAppResponse | null>();
+	const app = useOutletContext<AppDetail | null>();
 
 	return (
 		<article id="settings">

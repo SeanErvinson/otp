@@ -12,6 +12,7 @@ import { Apps } from '@/pages/Apps';
 import { NotFound } from '@/pages/NotFound';
 import { App } from '@/pages/Apps/App';
 import { Settings } from '@/pages/Apps/App/Settings';
+import { RecentCallbacks } from '@/pages/Apps/App/RecentCallbacks';
 import { loginRequest } from '@/services/auth/authConfig';
 import msalClient from './services/auth/msalClient';
 
@@ -41,6 +42,7 @@ const Root = () => {
 						<Route path="apps" element={<Apps />} />
 						<Route path="apps/:appId" element={<App />}>
 							<Route path="" element={<Settings />} />
+							<Route path="recent-callbacks" element={<RecentCallbacks />} />
 						</Route>
 						<Route path="billing" element={<Billing />} />
 						<Route path="usage" element={<Usage />} />

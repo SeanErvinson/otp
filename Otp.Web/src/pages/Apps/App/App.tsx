@@ -152,6 +152,16 @@ const App = () => {
 								}>
 								Settings
 							</NavLink>
+							{query.data?.callbackUrl && (
+								<NavLink
+									to="recent-callbacks"
+									end
+									className={({ isActive }) =>
+										`tab tab-lifted ${isActive && 'tab-active'}`
+									}>
+									Recent Callbacks
+								</NavLink>
+							)}
 						</div>
 
 						<Outlet context={query.data} />

@@ -48,8 +48,8 @@ public record GetOtpRequestQuery(Guid Id, string Key) : IRequest<GetOtpRequestQu
 
 			return new GetOtpRequestQueryResponse
 			{
-				BackgroundUri = otpRequest.App.BackgroundUri,
-				LogoUri = otpRequest.App.LogoUri,
+				BackgroundUrl = otpRequest.App.Branding.BackgroundUrl,
+				LogoUrl = otpRequest.App.Branding.LogoUrl,
 				Contact = otpRequest.Contact
 			};
 		}
@@ -58,7 +58,7 @@ public record GetOtpRequestQuery(Guid Id, string Key) : IRequest<GetOtpRequestQu
 
 public record GetOtpRequestQueryResponse
 {
-	public string? BackgroundUri { get; init; }
-	public string? LogoUri { get; init; }
+	public string? BackgroundUrl { get; init; }
+	public string? LogoUrl { get; init; }
 	public string Contact { get; init; } = default!;
 }

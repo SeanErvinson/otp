@@ -51,7 +51,7 @@ public class ReceiverController : ControllerBase
 
 		if (result == signatureResponse.Value)
 		{
-			_logger.LogInformation("Secret - Successfully decoded and received {Mode} {Contact} - {Type}", response.Contact, response.Mode, response.Type);
+			_logger.LogInformation("Secret - Successfully decoded and received {Mode} {Contact} - {Type}", response.Contact, response.Channel, response.Type);
 			return Ok(response);
 		}
 		
@@ -64,12 +64,12 @@ public class ReceiverController : ControllerBase
 	public record CallbackEventResponse
 	{
 		public Guid RequestId { get; init; }
-		public Mode Mode { get; init; }
+		public Channel Channel { get; init; }
 		public string Contact { get; init; }
 		public EventType Type { get; init; }
 	};
 
-	public enum Mode
+	public enum Channel
 	{
 		SMS,
 		Email
