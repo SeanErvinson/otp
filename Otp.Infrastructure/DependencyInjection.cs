@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Otp.Application.Common.Interfaces;
+using Otp.Infrastructure.Options;
 using Otp.Infrastructure.Persistence;
 using Otp.Infrastructure.Services;
 using Otp.Infrastructure.Services.Sender;
@@ -24,20 +25,21 @@ public static class DependencyInjection
 																								typeof(ApplicationDbContext).Assembly.FullName)));
 		services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
-		services.TryAddEnumerable(new []
+		services.TryAddEnumerable(new[]
 		{
-			ServiceDescriptor.Transient<ISenderFactory, SmsSenderFactory>(), 
-			ServiceDescriptor.Transient<ISenderFactory, EmailSenderFactory>(), 
+			ServiceDescriptor.Transient<ISenderFactory, SmsSenderFactory>(),
+			ServiceDescriptor.Transient<ISenderFactory, EmailSenderFactory>(),
 		});
-		
-		services.TryAddEnumerable(new []
+
+		services.TryAddEnumerable(new[]
 		{
-			ServiceDescriptor.Transient<ISmsProvider, PhilippinesSmsProvider>(), 
+			ServiceDescriptor.Transient<ISmsProvider, PhilippinesSmsProvider>(),
 			ServiceDescriptor.Transient<ISmsProvider, AustraliaSmsProvider>(),
 		});
 		services.AddTransient<ISenderService, SenderService>();
 		services.AddTransient<IEmailProvider, SendGridEmailProvider>();
 
+		services.AddTransient<IBlobStorageService, AzureBlobStorageService>();
 		services.AddTransient<IDomainEventService, DomainEventService>();
 	}
 }

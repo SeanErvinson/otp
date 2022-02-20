@@ -1,4 +1,5 @@
-﻿using Otp.Core.Domains.Common.Models;
+﻿using Otp.Core.Domains.Common.Exceptions;
+using Otp.Core.Domains.Common.Models;
 
 namespace Otp.Core.Domains.ValueObjects;
 
@@ -8,18 +9,19 @@ public class Branding : ValueObject
 	public string? BackgroundUrl { get; private set; }
 	public string? LogoUrl { get; private set; }
 
-	public void UpdateSmsMessageTemplate(string? smsMessageTemplate)
+	public const string MessageKeyword = "{code}";
+	
+	public void UpdateBranding(string? logoUrl, string? backgroundUrl, string? smsMessageTemplate)
 	{
-		SmsMessageTemplate = smsMessageTemplate;
-	}
-
-	public void UpdateBackgoundUrl(string? backgroundUrl)
-	{
-		BackgroundUrl = backgroundUrl;
-	}
-
-	public void UpdateLogoUrl(string? logoUrl)
-	{
+		if (!string.IsNullOrEmpty(smsMessageTemplate))
+		{
+			if (!smsMessageTemplate.Contains(MessageKeyword))
+			{
+				throw new BrandingException($"Sms message template should contain keyword: {MessageKeyword}");
+			}
+		}
 		LogoUrl = logoUrl;
+		BackgroundUrl = backgroundUrl;
+		SmsMessageTemplate = smsMessageTemplate;
 	}
 }

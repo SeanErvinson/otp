@@ -11,6 +11,7 @@ using Otp.Api.Services;
 using Otp.Application;
 using Otp.Application.Common.Interfaces;
 using Otp.Infrastructure;
+using Otp.Infrastructure.Options;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -53,6 +54,7 @@ try
 			})
 			.AddFluentValidation();
 
+	builder.Services.AddOptions<StorageAccountOptions>().Bind(builder.Configuration.GetSection(StorageAccountOptions.Section));
 	builder.Services.AddEndpointsApiExplorer();
 	builder.Services.AddSwagger();
 	builder.Services.AddJwtBearerAuthentication(builder.Configuration, builder.Environment);

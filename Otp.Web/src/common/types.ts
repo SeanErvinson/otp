@@ -19,8 +19,8 @@ const Channel = ['SMS', 'Email'] as const;
 export type Channel = typeof Channel[number];
 
 export type OtpRequest = {
-	backgroundUri?: string;
-	logoUri?: string;
+	backgroundUrl?: string;
+	logoUrl?: string;
 	contact: string;
 };
 
@@ -42,6 +42,8 @@ export type AppDetail = {
 	description: string;
 	tags?: string[];
 	callbackUrl: string;
+	backgroundUrl?: string;
+	logoUrl?: string;
 	createdAt: Date;
 	updatedAt: Date;
 };

@@ -23,7 +23,8 @@ const RecentCallbacks = () => {
 
 	return (
 		<article id="recent-callbacks">
-			<h1>Recent callbacks</h1>
+			<h2 className="text-lg font-semibold mb-2">Recent delivers</h2>
+			<span className="text-sm font-light mb-2">Last 30 callbacks</span>
 			{query.isLoading && <Spinner />}
 			{query.data &&
 				query.data.map((callback, index) => {
