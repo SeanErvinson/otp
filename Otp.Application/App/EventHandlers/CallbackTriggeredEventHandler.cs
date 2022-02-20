@@ -1,4 +1,5 @@
-﻿using System.Net.Mime;
+﻿using System.Net;
+using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using MediatR;
@@ -50,10 +51,22 @@ public class CallbackTriggeredEventHandler : INotificationHandler<DomainEventNot
 			Content = new StringContent(data, Encoding.UTF8, MediaTypeNames.Application.Json),
 		};
 		var httpClient = _httpClientFactory.CreateClient();
-		var response = await httpClient.SendAsync(httpMessage, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-		domainEvent.CallbackEvent.SetResponse((int) response.StatusCode, response.ReasonPhrase);
-		await _dbContext.CallbackEvents.AddAsync(domainEvent.CallbackEvent, cancellationToken);
-		await _dbContext.SaveChangesAsync(cancellationToken);
+		HttpResponseMessage responseMessage = new HttpResponseMessage();
+		try
+		{
+			responseMessage = await httpClient.SendAsync(httpMessage, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+		}
+		catch (HttpRequestException ex)
+		{
+			responseMessage.StatusCode = ex.StatusCode ?? HttpStatusCode.ServiceUnavailable;
+			responseMessage.ReasonPhrase = ex.Message;
+		}
+		finally
+		{
+			domainEvent.CallbackEvent.SetResponse((int) responseMessage.StatusCode, responseMessage.ReasonPhrase);
+			await _dbContext.CallbackEvents.AddAsync(domainEvent.CallbackEvent, cancellationToken);
+			await _dbContext.SaveChangesAsync(cancellationToken);
+		}
 	}
 
 	public record CallbackEventResponse

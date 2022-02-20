@@ -1,5 +1,5 @@
 import { oauthInstance, otpInstance } from '@/api/https';
-import { App, AppDetail, OtpRequest, PagedResult } from '@/common/types';
+import { App, AppDetail, Channel, OtpRequest, PagedResult } from '@/common/types';
 
 export const getApps = async (pageIndex: number): Promise<PagedResult<App> | null> => {
 	const pageSize = 7;
@@ -52,6 +52,19 @@ export const getApp = async (id: string | undefined): Promise<AppDetail | null> 
 		return null;
 	}
 	const response = await oauthInstance.get(`/apps/${id}`);
+	if (response.status === 404) {
+		return null;
+	}
+	return response.data;
+};
+
+export const getAppRecentCallbacks = async (
+	id: string | undefined,
+): Promise<GetAppRecentCallbacksResponse[] | null> => {
+	if (!id) {
+		return null;
+	}
+	const response = await oauthInstance.get(`/apps/${id}/recent-callbacks`);
 	if (response.status === 404) {
 		return null;
 	}
@@ -140,4 +153,12 @@ type UpdateCallbackRequest = {
 
 export type RegenerateApiKeyResponse = {
 	apiKey: string;
+};
+
+export type GetAppRecentCallbacksResponse = {
+	requestId: string;
+	createdAt: Date;
+	statusCode: number;
+	channel: Channel;
+	responseMessage?: string;
 };

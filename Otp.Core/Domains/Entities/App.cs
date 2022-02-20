@@ -55,16 +55,17 @@ public class App : AuditableEntity
 		HashedApiKey = CryptoUtil.HashKey(generatedKey);
 		return generatedKey;
 	}
-	
+
 	public void TriggerFailedCallback(OtpRequest request)
 	{
 		TriggerCallback(request, CallbackEventType.Failed);
 	}
-	
+
 	public void TriggerCanceledCallback(OtpRequest request)
 	{
 		TriggerCallback(request, CallbackEventType.Canceled);
 	}
+
 	public void TriggerSuccessCallback(OtpRequest request)
 	{
 		TriggerCallback(request, CallbackEventType.Success);
@@ -74,14 +75,12 @@ public class App : AuditableEntity
 	{
 		if (string.IsNullOrEmpty(CallbackUrl))
 			return;
-		
-		AddDomainEvent(new CallbackTriggeredEvent(new CallbackEvent
-		{
-			Channel = request.Channel,
-			Contact = request.Contact,
-			RequestId =request.Id,
-			Type = type
-		}, CallbackUrl, EndpointSecret));
+
+		AddDomainEvent(new CallbackTriggeredEvent(new CallbackEvent(Id,
+																	request.Channel,
+																	request.Id,
+																	request.Contact,
+																	type), CallbackUrl, EndpointSecret));
 	}
 
 	public void MarkAsDeleted()

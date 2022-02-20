@@ -98,11 +98,14 @@ const Channel = () => {
 	}, []);
 
 	return (
-		<main id="channel" className="h-full w-full bg-base-300">
+		<main
+			id="channel"
+			className="h-full w-full bg-base-300 bg-repeat bg-cover bg-center"
+			style={{ backgroundImage: `url("${query.data?.backgroundUrl ?? '/bg.svg'}")` }}>
 			<section className="h-full w-full flex flex-col items-center">
 				<div className="card shadow-lg bg-base-200 my-auto mx-4">
 					<div className="card-body">
-						<h2 className="card-title text-center">One-Time Passowrd</h2>
+						<h2 className="card-title text-center">One-Time Password</h2>
 						{query.isLoading && <Spinner size={'lg'} height={0} />}
 						{query.isSuccess && (
 							<>

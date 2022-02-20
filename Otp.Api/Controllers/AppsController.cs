@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Otp.Application.App.Commands.CreateApp;
 using Otp.Application.App.Commands.DeleteApp;
 using Otp.Application.App.Commands.RegenerateApiKey;
+using Otp.Application.App.Commands.UpdateBranding;
 using Otp.Application.App.Commands.UpdateCallback;
 using Otp.Application.App.Queries.GetApp;
+using Otp.Application.App.Queries.GetAppRecentCallbacks;
 using Otp.Application.App.Queries.GetApps;
 using Otp.Application.Otp.Commands.RequestOtp;
 
@@ -36,7 +38,7 @@ public class AppsController : ControllerBase
 		var result = await _mediator.Send(request);
 		return Created(Url.RouteUrl(nameof(GetApp), new { id = result.Id }), result);
 	}
-	
+
 	[HttpPut("{id:guid}/callback")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -49,6 +51,16 @@ public class AppsController : ControllerBase
 		return NoContent();
 	}
 
+	[HttpGet("{id:guid}/recent-callbacks")]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetAppRecentCallbacksDto>))]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	public async Task<IActionResult> GetAppRecentCallbacks(Guid id)
+	{
+		var result = await _mediator.Send(new GetAppRecentCallbacks(id));
+		return Ok(result);
+	}
 
 	[HttpPatch("{id:guid}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RequestOtpDto))]
@@ -82,6 +94,25 @@ public class AppsController : ControllerBase
 		await _mediator.Send(new DeleteAppCommand(id));
 		return NoContent();
 	}
+
+	[HttpPut("{id:guid}/branding")]
+	[Consumes(MediaTypeNames.Application.Json, "multipart/form-data")]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	public async Task<IActionResult> UpdateBranding([FromRoute] Guid id, [FromForm] UpdateBrandingCommandRequest request)
+	{
+		await _mediator.Send(new UpdateBrandingCommand
+		{
+			Id = id,
+			BackgroundImage = request.BackgroundImage,
+			LogoImage = request.LogoImage,
+			SmsMessageTemplate = request.SmsMessageTemplate
+		});
+		return NoContent();
+	}
+
 
 	[HttpGet]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAppsQueryDto))]
