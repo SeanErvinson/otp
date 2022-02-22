@@ -90,10 +90,10 @@ const Channel = () => {
 
 	useEffect(() => {
 		if (!requestId || !isValidGuid(requestId) || !hash) {
-			// navigate('/404', {
-			// 	replace: true,
-			// });
-			// return;
+			navigate('/404', {
+				replace: true,
+			});
+			return;
 		}
 	}, []);
 
