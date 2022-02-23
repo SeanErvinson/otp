@@ -1,5 +1,5 @@
 import { InteractionType } from '@azure/msal-browser';
-import { MsalProvider, useMsalAuthentication } from '@azure/msal-react';
+import { useIsAuthenticated, useMsalAuthentication } from '@azure/msal-react';
 import { useEffect } from 'react';
 import { Outlet, Route, Routes } from 'react-router-dom';
 
@@ -14,10 +14,11 @@ import { App } from '@/pages/Apps/App';
 import { Settings } from '@/pages/Apps/App/Settings';
 import { RecentCallbacks } from '@/pages/Apps/App/RecentCallbacks';
 import { loginRequest } from '@/services/auth/authConfig';
-import msalClient from './services/auth/msalClient';
+import { Loader } from './components/Loader';
 
 const SidebarLayout = () => {
-	const { login, result, error } = useMsalAuthentication(InteractionType.Redirect, loginRequest);
+	const isAuthenticated = useIsAuthenticated();
+	const { login, error } = useMsalAuthentication(InteractionType.Redirect, loginRequest);
 
 	useEffect(() => {
 		if (error) {
@@ -25,36 +26,32 @@ const SidebarLayout = () => {
 		}
 	}, []);
 
-	return (
+	return isAuthenticated ? (
 		<Sidebar>
 			<Outlet />
 		</Sidebar>
+	) : (
+		<Loader />
 	);
 };
 
 const Root = () => {
 	return (
-		<>
-			<MsalProvider instance={msalClient}>
-				<Routes>
-					<Route path="/" element={<SidebarLayout />}>
-						<Route path="" element={<Home />} />
-						<Route path="apps" element={<Apps />} />
-						<Route path="apps/:appId" element={<App />}>
-							<Route path="" element={<Settings />} />
-							<Route path="recent-callbacks" element={<RecentCallbacks />} />
-						</Route>
-						<Route path="billing" element={<Billing />} />
-						<Route path="usage" element={<Usage />} />
-					</Route>
-				</Routes>
-			</MsalProvider>
-			<Routes>
-				<Route path="*" element={<NotFound />} />
-				<Route path="/sms/:requestId" element={<Channel />} />
-				<Route path="/email/:requestId" element={<Channel />} />
-			</Routes>
-		</>
+		<Routes>
+			<Route path="/" element={<SidebarLayout />}>
+				<Route path="" element={<Home />} />
+				<Route path="apps" element={<Apps />} />
+				<Route path="apps/:appId" element={<App />}>
+					<Route path="" element={<Settings />} />
+					<Route path="recent-callbacks" element={<RecentCallbacks />} />
+				</Route>
+				<Route path="billing" element={<Billing />} />
+				<Route path="usage" element={<Usage />} />
+			</Route>
+			<Route path="/sms/:requestId" element={<Channel />} />
+			<Route path="/email/:requestId" element={<Channel />} />
+			<Route path="*" element={<NotFound />} />
+		</Routes>
 	);
 };
 

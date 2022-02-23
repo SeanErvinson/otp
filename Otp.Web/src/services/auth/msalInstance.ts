@@ -2,6 +2,6 @@ import { PublicClientApplication } from '@azure/msal-browser';
 
 import { authConfig } from './authConfig';
 
-const msalClient = new PublicClientApplication(authConfig);
+const msalInstance = new PublicClientApplication(authConfig);
 
-export default msalClient;
+export default msalInstance;

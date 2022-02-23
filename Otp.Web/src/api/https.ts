@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import msalClient from '@/services/auth/msalClient';
+import msalInstance from '@/services/auth/msalInstance';
 import { InteractionRequiredAuthError } from '@azure/msal-browser';
 
 export const otpInstance = (key: string) => {
@@ -31,8 +31,8 @@ oauthInstance.interceptors.request.use(async config => {
 });
 
 const acquireAccessToken = async (): Promise<string | null> => {
-	const activeAccount = msalClient.getActiveAccount();
-	const accounts = msalClient.getAllAccounts();
+	const activeAccount = msalInstance.getActiveAccount();
+	const accounts = msalInstance.getAllAccounts();
 	if (!activeAccount && accounts.length === 0) {
 		console.log('No account');
 	}
@@ -42,11 +42,11 @@ const acquireAccessToken = async (): Promise<string | null> => {
 		account: activeAccount || accounts[0],
 	};
 	try {
-		const authResult = await msalClient.acquireTokenSilent(request);
+		const authResult = await msalInstance.acquireTokenSilent(request);
 		return authResult.accessToken;
 	} catch (error) {
 		if (error instanceof InteractionRequiredAuthError) {
-			msalClient.acquireTokenRedirect(request);
+			msalInstance.acquireTokenRedirect(request);
 		}
 	}
 	return null;

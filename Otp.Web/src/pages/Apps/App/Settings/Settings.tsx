@@ -1,7 +1,7 @@
 import { useOutletContext } from 'react-router-dom';
 
 import { AppDetail } from '@/common/types';
-import Spinner from '@/components/misc/Spinner';
+import SpinnerIcon from '@/components/misc/SpinnerIcon';
 
 import SettingsSection from './SettingsSection';
 import BrandingSection from './BrandingSection';
@@ -13,7 +13,7 @@ const Settings = () => {
 
 	return (
 		<article id="settings">
-			{!app && <Spinner />}
+			{!app && <SpinnerIcon />}
 			{app && (
 				<>
 					<SettingsSection
