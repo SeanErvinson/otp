@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 
 import { getAppRecentCallbacks } from '@/api/otpApi';
-import Spinner from '@/components/misc/Spinner';
+import SpinnerIcon from '@/components/misc/SpinnerIcon';
 import RoundCheckIcon from '@/components/misc/RoundCheckIcon';
 import { AppDetail } from '@/common/types';
 import { Fragment, useEffect } from 'react';
@@ -25,7 +25,7 @@ const RecentCallbacks = () => {
 		<article id="recent-callbacks">
 			<h2 className="text-lg font-semibold mb-2">Recent delivers</h2>
 			<span className="text-sm font-light mb-2">Last 30 callbacks</span>
-			{query.isLoading && <Spinner />}
+			{query.isLoading && <SpinnerIcon />}
 			{query.data &&
 				query.data.map((callback, index) => {
 					return (

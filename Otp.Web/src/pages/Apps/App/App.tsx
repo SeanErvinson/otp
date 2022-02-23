@@ -4,7 +4,7 @@ import { NavLink, Outlet, useParams } from 'react-router-dom';
 
 import { getApp } from '@/api/otpApi';
 import { TagInput } from '@/components/TagInput';
-import Spinner from '@/components/misc/Spinner';
+import SpinnerIcon from '@/components/misc/SpinnerIcon';
 import XIcon from '@/components/misc/XIcon';
 
 import DeleteAppButton from './DeleteAppButton';
@@ -60,7 +60,7 @@ const App = () => {
 		<main id="app" className="h-full w-4/5 mx-auto pt-5">
 			{query.isLoading && (
 				<div className="flex flex-col gap-3 items-center h-full w-full justify-center">
-					<Spinner />
+					<SpinnerIcon />
 				</div>
 			)}
 			{query.isSuccess && (
