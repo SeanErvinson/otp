@@ -36,9 +36,7 @@ const RecentCallbacks = () => {
 								<div className="collapse-title text-sm font-medium flex flex-row justify-between">
 									<div className="flex flex-row items-center gap-2">
 										{(callback.statusCode <= 300 ||
-											callback.statusCode <= 200) && (
-											<RoundCheckIcon className="fill-success-content" />
-										)}
+											callback.statusCode <= 200) && <RoundCheckIcon />}
 										<span>{callback.requestId}</span>
 									</div>
 									<span>{callback.createdAt}</span>
