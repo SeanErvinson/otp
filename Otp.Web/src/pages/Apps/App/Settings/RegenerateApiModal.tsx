@@ -39,30 +39,26 @@ const RegenerateApiModal = (props: Props) => {
 	};
 
 	let defaultComponent = !isSuccess ? (
-		<div id="createAppModal" className={`modal ${props.showCreateAppModal && 'modal-open'}`}>
-			<div className="modal-box">
-				<h3 className="text-xl font-semibold">
-					Are you sure you want to regenerate this key?
-				</h3>
-				<br />
-				<p className="text-md">
-					Any applications or scripts using this api key will no longer be able to access
-					the API. You cannot undo this action.
-				</p>
-				<div className="modal-action">
-					<button
-						className="btn btn-error"
-						type="button"
-						disabled={isLoading ? true : false}
-						onClick={() => onClick(props.appId)}>
-						{!isLoading ? 'I understand, delete this app' : 'Deleting'}
-					</button>
-					<button className="btn btn-ghost" type="button" onClick={onClose}>
-						Cancel
-					</button>
-				</div>
+		<>
+			<h3 className="text-xl font-semibold">Are you sure you want to regenerate this key?</h3>
+			<br />
+			<p className="text-md">
+				Any applications or scripts using this api key will no longer be able to access the
+				API. You cannot undo this action.
+			</p>
+			<div className="modal-action">
+				<button
+					className="btn btn-error"
+					type="button"
+					disabled={isLoading ? true : false}
+					onClick={() => onClick(props.appId)}>
+					{!isLoading ? 'I understand, regenerate the api key' : 'Regenerating'}
+				</button>
+				<button className="btn btn-ghost" type="button" onClick={onClose}>
+					Cancel
+				</button>
 			</div>
-		</div>
+		</>
 	) : (
 		<ApiKeyPreview apiKey={createAppResponse.apiKey} onClose={onClose} />
 	);
@@ -70,7 +66,7 @@ const RegenerateApiModal = (props: Props) => {
 	return (
 		<div id="createAppModal" className={`modal ${props.showCreateAppModal && 'modal-open'}`}>
 			<div
-				className={`modal-box  flex flex-col justify-between ${
+				className={`modal-box flex flex-col justify-between ${
 					isSuccess && 'animate__animated animate__flipInY min-h-[21rem]'
 				}`}>
 				{defaultComponent}

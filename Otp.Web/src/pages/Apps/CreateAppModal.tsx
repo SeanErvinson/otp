@@ -64,7 +64,7 @@ const CreateAppModal = (props: Props) => {
 		props.onClose();
 	};
 
-	let defaultComponent = (
+	let defaultComponent = !isSuccess ? (
 		<>
 			<h3 className="text-xl font-semibold">Create App</h3>
 			<form onSubmit={handleSubmit(onSubmit)}>
@@ -143,10 +143,9 @@ const CreateAppModal = (props: Props) => {
 				</div>
 			</form>
 		</>
+	) : (
+		<ApiKeyPreview apiKey={createAppResponse.apiKey} onClose={onClose} />
 	);
-	if (isSuccess) {
-		defaultComponent = <ApiKeyPreview apiKey={createAppResponse.apiKey} onClose={onClose} />;
-	}
 
 	return (
 		<div id="createAppModal" className={`modal ${props.showCreateAppModal && 'modal-open'}`}>
