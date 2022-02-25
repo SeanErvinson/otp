@@ -27,6 +27,7 @@
   },
   "include": [
     "./src",
-    "env.d.ts"
+    "env.d.ts",
+    "react-table-config.d.ts"
   ]
 }

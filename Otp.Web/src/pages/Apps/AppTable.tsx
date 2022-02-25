@@ -3,7 +3,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Column, useTable, useSortBy } from 'react-table';
+import { Column, useTable, useSortBy, Cell } from 'react-table';
 
 import { App } from '@/common/types';
 import { useGeneratedId } from '@/hooks';
@@ -29,7 +29,7 @@ const AppTable = (props: Props) => {
 			{
 				Header: 'Name',
 				accessor: 'name',
-				Cell: ({ row }: any) => (
+				Cell: ({ row }: Cell<App>) => (
 					<div className="flex flex-col h-full">
 						<span className="font-semibold">{row.original.name}</span>
 						<span className="text-md opacity-75">
@@ -46,7 +46,7 @@ const AppTable = (props: Props) => {
 			},
 			{
 				Header: 'Tags',
-				Cell: ({ row }: any) => (
+				Cell: ({ row }: Cell<App>) => (
 					<div className="flex flex-row gap-2">
 						{row.original.tags && <TagCollection tags={row.original.tags} />}
 					</div>
@@ -55,7 +55,7 @@ const AppTable = (props: Props) => {
 			},
 			{
 				id: generatedId('action'),
-				Cell: ({ row }: any) => (
+				Cell: ({ row }: Cell<App>) => (
 					<Link className="btn btn-ghost btn-xs" to={`/apps/${row.original.id}`}>
 						Details
 					</Link>
