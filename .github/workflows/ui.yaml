@@ -1,0 +1,36 @@
+﻿name: api
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/**"
+      - 'Otp.Web/**'
+  pull_request:
+    types:
+      - synchronize
+      - auto_merge_enabled
+      - opened
+    paths:
+      - ".github/**"
+      - 'Otp.Web/**'
+
+env:
+  PROJECT_NAME: Otp.Web
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install packages
+        uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: install --fronzen-lockfile
+      - name: Build project
+        uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: build
