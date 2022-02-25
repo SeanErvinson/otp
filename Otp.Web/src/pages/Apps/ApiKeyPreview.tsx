@@ -45,8 +45,8 @@ const ApiKeyPreview = (props: Props) => {
 					<label className="swap swap-rotate">
 						<input type="checkbox" checked={isTimeout} />
 						<div className="swap-off self-center">Copy</div>
-						<div className="swap-on">
-							<RoundCheckIcon />
+						<div className="swap-on items-center">
+							<RoundCheckIcon className="fill-success" />
 						</div>
 					</label>
 				</button>
