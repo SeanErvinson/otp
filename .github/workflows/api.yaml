@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - ".github/**"
+      - ".github/workflows/api.yaml"
       - 'Otp.Api/**'
       - 'Otp.Application/**'
       - 'Otp.Core/**'
@@ -17,7 +17,7 @@ on:
       - auto_merge_enabled
       - opened
     paths:
-      - ".github/**"
+      - ".github/workflows/api.yaml"
       - 'Otp.Api/**'
       - 'Otp.Application/**'
       - 'Otp.Core/**'
