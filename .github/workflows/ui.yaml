@@ -6,7 +6,8 @@ on:
     branches:
       - main
     paths:
-      - ".github/workflows/ui.yaml"
+      - '.github/workflows/ui.yaml'
+      - '!.github/workflows/**'
       - 'Otp.Web/**'
   pull_request:
     types:
@@ -14,12 +15,13 @@ on:
       - auto_merge_enabled
       - opened
     paths:
-      - ".github/workflows/ui.yaml"
+      - '.github/workflows/ui.yaml'
+      - '!.github/workflows/**'
       - 'Otp.Web/**'
 
 env:
   PROJECT_NAME: Otp.Web
-  NODE_VERSION: 14
+  NODE_VERSION: 16.14.0
 
 jobs:
   build:
@@ -27,15 +29,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Node ${{ env.NODE_VERSION }}
+      - name: Installing Node ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'yarn'
           cache-dependency-path: ${{ env.PROJECT_NAME }}/yarn.lock
-      - name: Install packages
+      - name: Installing npm packages
         run: yarn install --fronzen-lockfile
         working-directory: ${{ env.PROJECT_NAME }}
-      - name: Build ${{ env.PROJECT_NAME }}
+      - name: Building ${{ env.PROJECT_NAME }}
         run: yarn build
         working-directory: ${{ env.PROJECT_NAME }}

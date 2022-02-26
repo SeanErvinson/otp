@@ -6,7 +6,8 @@ on:
     branches:
       - main
     paths:
-      - ".github/workflows/api.yaml"
+      - '.github/workflows/api.yaml'
+      - '!.github/workflows/**'
       - 'Otp.Api/**'
       - 'Otp.Application/**'
       - 'Otp.Core/**'
@@ -17,7 +18,8 @@ on:
       - auto_merge_enabled
       - opened
     paths:
-      - ".github/workflows/api.yaml"
+      - '.github/workflows/api.yaml'
+      - '!.github/workflows/**'
       - 'Otp.Api/**'
       - 'Otp.Application/**'
       - 'Otp.Core/**'
@@ -38,18 +40,18 @@ jobs:
       DOTNET_CLI_TELEMETRY_OPTOUT: true
     steps:
       - uses: actions/checkout@v2
-      - name: Install .NET ${{ env.DOTNET_VERSION }}
+      - name: Installing .NET ${{ env.DOTNET_VERSION }}
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Restore dependencies
+      - name: Restoring dependencies
         run: dotnet restore ${{ env.PROJECT_NAME }}
-      - name: Build ${{ env.PROJECT_NAME }}
+      - name: Building ${{ env.PROJECT_NAME }}
         run: dotnet build --no-restore ${{ env.PROJECT_NAME }}
-      - name: Publish ${{ env.PROJECT_NAME }}
+      - name: Publishing ${{ env.PROJECT_NAME }}
         if: ${{ github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main' }}
         run: dotnet publish --no-restore -c Release -o ${{ env.PUBLISH_PATH }} ${{ env.PROJECT_NAME }}
-      - name: Upload build artifact
+      - name: Uploading build artifact
         uses: actions/upload-artifact@v2
         if: ${{ github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main' }}
         with:
