@@ -14,7 +14,7 @@ const Contact = () => {
           </p>
         </div>
       </div>
-      <form name="contact" method="POST" data-netlify="true" action="/">
+      <form name="Contact" method="POST" data-netlify="true">
         <p>
           <label>
             Your Name: <input type="text" name="name" />
