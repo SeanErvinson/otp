@@ -7,7 +7,7 @@ const lightCodeTheme = require("prism-react-renderer/themes/github");
 const config = {
   title: "OhTP",
   tagline: "Dinosaurs are cool",
-  url: "https://ohtp.xyz",
+  url: "https://darling-cajeta-d4181d.netlify.app",
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
