@@ -6,7 +6,7 @@
 export default {
   "title": "OhTP",
   "tagline": "Dinosaurs are cool",
-  "url": "https://ohtp.xyz",
+  "url": "https://darling-cajeta-d4181d.netlify.app",
   "baseUrl": "/",
   "onBrokenLinks": "throw",
   "onBrokenMarkdownLinks": "warn",
@@ -18,12 +18,12 @@ export default {
       "classic",
       {
         "docs": {
-          "sidebarPath": "/home/asean/RiderProjects/TestDoc/my-website/sidebars.js",
+          "sidebarPath": "/home/asean/RiderProjects/Otp/Otp.Site/sidebars.js",
           "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/"
         },
         "blog": false,
         "theme": {
-          "customCss": "/home/asean/RiderProjects/TestDoc/my-website/src/css/custom.css"
+          "customCss": "/home/asean/RiderProjects/Otp/Otp.Site/src/css/custom.css"
         }
       }
     ]
