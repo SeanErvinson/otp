@@ -9,6 +9,7 @@ import { TagInput } from '@/components/TagInput';
 
 import ApiKeyPreview from './ApiKeyPreview';
 import { AxiosError } from 'axios';
+import { CustomError } from '@/common/types';
 
 interface Props {
 	showCreateAppModal: boolean;
@@ -43,7 +44,7 @@ const CreateAppModal = (props: Props) => {
 			setIsSuccess(true);
 			setIsLoading(false);
 		},
-		onError: (response: AxiosError) => {
+		onError: (response: AxiosError<CustomError>) => {
 			setIsLoading(false);
 			setError(response.response?.data.detail);
 		},

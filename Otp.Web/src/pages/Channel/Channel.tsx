@@ -3,12 +3,13 @@ import React, { FormEvent, useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { cancelOtp, getOtpRequest, resendOtp, verifyOtp } from '@/api/otpApi';
+import { cancelOtp, getOtpRequest, resendOtp, verifyOtp, VerifyOtpResponse } from '@/api/otpApi';
 import SpinnerIcon from '@/components/misc/SpinnerIcon';
 import { isValidGuid } from '@/utils/stringUtils';
 
 import { OtpInputGroup } from './OtpInputGroup';
 import { Loader } from '@/components/Loader';
+import { CustomError } from '@/common/types';
 
 const otpInputLength = 6;
 
@@ -46,7 +47,7 @@ const Channel = () => {
 		},
 	);
 
-	const verifyMutation = useMutation(
+	const verifyMutation = useMutation<VerifyOtpResponse, CustomError>(
 		['verifyApp', requestId, key, code],
 		() => verifyOtp(requestId!, key, code),
 		{
@@ -120,10 +121,7 @@ const Channel = () => {
 										</div>
 										{verifyMutation.isError && (
 											<span className="label-text-alt text-sm text-error">
-												{
-													(verifyMutation.error as AxiosError).response
-														?.data.detail
-												}
+												{verifyMutation.error.detail}
 											</span>
 										)}
 										<button
