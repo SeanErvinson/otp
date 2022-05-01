@@ -1,7 +1,21 @@
 import Layout from "@theme/Layout";
-import React from "react";
+import React, { FormEvent } from "react";
 
 const Contact = () => {
+  const handleOnSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log(event.currentTarget);
+    fetch("/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(
+        new FormData(event.currentTarget) as any
+      ).toString(),
+    })
+      .then(() => console.log("Form successfully submitted"))
+      .catch((error) => alert(error));
+  };
+
   return (
     <Layout title="Contact Us" description="Very simple and affordable">
       <div className="container px-6 py-16 mx-auto text-center">
@@ -14,45 +28,12 @@ const Contact = () => {
           </p>
         </div>
       </div>
-      <form name="contact" method="POST" data-netlify="true">
-        <input type="hidden" name="form-name" value="contact" />
-        <p>
-          <label>
-            Your Name: <input type="text" name="name" />
-          </label>
-        </p>
-        <p>
-          <label>
-            Your Email: <input type="email" name="email" />
-          </label>
-        </p>
-        <p>
-          <label>
-            Your Role:{" "}
-            <select name="role[]" multiple>
-              <option value="leader">Leader</option>
-              <option value="follower">Follower</option>
-            </select>
-          </label>
-        </p>
-        <p>
-          <label>
-            Message: <textarea name="message"></textarea>
-          </label>
-        </p>
-        <p>
-          <button type="submit">Send</button>
-        </p>
-      </form>
-      <hr />
-      <form name="newsletter" method="POST" data-netlify="true">
+      <form name="newsletter" data-netlify="true" onSubmit={handleOnSubmit}>
+        <input type="hidden" name="form-name" value="newsletter" />
         <p>
           <label>
             Email <input type="email" name="email" />
           </label>
-        </p>
-        <p>
-          <button type="submit">Send</button>
         </p>
       </form>
     </Layout>
