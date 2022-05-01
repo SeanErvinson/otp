@@ -47,3 +47,13 @@ export type AppDetail = {
 	createdAt: Date;
 	updatedAt: Date;
 };
+
+/**
+ * Misc
+ */
+
+export type CustomError = {
+	type: string;
+	title: string;
+	detail: string;
+};
