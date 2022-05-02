@@ -1,5 +1,7 @@
 import Layout from '@theme/Layout';
 import React, { ReactNode, useState } from 'react';
+import CheckMarkIcon from '../components/icons/CheckMarkIcon';
+import DropDownIcon from '../components/icons/DropDownIcon';
 import PricingCalculator from '../components/PricingCalculator';
 import { emailPricingTable, smsPricingTable } from '../types';
 
@@ -47,6 +49,32 @@ const PricingTable = (props: Props) => {
 	);
 };
 
+const IncludedList = () => {
+	const features = [
+		'Reporting and Analytics',
+		'Own company branding',
+		'Downloadable logs',
+		'And much more!',
+	];
+
+	return (
+		<div className="p-6">
+			<h1 className="text-lg font-medium text-gray-700 capitalize lg:text-xl dark:text-white">
+				What’s included:
+			</h1>
+			<div className="mt-8 space-y-4">
+				{features.map((feature, index) => (
+					<div className="flex items-center" key={index}>
+						<CheckMarkIcon className="h-6 stroke-blue-600" />
+
+						<span className="mx-4 text-gray-700 dark:text-gray-300">{feature} </span>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+};
+
 const Pricing = () => {
 	const [showSmsPriceTable, setShowSmsPriceTable] = useState(false);
 	const [showEmailPriceTable, setShowEmailPriceTable] = useState(false);
@@ -85,8 +113,8 @@ const Pricing = () => {
 										</h1>
 
 										<p className="mt-4 text-gray-500 dark:text-gray-300">
-											You're only billed what you use. Easily calculate using
-											a{' '}
+											You're only billed what you use. Estimate your expected
+											monthly costs —{' '}
 											<a
 												href={`#pricing-calculator`}
 												className="text-sm font-bold text-blue-500 dark:text-blue-400 hover:underline">
@@ -114,17 +142,7 @@ const Pricing = () => {
 												}
 												className="flex flex-row p-2 text-gray-700 bg-white border border-transparent rounded-md dark:text-white focus:border-blue-500 focus:ring-opacity-40 dark:focus:ring-opacity-40 focus:ring-blue-300 dark:focus:ring-blue-400 focus:ring dark:bg-gray-800 focus:outline-none">
 												show price table
-												<svg
-													className="w-5 h-5 text-gray-800 dark:text-white"
-													xmlns="http://www.w3.org/2000/svg"
-													viewBox="0 0 20 20"
-													fill="currentColor">
-													<path
-														fillRule="evenodd"
-														d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-														clipRule="evenodd"
-													/>
-												</svg>
+												<DropDownIcon className="w-5 h-5 text-gray-800 dark:text-white" />
 											</button>
 										</div>
 										{showSmsPriceTable && (
@@ -146,17 +164,7 @@ const Pricing = () => {
 												}
 												className="flex flex-row p-2 text-gray-700 bg-white border border-transparent rounded-md dark:text-white focus:border-blue-500 focus:ring-opacity-40 dark:focus:ring-opacity-40 focus:ring-blue-300 dark:focus:ring-blue-400 focus:ring dark:bg-gray-800 focus:outline-none">
 												show price table
-												<svg
-													className="w-5 h-5 text-gray-800 dark:text-white"
-													xmlns="http://www.w3.org/2000/svg"
-													viewBox="0 0 20 20"
-													fill="currentColor">
-													<path
-														fillRule="evenodd"
-														d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-														clipRule="evenodd"
-													/>
-												</svg>
+												<DropDownIcon className="w-5 h-5 text-gray-800 dark:text-white" />
 											</button>
 										</div>
 										{showEmailPriceTable && (
@@ -176,66 +184,7 @@ const Pricing = () => {
 
 									<hr className="border-gray-200 dark:border-gray-700" />
 
-									<div className="p-6">
-										<h1 className="text-lg font-medium text-gray-700 capitalize lg:text-xl dark:text-white">
-											What’s included:
-										</h1>
-										<div className="mt-8 space-y-4">
-											<div className="flex items-center">
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													className="w-5 h-5 text-blue-500"
-													viewBox="0 0 20 20"
-													fill="currentColor">
-													<path
-														fillRule="evenodd"
-														d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-														clipRule="evenodd"
-													/>
-												</svg>
-
-												<span className="mx-4 text-gray-700 dark:text-gray-300">
-													Reporting and Analytics
-												</span>
-											</div>
-
-											<div className="flex items-center">
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													className="w-5 h-5 text-blue-500"
-													viewBox="0 0 20 20"
-													fill="currentColor">
-													<path
-														fillRule="evenodd"
-														d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-														clipRule="evenodd"
-													/>
-												</svg>
-
-												<span className="mx-4 text-gray-700 dark:text-gray-300">
-													Own company branding
-												</span>
-											</div>
-
-											<div className="flex items-center">
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													className="w-5 h-5 text-blue-500"
-													viewBox="0 0 20 20"
-													fill="currentColor">
-													<path
-														fillRule="evenodd"
-														d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-														clipRule="evenodd"
-													/>
-												</svg>
-
-												<span className="mx-4 text-gray-700 dark:text-gray-300">
-													Downloadable logs
-												</span>
-											</div>
-										</div>
-									</div>
+									<IncludedList />
 								</div>
 							</div>
 						</div>
