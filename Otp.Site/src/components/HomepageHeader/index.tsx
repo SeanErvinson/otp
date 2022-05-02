@@ -17,19 +17,19 @@ const HomepageHeader = () => {
 
 					<div className="mt-8 space-y-5">
 						<p className="flex items-center -mx-2 text-gray-700 dark:text-gray-200">
-							<CheckMarkIcon className="h-6 stroke-blue-600" />
+							<CheckMarkIcon className="w-6 h-6 mx-2 text-blue-500" />
 
 							<span className="mx-2">Clean and Simple Layout</span>
 						</p>
 
 						<p className="flex items-center -mx-2 text-gray-700 dark:text-gray-200">
-							<CheckMarkIcon className="h-6 stroke-blue-600" />
+							<CheckMarkIcon className="w-6 h-6 mx-2 text-blue-500" />
 
 							<span className="mx-2">Just Copy Paste Codeing</span>
 						</p>
 
 						<p className="flex items-center -mx-2 text-gray-700 dark:text-gray-200">
-							<CheckMarkIcon className="h-6 stroke-blue-600" />
+							<CheckMarkIcon className="w-6 h-6 mx-2 text-blue-500" />
 
 							<span className="mx-2">Easy to Use</span>
 						</p>
