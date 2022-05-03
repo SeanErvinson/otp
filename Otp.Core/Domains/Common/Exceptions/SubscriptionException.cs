@@ -1,6 +1,5 @@
 ﻿using System.Runtime.Serialization;
 using Otp.Core.Domains.Common.Enums;
-using Otp.Core.Domains.Entities;
 
 namespace Otp.Core.Domains.Common.Exceptions;
 

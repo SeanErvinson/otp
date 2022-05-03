@@ -6,6 +6,7 @@ namespace Otp.Core.Domains.Entities;
 public class CallbackEvent : TimedEntity
 {
 	public Guid AppId { get; private set; }
+	public string? Message { get; set; }
 	public Guid RequestId { get; private set; }
 	public Channel Channel { get; private set; }
 	public string Contact { get; private set; }
@@ -19,13 +20,14 @@ public class CallbackEvent : TimedEntity
 	{
 	}
 
-	public CallbackEvent(Guid appId, Channel channel, Guid requestId, string contact, CallbackEventType type)
+	public CallbackEvent(Guid appId, Channel channel, Guid requestId, string contact, CallbackEventType type, string? message)
 	{
 		AppId = appId;
 		Channel = channel;
 		RequestId = requestId;
 		Contact = contact;
 		Type = type;
+		Message = message;
 	}
 
 	public void SetResponse(int statusCode, string? responseMessage)
