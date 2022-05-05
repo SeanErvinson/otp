@@ -56,22 +56,23 @@ public class App : AuditableEntity
 		return generatedKey;
 	}
 
-	public void TriggerFailedCallback(OtpRequest request)
+	public void TriggerFailedCallback(OtpRequest request, string message)
 	{
-		TriggerCallback(request, CallbackEventType.Failed);
+		TriggerCallback(request, CallbackEventType.Failed, message);
 	}
-
+	
 	public void TriggerCanceledCallback(OtpRequest request)
 	{
 		TriggerCallback(request, CallbackEventType.Canceled);
 	}
-
+	
 	public void TriggerSuccessCallback(OtpRequest request)
 	{
 		TriggerCallback(request, CallbackEventType.Success);
 	}
 
-	private void TriggerCallback(OtpRequest request, CallbackEventType type)
+	// TODO If switched to a microservice, replace this into a message handler call a mediator
+	private void TriggerCallback(OtpRequest request, CallbackEventType type, string? message = null)
 	{
 		if (string.IsNullOrEmpty(CallbackUrl))
 			return;
@@ -80,7 +81,8 @@ public class App : AuditableEntity
 																	request.Channel,
 																	request.Id,
 																	request.Contact,
-																	type), CallbackUrl, EndpointSecret));
+																	type, 
+																	message), CallbackUrl, EndpointSecret));
 	}
 
 	public void MarkAsDeleted()

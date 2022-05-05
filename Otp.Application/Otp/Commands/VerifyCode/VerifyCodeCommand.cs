@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Entities;
+using Otp.Core.Domains.ValueObjects;
+using Serilog;
 using Serilog.Context;
 
 namespace Otp.Application.Otp.Commands.VerifyCode;
@@ -13,11 +15,13 @@ public record VerifyCodeCommand(Guid Id, string Code) : IRequest<VerifyCodeComma
 	{
 		private readonly IApplicationDbContext _dbContext;
 		private readonly IOtpContextService _otpContextService;
+		private readonly ICurrentUserService _currentUserService;
 
-		public Handler(IApplicationDbContext dbContext, IOtpContextService otpContextService)
+		public Handler(IApplicationDbContext dbContext, IOtpContextService otpContextService, ICurrentUserService currentUserService)
 		{
 			_dbContext = dbContext;
 			_otpContextService = otpContextService;
+			_currentUserService = currentUserService;
 		}
 
 		public async Task<VerifyCodeCommandResponse> Handle(VerifyCodeCommand request, CancellationToken cancellationToken)
@@ -26,13 +30,13 @@ public record VerifyCodeCommand(Guid Id, string Code) : IRequest<VerifyCodeComma
 			{
 				var otpRequest =
 					await _dbContext.OtpRequests
-									.Include(otpRequest => otpRequest.App)
-									.FirstOrDefaultAsync(req =>
-															req.Id == request.Id
-															&& req.Key == _otpContextService.Key
-															&& req.State == OtpRequestState.Available
-															&& req.Status == OtpRequestStatus.Success,
-														cancellationToken);
+						.Include(otpRequest => otpRequest.App)
+						.FirstOrDefaultAsync(req =>
+								req.Id == request.Id
+								&& req.Key == _otpContextService.Key
+								&& req.State == OtpRequestState.Available
+								&& req.Status == OtpRequestStatus.Success,
+							cancellationToken);
 
 				if (otpRequest is null)
 				{
@@ -51,13 +55,13 @@ public record VerifyCodeCommand(Guid Id, string Code) : IRequest<VerifyCodeComma
 
 				if (otpRequest.Code != request.Code)
 				{
-					otpRequest.App.TriggerFailedCallback(otpRequest);
+					otpRequest.AddAttempt(OtpAttempt.Fail(_currentUserService.IpAddress, _currentUserService.UserAgent, request.Code));
 					await _dbContext.SaveChangesAsync(cancellationToken);
 					throw new InvalidRequestException("Code provided was incorrect");
 				}
 
-				otpRequest.App.TriggerSuccessCallback(otpRequest);
-				otpRequest.SuccessfullyClaimed();
+				Log.Information("Setting request to success");
+				otpRequest.AddAttempt(OtpAttempt.Success(_currentUserService.IpAddress, _currentUserService.UserAgent, request.Code));
 				await _dbContext.SaveChangesAsync(cancellationToken);
 
 				return new VerifyCodeCommandResponse(otpRequest.SuccessUrl);

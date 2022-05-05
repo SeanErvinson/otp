@@ -33,12 +33,12 @@ public class OtpRequestedEventHandler : INotificationHandler<DomainEventNotifica
 				{
 					Log.Information("Sending otp request");
 					await sender.Send(otpRequest, cancellationToken);
-					otpRequest.SuccessfullySent();
+					otpRequest.SentSuccessfully();
 				}
 				catch (Exception e)
 				{
 					Log.Error(e, "Failed to send otp request");
-					otpRequest.FailedSent(e.Message);
+					otpRequest.SentFailed(e.Message);
 					throw new InvalidOperationException(e.Message);
 				}
 				finally

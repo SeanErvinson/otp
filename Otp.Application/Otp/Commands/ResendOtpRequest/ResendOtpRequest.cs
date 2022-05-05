@@ -37,9 +37,9 @@ public record ResendOtpRequest(Guid Id) : IRequest
 					throw new NotFoundException("Unable to resend existing request was not found");
 				}
 
-				using (LogContext.PushProperty("NumberOfRetries", otpRequest.Retries))
+				using (LogContext.PushProperty("NumberOfResend", otpRequest.ResendCount))
 				{
-					otpRequest.Retry();
+					otpRequest.Resend();
 
 					await _dbContext.SaveChangesAsync(cancellationToken);
 

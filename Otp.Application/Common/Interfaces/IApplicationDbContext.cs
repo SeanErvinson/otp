@@ -15,4 +15,5 @@ public interface IApplicationDbContext
 	DbSet<Subscription> Subscriptions { get; set; }
 
 	Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+	int SaveChanges();
 }

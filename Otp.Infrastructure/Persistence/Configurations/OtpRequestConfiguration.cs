@@ -21,5 +21,9 @@ public class OtpRequestConfiguration : BaseEntityConfiguration<OtpRequest>
 		builder.Property(otpRequest => otpRequest.Channel)
 				.HasConversion<string>();
 		builder.Ignore(otpRequest => otpRequest.RequestPath);
+		builder.OwnsMany(otpRequest => otpRequest.OtpAttempts, attempts =>
+		{
+			attempts.Property(attempt => attempt.AttemptStatus).HasConversion<string>();
+		});
 	}
 }

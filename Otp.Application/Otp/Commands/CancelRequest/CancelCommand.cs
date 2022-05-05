@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Entities;
+using Otp.Core.Domains.ValueObjects;
+using Serilog;
 using Serilog.Context;
 
 namespace Otp.Application.Otp.Commands.CancelRequest;
@@ -13,11 +15,13 @@ public record CancelRequestCommand(Guid Id) : IRequest<CancelRequestCommandRespo
 	{
 		private readonly IApplicationDbContext _dbContext;
 		private readonly IOtpContextService _otpContextService;
+		private readonly ICurrentUserService _currentUserService;
 
-		public Handler(IApplicationDbContext dbContext, IOtpContextService otpContextService)
+		public Handler(IApplicationDbContext dbContext, IOtpContextService otpContextService, ICurrentUserService currentUserService)
 		{
 			_dbContext = dbContext;
 			_otpContextService = otpContextService;
+			_currentUserService = currentUserService;
 		}
 
 		public async Task<CancelRequestCommandResponse> Handle(CancelRequestCommand request, CancellationToken cancellationToken)
@@ -48,9 +52,9 @@ public record CancelRequestCommand(Guid Id) : IRequest<CancelRequestCommandRespo
 				{
 					throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
 				}
-
-				otpRequest.App.TriggerCanceledCallback(otpRequest);
-				otpRequest.FailedClaimed("Request was canceled");
+				
+				Log.Information("Cancelling otp request");
+				otpRequest.AddAttempt(OtpAttempt.Cancel(_currentUserService.IpAddress, _currentUserService.UserAgent));
 				await _dbContext.SaveChangesAsync(cancellationToken);
 
 				return new CancelRequestCommandResponse(otpRequest.CancelUrl);

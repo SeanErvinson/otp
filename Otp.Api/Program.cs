@@ -8,6 +8,7 @@ using Otp.Api.Extensions;
 using Otp.Api.Middlewares;
 using Otp.Api.PipelineBehaviors;
 using Otp.Api.Services;
+using Otp.Api.Startup;
 using Otp.Application;
 using Otp.Application.Common.Interfaces;
 using Otp.Infrastructure;
@@ -18,9 +19,18 @@ Log.Logger = new LoggerConfiguration()
 			.WriteTo.Console()
 			.CreateBootstrapLogger();
 
+void DbMigrate(IApplicationBuilder applicationBuilder)
+{
+	using var scope = applicationBuilder.ApplicationServices.CreateScope();
+	var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+	dbInitializer.Migrate();
+	dbInitializer.Seed();
+}
+
 try
 {
 	var builder = WebApplication.CreateBuilder(args);
+
 	builder.Host.UseSerilog(((context, services, configuration) =>
 	{
 		configuration.ReadFrom.Configuration(context.Configuration)
@@ -61,6 +71,8 @@ try
 
 	builder.Services.AddInfrastructure(builder.Configuration);
 	builder.Services.AddApplication(builder.Configuration);
+	
+	builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 	builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 	builder.Services.AddScoped<IAppContextService, AppContextService>();
@@ -76,6 +88,8 @@ try
 		app.UseDeveloperExceptionPage();
 		app.UseMigrationsEndPoint();
 	}
+
+	DbMigrate(app);
 
 	app.UseHttpsRedirection();
 

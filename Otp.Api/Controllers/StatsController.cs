@@ -2,12 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Otp.Api.Filters;
-using Otp.Application.Otp.Commands.CancelRequest;
 using Otp.Application.Otp.Commands.RequestOtp;
-using Otp.Application.Otp.Commands.ResendOtpRequest;
-using Otp.Application.Otp.Commands.VerifyCode;
-using Otp.Application.Otp.Queries.GetOtpRequest;
 
 namespace Otp.Api.Controllers;
 

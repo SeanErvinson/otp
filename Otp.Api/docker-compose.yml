@@ -1,13 +1,37 @@
 ﻿services:
+  azurerite:
+    container_name: azurerite-local
+    image: mcr.microsoft.com/azure-storage/azurite
+    restart: always
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    volumes:
+      - type: volume
+        source: azurerite-data
+        target: /data
   db:
+    container_name: sqldb-otp
     environment:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: P@ssword1
+    user: root
     image: mcr.microsoft.com/mssql/server:2019-latest
     restart: always
     ports:
       - "1433:1433"
     volumes:
-      - $USERPROFILE/mssql/data:/var/opt/mssql/data
-      - $USERPROFILE/mssql/log:/var/opt/mssql/log
-      - $USERPROFILE/mssql/secrets:/var/opt/mssql/secretsd
+      - type: bind
+        source: ~/RiderProjects/Databases/otp-dev/data
+        target: /var/opt/mssql/data
+      - type: bind
+        source: ~/RiderProjects/Databases/otp-dev/log
+        target: /var/opt/mssql/log
+      - type: bind
+        source: ~/RiderProjects/Databases/otp-dev/secrets
+        target: /var/opt/mssql/secrets
+
+volumes:
+  azurerite-data:
+      
