@@ -1,3 +1,9 @@
+## Run infrastructure locally
+```shell
+docker compose up -d
+```
+
+
 ## Install mssql in a container
 
 ```shell

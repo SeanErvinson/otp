@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Otp.Application.Principal.Commands;
+using Otp.Application.Principal.Queries.GetCurrentPrincipal;
 
 namespace Otp.Api.Controllers;
 
@@ -15,6 +16,15 @@ public class PrincipalController : ControllerBase
 	public PrincipalController(IMediator mediator)
 	{
 		_mediator = mediator;
+	}
+	
+	[HttpGet("current")]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetCurrentPrincipalQueryDto))]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	public async Task<IActionResult> GetCurrentPrincipal()
+	{
+		var result = await _mediator.Send(new GetCurrentPrincipalQuery());
+		return Ok(result);
 	}
 	
 	[HttpPost]
