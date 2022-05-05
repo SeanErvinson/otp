@@ -31,14 +31,9 @@ public record GetCurrentPrincipalQuery : IRequest<GetCurrentPrincipalQueryDto>
 				throw new NotFoundException("Principal does not exists");
 			}
 
-			var subscription = await _applicationDbContext.Subscriptions.AsNoTracking()
-				.FirstOrDefaultAsync(subscription => subscription.PrincipalId == principal.Id,
-					cancellationToken);
-			
-
-			return new GetCurrentPrincipalQueryDto(subscription?.TieredPlan);
+			return new GetCurrentPrincipalQueryDto();
 		}
 	}
 }
 
-public record GetCurrentPrincipalQueryDto(TieredPlan? Plan);
+public record GetCurrentPrincipalQueryDto();
