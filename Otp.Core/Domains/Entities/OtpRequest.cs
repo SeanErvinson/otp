@@ -24,7 +24,7 @@ public class OtpRequest : TimedEntity
 	public OtpRequestState State { get; private set; }
 	public OtpRequestStatus Status { get; private set; }
 	public string? ErrorMessage { get; private set; }
-
+	public RequestInfo? RequestInfo { get; private set; }
 	private readonly List<OtpAttempt> _otpAttempts = new();
 	public IReadOnlyCollection<OtpAttempt> OtpAttempts => _otpAttempts.AsReadOnly();
 	public DateTime ExpiresOn { get; } = DateTime.UtcNow.AddMinutes(5);
@@ -68,10 +68,12 @@ public class OtpRequest : TimedEntity
 		Status = OtpRequestStatus.Failed;
 		ErrorMessage = message;
 	}
-	
+
 	// TODO If switched to a microservice, all the trigger, should be replace with an event that sends a message
-	public void AddAttempt(OtpAttempt attempt)
+	public void AddAttempt(OtpAttempt attempt, RequestInfo requestInfo)
 	{
+		RequestInfo ??= requestInfo;
+		
 		if (_otpAttempts.Count >= MaxAttempts)
 		{
 			const string message = "OTP has reached max attempt tries. Please request a new OTP";

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Otp.Core.Domains.Entities;
 
 namespace Otp.Infrastructure.Persistence.Configurations;
@@ -23,7 +24,9 @@ public class OtpRequestConfiguration : BaseEntityConfiguration<OtpRequest>
 		builder.Ignore(otpRequest => otpRequest.RequestPath);
 		builder.OwnsMany(otpRequest => otpRequest.OtpAttempts, attempts =>
 		{
+			attempts.ToTable(nameof(OtpRequest.OtpAttempts));
 			attempts.Property(attempt => attempt.AttemptStatus).HasConversion<string>();
 		});
+		builder.OwnsOne(otpRequest => otpRequest.RequestInfo);
 	}
 }

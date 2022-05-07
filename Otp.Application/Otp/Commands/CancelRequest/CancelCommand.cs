@@ -54,7 +54,7 @@ public record CancelRequestCommand(Guid Id) : IRequest<CancelRequestCommandRespo
 				}
 				
 				Log.Information("Cancelling otp request");
-				otpRequest.AddAttempt(OtpAttempt.Cancel(_currentUserService.IpAddress, _currentUserService.UserAgent));
+				otpRequest.AddAttempt(OtpAttempt.Cancel(), new RequestInfo(_currentUserService.IpAddress, _currentUserService.UserAgent, _currentUserService.Referrer));
 				await _dbContext.SaveChangesAsync(cancellationToken);
 
 				return new CancelRequestCommandResponse(otpRequest.CancelUrl);
