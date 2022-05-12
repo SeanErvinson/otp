@@ -1,5 +1,5 @@
-import { FunctionComponent, ReactChildren, ReactNode } from 'react';
-import { NavLink } from 'react-router-dom';
+import { ReactChildren, ReactNode } from 'react';
+import { Link, NavLink } from 'react-router-dom';
 
 import MenuIcon from '@/components/misc/MenuIcon';
 
@@ -7,7 +7,7 @@ interface Props {
 	children: ReactChildren | ReactNode;
 }
 
-const Sidebar: FunctionComponent<Props> = props => {
+const Sidebar = (props: Props) => {
 	return (
 		<div id="sidebar" className="shadow bg-base-200 h-full drawer drawer-mobile w-full">
 			<input id="drawer" type="checkbox" className="drawer-toggle" />
@@ -36,10 +36,22 @@ const Sidebar: FunctionComponent<Props> = props => {
 					</li>
 					<div className="grow"></div>
 					<li>
-						<a>Customer Support</a>
+						<a
+							href={`${
+								new URL('contact', import.meta.env.VITE_OTP_SITE_BASE_URL).href
+							}`}
+							target="_blank">
+							Customer Support
+						</a>
 					</li>
 					<li>
-						<a>Documentation</a>
+						<a
+							href={`${
+								new URL('docs/intro', import.meta.env.VITE_OTP_SITE_BASE_URL).href
+							}`}
+							target="_blank">
+							Documentation
+						</a>
 					</li>
 				</ul>
 			</div>

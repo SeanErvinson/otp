@@ -16,8 +16,8 @@ using Otp.Infrastructure.Options;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
-			.WriteTo.Console()
-			.CreateBootstrapLogger();
+	.WriteTo.Console()
+	.CreateBootstrapLogger();
 
 void DbMigrate(IApplicationBuilder applicationBuilder)
 {
@@ -34,8 +34,8 @@ try
 	builder.Host.UseSerilog(((context, services, configuration) =>
 	{
 		configuration.ReadFrom.Configuration(context.Configuration)
-					.ReadFrom.Services(services)
-					.Enrich.FromLogContext();
+			.ReadFrom.Services(services)
+			.Enrich.FromLogContext();
 	}));
 	builder.Services.AddHttpClient();
 	builder.Services.AddApiVersioning(options =>
@@ -56,13 +56,15 @@ try
 		option.LowercaseQueryStrings = true;
 	});
 
+	builder.Services.AddSingleton(new JsonSerializerOptions(JsonSerializerDefaults.Web));
+
 	builder.Services.AddControllers()
-			.AddJsonOptions(option =>
-			{
-				option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-				option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-			})
-			.AddFluentValidation();
+		.AddJsonOptions(option =>
+		{
+			option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+			option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+		})
+		.AddFluentValidation();
 
 	builder.Services.AddOptions<StorageAccountOptions>().Bind(builder.Configuration.GetSection(StorageAccountOptions.Section));
 	builder.Services.AddEndpointsApiExplorer();
@@ -71,7 +73,7 @@ try
 
 	builder.Services.AddInfrastructure(builder.Configuration);
 	builder.Services.AddApplication(builder.Configuration);
-	
+
 	builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 	builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();

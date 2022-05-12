@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink, Outlet, useParams } from 'react-router-dom';
 
@@ -19,7 +19,11 @@ type FormData = {
 
 const App = () => {
 	const params = useParams();
-	const query = useQuery(['getApp', params.appId], () => getApp(params.appId ?? ''));
+	const appId = params.appId;
+
+	const query = useQuery(['getApp', appId], () => getApp(appId), {
+		enabled: !!appId,
+	});
 
 	const { handleSubmit, register, control, resetField, setValue, reset } = useForm<FormData>({
 		defaultValues: {

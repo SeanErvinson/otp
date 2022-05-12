@@ -6,6 +6,7 @@ import EmptyIcon from '@/components/misc/EmptyIcon';
 
 import CreateAppButton from './CreateAppButton';
 import AppTable from './AppTable';
+import PageHeader from '@/components/PageHeader/PageHeader';
 
 const Apps = () => {
 	const [page, setPage] = useState(1);
@@ -59,10 +60,10 @@ const Apps = () => {
 
 	return (
 		<main id="apps">
-			<div className="flex flex-row justify-between">
-				<h1 className="text-4xl font-bold mb-6">Apps</h1>
-				{query.data && query.data.items.length > 0 && <CreateAppButton />}
-			</div>
+			<PageHeader
+				title="Apps"
+				rightElement={query.data && query.data.items.length > 0 && <CreateAppButton />}
+			/>
 
 			{defaultComponent}
 		</main>

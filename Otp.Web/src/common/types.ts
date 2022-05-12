@@ -14,6 +14,24 @@ export type PagedResult<T> = {
 /**
  * Otp
  */
+export enum MetricInterval {
+	Day = 'Day',
+	Month = 'Month',
+}
+const MetricStrategy = ['ChannelUsageCount', 'EmailUsageCount', 'SmsUsageCount'] as const;
+export type CountMetric = {
+	name: string;
+	data: {
+		previousMonthSentRequest: number;
+		sentRequest: number;
+	};
+};
+
+export type ChannelUsageMetric = {
+	name: string;
+	data: {};
+};
+export type MetricStrategy = typeof MetricStrategy[number];
 
 const Channel = ['SMS', 'Email'] as const;
 export type Channel = typeof Channel[number];
