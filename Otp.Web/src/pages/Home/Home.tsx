@@ -1,29 +1,80 @@
+import { getMetrics } from '@/api/otpApi';
+import { CountMetric } from '@/common/types';
+import PageHeader from '@/components/PageHeader/PageHeader';
+import SingleStat from '@/components/SIngleStat/SingleStat';
+import DateUtils from '@/utils/dateUtils';
+import { useQuery } from 'react-query';
+import ChannelUsageChart from './ChannelUsageChart';
+
+const refreshInterval = 10000;
+
 const Home = () => {
+	const currentDate = new Date();
+	const startMonthDate = DateUtils.startOfMonth(currentDate);
+	const endMonthDate = DateUtils.endOfMonth(currentDate);
+
+	const smsCountMetricQuery = useQuery(
+		['getSmsCountMetric'],
+		() =>
+			getMetrics<CountMetric>(
+				'SmsUsageCount',
+				`${startMonthDate.toISOString()}/${endMonthDate.toISOString()}`,
+			),
+		{
+			refetchInterval: refreshInterval,
+			refetchOnWindowFocus: true,
+		},
+	);
+
+	const emailCountMetricQuery = useQuery(
+		['getEmailCountMetric'],
+		() =>
+			getMetrics<CountMetric>(
+				'EmailUsageCount',
+				`${startMonthDate.toISOString()}/${endMonthDate.toISOString()}`,
+			),
+		{
+			refetchInterval: refreshInterval,
+			refetchOnWindowFocus: true,
+		},
+	);
+
+	const totalSmsRequest = smsCountMetricQuery.data?.data.sentRequest;
+	const totalPrevSmsRequest = smsCountMetricQuery.data?.data.previousMonthSentRequest;
+
+	const totalEmailRequest = emailCountMetricQuery.data?.data.sentRequest;
+	const totalPrevEmailRequest = emailCountMetricQuery.data?.data.previousMonthSentRequest;
+
 	return (
-		<div>
-			<div className="w-full mt-2 border stats border-base-300">
-				<div className="stat">
-					<div className="stat-figure text-primary">
-						<button className="btn loading btn-circle btn-lg bg-base-200 btn-ghost"></button>
-					</div>
-					<div className="stat-value">5,000/10,000</div>
-					<div className="stat-title">Email sent</div>
-					<div className="stat-desc">
-						<progress
-							value="50"
-							max="100"
-							className="progress progress-secondary"></progress>
-					</div>
+		<main id="home" className="h-full mx-auto">
+			<PageHeader title="Dashboard" />
+			<article className="flex flex-col gap-4">
+				<div className="flex flex-col md:flex-row gap-6">
+					<SingleStat
+						title="SMS sent this month"
+						value={totalSmsRequest?.toString() ?? '0'}
+						description={
+							totalPrevSmsRequest && totalSmsRequest
+								? `${totalPrevSmsRequest / totalSmsRequest}% more than last month`
+								: null
+						}
+					/>
+
+					<SingleStat
+						title="Email sent this month"
+						value={totalEmailRequest?.toString() ?? '0'}
+						description={
+							totalPrevEmailRequest && totalEmailRequest
+								? `${
+										totalPrevEmailRequest / totalEmailRequest
+								  }% more than last month`
+								: null
+						}
+					/>
 				</div>
-			</div>
-			<div className="shadow stats">
-				<div className="stat">
-					<div className="stat-title">SMS sent</div>
-					<div className="stat-value">89,400</div>
-					<div className="stat-desc">21% more than last month</div>
-				</div>
-			</div>
-		</div>
+				<ChannelUsageChart />
+			</article>
+		</main>
 	);
 };
 

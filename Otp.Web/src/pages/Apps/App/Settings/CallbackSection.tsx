@@ -62,7 +62,7 @@ const CallbackSection = ({ appId, callbackUrl }: Props) => {
 	};
 
 	return (
-		<div className="w-1/2 mb-2">
+		<div className="max-w-lg mb-2">
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className="form-control">
 					<label htmlFor={generateId('callback')} className="label">
@@ -92,20 +92,16 @@ const CallbackSection = ({ appId, callbackUrl }: Props) => {
 						<span className="label-text">Secret</span>
 					</label>
 					{!!callbackUrl && !enableChangeSecret ? (
-						<div className="alert alert-warning">
-							<div className="flex-1">
-								<WarningIcon />
-								<p>
-									If you've lost or forgotten this secret, you can change it, but
-									be aware that any integrations using this secret will need to be
-									updated. —<span>&nbsp;</span>
-									<span
-										className="link"
-										onClick={() => setEnableChangeSecret(true)}>
-										Change Secret
-									</span>
-								</p>
-							</div>
+						<div className="alert-warning rounded-2xl p-4 flex flex-row justify-between items-center gap-4">
+							<WarningIcon className="w-6 h-6 mx-1 fill-current" />
+							<p className="flex-1">
+								If you've lost or forgotten this secret, you can change it, but be
+								aware that any integrations using this secret will need to be
+								updated. —<span>&nbsp;</span>
+								<span className="link" onClick={() => setEnableChangeSecret(true)}>
+									Change Secret
+								</span>
+							</p>
 						</div>
 					) : (
 						<div className="flex space-x-2">

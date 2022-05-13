@@ -1,3 +1,4 @@
+import { MetricStrategy, MetricInterval } from './../common/types';
 import { oauthInstance, otpInstance } from '@/api/https';
 import { App, AppDetail, Channel, OtpRequest, PagedResult } from '@/common/types';
 
@@ -71,6 +72,40 @@ export const getAppRecentCallbacks = async (
 	return response.data;
 };
 
+export const updateAppCallback = async (request: UpdateCallbackRequest): Promise<void> => {
+	await oauthInstance.put(`apps/${request.id}/callback`, request);
+};
+
+export const regenerateAppApiKey = async (
+	id: string | undefined,
+): Promise<RegenerateApiKeyResponse> => {
+	const response = await oauthInstance.post(`/apps/${id}/regenerate-api-key`);
+	return response.data;
+};
+
+export const deleteApp = async (id: string): Promise<void> => {
+	await oauthInstance.delete(`/apps/${id}`);
+};
+
+export const getMetrics = async <T>(
+	strategy: MetricStrategy,
+	timeSpan: string,
+	metricInterval?: MetricInterval | null,
+): Promise<T> => {
+	const response = await oauthInstance.get(`/metrics`, {
+		params: {
+			metricName: strategy,
+			timeSpan: timeSpan,
+			metricInterval: metricInterval,
+		},
+	});
+	return response.data;
+};
+
+/**
+ * Otp-Related
+ */
+
 export const getOtpRequest = async (id: string, key: string): Promise<OtpRequest> => {
 	const response = await otpInstance(key).get(`/otp/${id}`, {
 		params: {
@@ -109,21 +144,6 @@ export const resendOtp = async (id: string, key: string) => {
 export const createApp = async (request: CreateAppRequest): Promise<CreateAppResponse> => {
 	const response = await oauthInstance.post('/apps', request);
 	return response.data;
-};
-
-export const updateAppCallback = async (request: UpdateCallbackRequest): Promise<void> => {
-	await oauthInstance.put(`apps/${request.id}/callback`, request);
-};
-
-export const regenerateAppApiKey = async (
-	id: string | undefined,
-): Promise<RegenerateApiKeyResponse> => {
-	const response = await oauthInstance.post(`/apps/${id}/regenerate-api-key`);
-	return response.data;
-};
-
-export const deleteApp = async (id: string): Promise<void> => {
-	await oauthInstance.delete(`/apps/${id}`);
 };
 
 export type VerifyOtpResponse = {

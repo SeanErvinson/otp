@@ -1,5 +1,12 @@
+import PageHeader from '@/components/PageHeader/PageHeader';
+
 const Billing = () => {
-	return <h1>Billing</h1>;
+	return (
+		<main id="billing">
+			<PageHeader title="Billing" />
+			<article></article>
+		</main>
+	);
 };
 
 export default Billing;
