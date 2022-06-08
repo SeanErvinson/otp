@@ -792,4 +792,4 @@ fabric.properties
 # Support for Project snippet scope
 !.vscode/*.code-snippets
 
-# End of https://www.toptal.com/developers/gitignore/api/aspnetcore,rider,visualstudiocode,react,node,csharp
+!Otp.Application/Logs/

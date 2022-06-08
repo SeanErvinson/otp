@@ -7,7 +7,7 @@ import { Sidebar } from '@/components/Sidebar';
 import { Home } from '@/pages/Home';
 import { Billing } from '@/pages/Billing';
 import { Channel } from '@/pages/Channel';
-import { Usage } from '@/pages/Usage';
+import { Logs } from '@/pages/Logs';
 import { Apps } from '@/pages/Apps';
 import { NotFound } from '@/pages/NotFound';
 import { App } from '@/pages/Apps/App';
@@ -46,7 +46,7 @@ const Root = () => {
 					<Route path="recent-callbacks" element={<RecentCallbacks />} />
 				</Route>
 				<Route path="billing" element={<Billing />} />
-				<Route path="usage" element={<Usage />} />
+				<Route path="logs" element={<Logs />} />
 			</Route>
 			<Route path="/sms/:requestId" element={<Channel />} />
 			<Route path="/email/:requestId" element={<Channel />} />

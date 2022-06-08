@@ -29,7 +29,7 @@ const Sidebar = (props: Props) => {
 						<NavLink to="/apps">Apps</NavLink>
 					</li>
 					<li>
-						<NavLink to="/usage">Usage</NavLink>
+						<NavLink to="/logs">Logs</NavLink>
 					</li>
 					<li>
 						<NavLink to="/billing">Billing</NavLink>

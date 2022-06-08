@@ -4,7 +4,7 @@ import Chart from 'react-apexcharts';
 import { useQuery } from 'react-query';
 
 import { getMetrics } from '@/api/otpApi';
-import { MetricInterval, MetricStrategy } from '@/common/types';
+import { MetricInterval } from '@/common/types';
 import PillRadioGroup from '@/components/PillRadioGroup/PillRadioGroup';
 import DateUtils from '@/utils/dateUtils';
 

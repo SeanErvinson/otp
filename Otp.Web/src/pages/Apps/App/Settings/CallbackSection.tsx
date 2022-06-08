@@ -70,7 +70,7 @@ const CallbackSection = ({ appId, callbackUrl }: Props) => {
 					</label>
 					<input
 						id={generateId('callback')}
-						type="text"
+						type="url"
 						defaultValue={callbackUrl}
 						{...register('callbackUrl', {
 							validate: value =>

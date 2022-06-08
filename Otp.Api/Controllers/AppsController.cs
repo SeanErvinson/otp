@@ -10,6 +10,7 @@ using Otp.Application.App.Commands.UpdateCallback;
 using Otp.Application.App.Queries.GetApp;
 using Otp.Application.App.Queries.GetAppRecentCallbacks;
 using Otp.Application.App.Queries.GetApps;
+using Otp.Application.Logs.Queries.GetLogs;
 using Otp.Application.Otp.Commands.RequestOtp;
 
 namespace Otp.Api.Controllers;
@@ -133,6 +134,17 @@ public class AppsController : ControllerBase
 	public async Task<IActionResult> GetApp(Guid id)
 	{
 		var result = await _mediator.Send(new GetAppQuery(id));
+		return Ok(result);
+	}
+	
+	[HttpGet("logs")]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAppQueryDto))]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	public async Task<IActionResult> GetLogs(GetLogsQuery request)
+	{
+		var result = await _mediator.Send(request);
 		return Ok(result);
 	}
 }

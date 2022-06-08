@@ -36,7 +36,12 @@ public static class DependencyInjection
 			ServiceDescriptor.Transient<ISmsProvider, AustraliaSmsProvider>(),
 		});
 		services.AddTransient<ISenderService, SenderService>();
-		services.AddTransient<IEmailProvider, SendGridEmailProvider>();
+		
+		services.TryAddEnumerable(new []
+		{
+			// ServiceDescriptor.Transient<IEmailProvider, SendGridEmailProvider>(),
+			ServiceDescriptor.Transient<IEmailProvider, AwsSesEmailProvider>(), 
+		});
 
 		services.AddTransient<IBlobStorageService, AzureBlobStorageService>();
 		services.AddTransient<IDomainEventService, DomainEventService>();

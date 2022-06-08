@@ -1,4 +1,4 @@
-import { MetricStrategy, MetricInterval } from './../common/types';
+import { MetricStrategy, MetricInterval, Log } from './../common/types';
 import { oauthInstance, otpInstance } from '@/api/https';
 import { App, AppDetail, Channel, OtpRequest, PagedResult } from '@/common/types';
 
@@ -97,6 +97,15 @@ export const getMetrics = async <T>(
 			metricName: strategy,
 			timeSpan: timeSpan,
 			metricInterval: metricInterval,
+		},
+	});
+	return response.data;
+};
+
+export const getLogs = async (pageIndex: number): Promise<Log> => {
+	const response = await oauthInstance.get('/logs', {
+		params: {
+			pageIndex: pageIndex,
 		},
 	});
 	return response.data;

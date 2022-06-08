@@ -85,7 +85,7 @@ const Channel = () => {
 		event.preventDefault();
 		cancelMutation.mutate();
 	};
-
+	
 	useEffect(() => {
 		code?.length === otpInputLength ? setIsValidOtp(true) : setIsValidOtp(false);
 	}, [code]);

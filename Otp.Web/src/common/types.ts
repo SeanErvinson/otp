@@ -11,6 +11,19 @@ export type PagedResult<T> = {
 	hasNextPage: boolean;
 };
 
+export type CursorResult<T> = {
+	before: string;
+	after: string;
+	hasAfter: boolean;
+	hasBefore: boolean;
+	items: T[];
+};
+
+export type CursorRequest = {
+	before?: string;
+	after?: string;
+};
+
 /**
  * Otp
  */
@@ -33,7 +46,7 @@ export type ChannelUsageMetric = {
 };
 export type MetricStrategy = typeof MetricStrategy[number];
 
-const Channel = ['SMS', 'Email'] as const;
+export const Channel = ['SMS', 'Email'] as const;
 export type Channel = typeof Channel[number];
 
 export type OtpRequest = {
@@ -65,6 +78,28 @@ export type AppDetail = {
 	createdAt: Date;
 	updatedAt: Date;
 };
+
+/**
+ * Logs
+ */
+
+export type Log = {
+	id: string;
+	status: Status;
+	eventDate: Date;
+	receiver: string;
+	channel: Channel;
+	app: string;
+};
+
+export const Status = {
+	success: 'Success',
+	warning: 'Warning',
+	error: 'Error',
+	delivered: 'Delivered',
+	sent: 'Sent',
+} as const;
+export type Status = typeof Status[keyof typeof Status];
 
 /**
  * Misc

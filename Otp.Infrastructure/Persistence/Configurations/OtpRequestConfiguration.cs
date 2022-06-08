@@ -14,6 +14,12 @@ public class OtpRequestConfiguration : BaseEntityConfiguration<OtpRequest>
 		builder.Property(otpRequest => otpRequest.Key);
 		builder.Property(otpRequest => otpRequest.ExpiresOn);
 		builder.Property(otpRequest => otpRequest.Contact);
+
+		builder.HasIndex(otpRequest => new
+		{
+			otpRequest.CreatedAt,
+			otpRequest.Id
+		});
 		
 		builder.Property(otpRequest => otpRequest.State)
 				.HasConversion<string>();
