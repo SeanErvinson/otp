@@ -52,7 +52,7 @@ const RegenerateApiModal = (props: Props) => {
 					type="button"
 					disabled={isLoading ? true : false}
 					onClick={() => onClick(props.appId)}>
-					{!isLoading ? 'I understand, regenerate the api key' : 'Regenerating'}
+					{!isLoading ? 'I understand' : 'Regenerating'}
 				</button>
 				<button className="btn btn-ghost" type="button" onClick={onClose}>
 					Cancel

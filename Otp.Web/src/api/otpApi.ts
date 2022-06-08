@@ -3,55 +3,63 @@ import { oauthInstance, otpInstance } from '@/api/https';
 import { App, AppDetail, Channel, OtpRequest, PagedResult } from '@/common/types';
 
 export const getApps = async (pageIndex: number): Promise<PagedResult<App> | null> => {
-	const pageSize = 7;
-	const response = await oauthInstance.get('/apps', {
-		params: {
-			pageIndex: pageIndex,
-			pageSize: pageSize,
-		},
-	});
+	// const pageSize = 7;
+	// const response = await oauthInstance.get('/apps', {
+	// 	params: {
+	// 		pageIndex: pageIndex,
+	// 		pageSize: pageSize,
+	// 	},
+	// });
 
-	// return {
-	// 	hasNextPage: false,
-	// 	hasPreviousPage: false,
-	// 	pageNumber: 1,
-	// 	totalCount: 4,
-	// 	totalPages: 1,
-	// 	items: [
-	// 		{
-	// 			id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf6',
-	// 			createdAt: new Date(),
-	// 			tags: ['Hello'],
-	// 			name: 'Willow',
-	// 		},
-	// 		{
-	// 			id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cba6',
-	// 			createdAt: new Date(),
-	// 			tags: ['Hello'],
-	// 			name: 'Microsoft',
-	// 		},
-	// 		{
-	// 			id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf1',
-	// 			createdAt: new Date(),
-	// 			tags: ['Hello'],
-	// 			name: 'Twitter',
-	// 		},
-	// 		{
-	// 			id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf3',
-	// 			createdAt: new Date(),
-	// 			tags: ['Hello'],
-	// 			name: 'Google',
-	// 		},
-	// 	],
-	// };
+	return {
+		hasNextPage: false,
+		hasPreviousPage: false,
+		pageNumber: 1,
+		totalCount: 4,
+		totalPages: 1,
+		items: [
+			{
+				id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf6',
+				createdAt: new Date(),
+				tags: ['Hello'],
+				name: 'Willow',
+			},
+			{
+				id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cba6',
+				createdAt: new Date(),
+				tags: ['Hello'],
+				name: 'Microsoft',
+			},
+			{
+				id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf1',
+				createdAt: new Date(),
+				tags: ['Hello'],
+				name: 'Twitter',
+			},
+			{
+				id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf3',
+				createdAt: new Date(),
+				tags: ['Hello'],
+				name: 'Google',
+			},
+		],
+	};
 
-	return response.data;
+	// return response.data;
 };
 
 export const getApp = async (id: string | undefined): Promise<AppDetail | null> => {
 	if (!id) {
 		return null;
 	}
+	return {
+		id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf3',
+		name: 'Google',
+		description: 'Hello world',
+		tags: ['hello', 'world', 'hellasdfaso1', 'hell2', 'asdfasdfa', 'helzo', 'helz123asdfo'],
+		createdAt: new Date(),
+		updatedAt: new Date(),
+	};
 	const response = await oauthInstance.get(`/apps/${id}`);
 	if (response.status === 404) {
 		return null;

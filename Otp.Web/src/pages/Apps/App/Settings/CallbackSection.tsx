@@ -9,7 +9,7 @@ import { isValidUrl } from '@/utils/stringUtils';
 
 interface Props {
 	appId: string;
-	callbackUrl: string;
+	callbackUrl?: string;
 }
 
 type FormData = {
@@ -63,7 +63,7 @@ const CallbackSection = ({ appId, callbackUrl }: Props) => {
 
 	return (
 		<div className="max-w-lg mb-2">
-			<form onSubmit={handleSubmit(onSubmit)}>
+			<form onSubmit={handleSubmit(onSubmit)} className="gap-2">
 				<div className="form-control">
 					<label htmlFor={generateId('callback')} className="label">
 						<span className="label-text">Callback URL</span>
@@ -126,12 +126,14 @@ const CallbackSection = ({ appId, callbackUrl }: Props) => {
 				</div>
 
 				{isDirty && (
-					<button
-						className={`btn btn-success ${isLoading && 'loading'}`}
-						disabled={isLoading ? true : false}
-						type="submit">
-						{!isLoading ? 'Save' : 'Saving'}
-					</button>
+					<div>
+						<button
+							className={`btn btn-sm btn-success ${isLoading && 'loading'}`}
+							disabled={isLoading ? true : false}
+							type="submit">
+							{!isLoading ? 'Save' : 'Saving'}
+						</button>
+					</div>
 				)}
 			</form>
 		</div>

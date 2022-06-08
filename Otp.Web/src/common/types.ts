@@ -72,7 +72,7 @@ export type AppDetail = {
 	name: string;
 	description: string;
 	tags?: string[];
-	callbackUrl: string;
+	callbackUrl?: string;
 	backgroundUrl?: string;
 	logoUrl?: string;
 	createdAt: Date;

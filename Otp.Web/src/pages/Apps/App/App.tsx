@@ -14,7 +14,7 @@ import { useForm, useFormState } from 'react-hook-form';
 type FormData = {
 	name: string;
 	description: string;
-	tags: string[];
+	tags?: string[];
 };
 
 const App = () => {
@@ -25,28 +25,37 @@ const App = () => {
 		enabled: !!appId,
 	});
 
-	const { handleSubmit, register, control, resetField, setValue, reset } = useForm<FormData>({
-		defaultValues: {
-			name: query.data?.name,
-			description: query.data?.description,
-			tags: query.data?.tags,
-		},
-	});
+	const { handleSubmit, register, control, resetField, setValue, reset, getValues } =
+		useForm<FormData>({
+			defaultValues: {
+				name: query.data?.name,
+				description: query.data?.description,
+				tags: query.data?.tags,
+			},
+		});
 
 	const { isDirty, dirtyFields } = useFormState<FormData>({ control });
 	const [showTagInput, setShowTagInput] = useState(false);
-	const [tags, setTags] = useState<string[]>([]);
 
 	const handleOnTagInput = (values: string[]) => {
 		if (values.length <= 0) return;
-		setTags(values);
-		setValue('tags', values, { shouldDirty: true });
+		setValue('tags', values, {
+			shouldDirty: true,
+			shouldTouch: true,
+			shouldValidate: true,
+		});
 	};
 
 	const handleOnTagCancel = () => {
+		reset({
+			tags: query.data?.tags,
+		});
 		setShowTagInput(!showTagInput);
-		resetField('tags');
 	};
+
+	useEffect(() => {
+		register('tags');
+	}, []);
 
 	useEffect(() => {
 		reset({
@@ -61,7 +70,7 @@ const App = () => {
 	};
 
 	return (
-		<main id="app" className="h-full w-4/5 mx-auto pt-5">
+		<main id="app" className="h-full mx-auto">
 			{query.isLoading && (
 				<div className="flex flex-col gap-3 items-center h-full w-full justify-center">
 					<SpinnerIcon />
@@ -70,28 +79,33 @@ const App = () => {
 			{query.isSuccess && (
 				<>
 					<div className="flex flex-row justify-between mb-4">
-						<form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
-							<div className="form-control flex flex-row items-center gap-4">
-								<input
-									type="text"
-									defaultValue={query.data?.name}
-									className="input text-3xl font-bold bg-base-200 focus:bg-base-100 px-0 cursor-text"
-									{...register('name', {
-										required: true,
-										pattern: {
-											value: /[\w-]/,
-											message:
-												'Name should only contain alphanumeric, -, or _',
-										},
-									})}
-								/>
-								{dirtyFields.name && (
-									<button
-										onClick={() => resetField('name')}
-										className="btn btn-outline btn-circle btn-xs">
-										<XIcon />
-									</button>
-								)}
+						<form
+							onSubmit={handleSubmit(onSubmit)}
+							className="flex flex-1 flex-col gap-2 w-full">
+							<div className="flex flex-row justify-between">
+								<div className="form-control flex flex-row items-center gap-4">
+									<input
+										type="text"
+										defaultValue={query.data?.name}
+										className="input text-3xl font-bold bg-base-200 focus:bg-base-100 px-0 cursor-text w-4/5"
+										{...register('name', {
+											required: true,
+											pattern: {
+												value: /[\w-]/,
+												message:
+													'Name should only contain alphanumeric, -, or _',
+											},
+										})}
+									/>
+									{dirtyFields.name && (
+										<button
+											onClick={() => resetField('name')}
+											className="btn btn-outline btn-circle btn-xs">
+											<XIcon />
+										</button>
+									)}
+								</div>
+								<DeleteAppButton appId={params.appId ?? ''} />
 							</div>
 							<div className="form-control flex flex-row items-center gap-4">
 								<input
@@ -100,7 +114,7 @@ const App = () => {
 									{...register('description', {
 										maxLength: 128,
 									})}
-									className="input input-sm text-xl font-semibold bg-base-200 focus:bg-base-100 px-0 cursor-text"
+									className="input input-sm text-xl font-semibold bg-base-200 focus:bg-base-100 px-0 cursor-text w-4/5"
 								/>
 								{dirtyFields.description && (
 									<button
@@ -112,18 +126,20 @@ const App = () => {
 							</div>
 
 							{!showTagInput ? (
-								<div className="flex flex-row">
-									{query.data?.tags && (
-										<TagCollection tags={query.data.tags} tagCount={5} />
-									)}
+								<div className="flex flex-row items-center">
+									<div className="w-9/12 md:w-auto">
+										{query.data?.tags && (
+											<TagCollection tags={query.data.tags} tagCount={5} />
+										)}
+									</div>
 									<div
-										className="badge badge-outline border-dashed text-sm cursor-pointer hover:bg-base-300"
+										className="flex-3 badge badge-outline border-dashed text-sm cursor-pointer hover:bg-base-300 ml-1 whitespace-nowrap"
 										onClick={() => setShowTagInput(!showTagInput)}>
 										+ Add tags
 									</div>
 								</div>
 							) : (
-								<div className="flex flex-row gap-2 items-center">
+								<div className="flex flex-row gap-2 items-center lg:w-full">
 									<TagInput
 										onUpdate={handleOnTagInput}
 										initialTags={query.data?.tags}
@@ -138,12 +154,13 @@ const App = () => {
 								</div>
 							)}
 							{isDirty && (
-								<button className="btn btn-success" type="submit">
-									Update App
-								</button>
+								<div>
+									<button className="btn btn-sm btn-success" type="submit">
+										Save
+									</button>
+								</div>
 							)}
 						</form>
-						<DeleteAppButton appId={params.appId ?? ''} />
 					</div>
 
 					<div>

@@ -11,7 +11,7 @@ const DeleteAppButton = ({ appId }: Props) => {
 	return (
 		<>
 			<button
-				className="btn btn-error"
+				className="btn btn-sm md:btn-md btn-error"
 				onClick={() => setShowDeleteAppButton(!showDeleteAppButton)}>
 				Delete
 			</button>

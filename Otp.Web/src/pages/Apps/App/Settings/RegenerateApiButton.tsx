@@ -11,7 +11,7 @@ const RegenerateApiButton = ({ appId }: Props) => {
 	return (
 		<>
 			<button
-				className="btn btn-error"
+				className="btn btn-sm md:btn-md btn-error"
 				onClick={() => setShowRegenerateApiButton(!showRegenerateApiButton)}>
 				Regenerate Key
 			</button>
