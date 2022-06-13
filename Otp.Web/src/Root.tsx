@@ -10,7 +10,7 @@ import { Channel } from '@/pages/Channel';
 import { Logs } from '@/pages/Logs';
 import { Apps } from '@/pages/Apps';
 import { NotFound } from '@/pages/NotFound';
-import { App } from '@/pages/Apps/App';
+import { AppDetails } from '@/AppDetails/views';
 import { Settings } from '@/pages/Apps/App/Settings';
 import { RecentCallbacks } from '@/pages/Apps/App/RecentCallbacks';
 import { loginRequest } from '@/services/auth/authConfig';
@@ -41,7 +41,7 @@ const Root = () => {
 			<Route path="/" element={<SidebarLayout />}>
 				<Route path="" element={<Home />} />
 				<Route path="apps" element={<Apps />} />
-				<Route path="apps/:appId" element={<App />}>
+				<Route path="apps/:appId" element={<AppDetails />}>
 					<Route path="" element={<Settings />} />
 					<Route path="recent-callbacks" element={<RecentCallbacks />} />
 				</Route>
