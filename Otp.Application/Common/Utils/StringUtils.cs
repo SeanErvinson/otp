@@ -7,10 +7,7 @@ public static class StringUtils
 {
 	public static string Base64Encode(string value, [CallerArgumentExpression("value")] string valueName = "")
 	{
-		if (string.IsNullOrWhiteSpace(value))
-		{
-			throw new ArgumentNullException(nameof(valueName), "Value is empty");
-		}
+		ArgumentNullException.ThrowIfNull(value, nameof(valueName));
 		var valueBytes = System.Text.Encoding.UTF8.GetBytes(value);
 		return Convert.ToBase64String(valueBytes);
 	}
@@ -19,10 +16,7 @@ public static class StringUtils
 		out string value,
 		[CallerArgumentExpression("base64")] string base64Name = "")
 	{
-		if (string.IsNullOrWhiteSpace(base64))
-		{
-			throw new ArgumentNullException(nameof(base64Name), "Value is empty");
-		}
+		ArgumentNullException.ThrowIfNull(base64, nameof(base64Name));
 		try
 		{
 			var bytes = Convert.FromBase64String(base64);

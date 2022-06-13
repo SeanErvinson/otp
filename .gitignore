@@ -793,3 +793,5 @@ fabric.properties
 !.vscode/*.code-snippets
 
 !Otp.Application/Logs/
+!Otp.Web/src/**/Logs/
+!Otp.Web/src/types

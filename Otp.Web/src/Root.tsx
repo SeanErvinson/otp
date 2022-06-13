@@ -4,15 +4,15 @@ import { useEffect } from 'react';
 import { Outlet, Route, Routes } from 'react-router-dom';
 
 import { Sidebar } from '@/components/Sidebar';
-import { Home } from '@/pages/Home';
-import { Billing } from '@/pages/Billing';
-import { Channel } from '@/pages/Channel';
-import { Logs } from '@/pages/Logs';
-import { Apps } from '@/pages/Apps';
-import { NotFound } from '@/pages/NotFound';
-import { AppDetails } from '@/AppDetails/views';
-import { Settings } from '@/pages/Apps/App/Settings';
-import { RecentCallbacks } from '@/pages/Apps/App/RecentCallbacks';
+import Dashboard from '@/modules/Dashboard/views/Dashboard';
+import Billing from '@/modules/Billing/views/Billing';
+import Channel from '@/modules/Channel/views/Channel';
+import Logs from '@/modules/Logs/views/Logs';
+import Apps from '@/modules/Apps/views/Apps';
+import AppDetails from '@/modules/Apps/views/Apps';
+import Settings from '@/modules/Apps/views/Apps';
+import NotFound from '@/modules/common/views/NotFound';
+import { RecentCallbacks } from '@/modules/RecentCallbacks';
 import { loginRequest } from '@/services/auth/authConfig';
 import { Loader } from './components/Loader';
 
@@ -39,7 +39,7 @@ const Root = () => {
 	return (
 		<Routes>
 			<Route path="/" element={<SidebarLayout />}>
-				<Route path="" element={<Home />} />
+				<Route path="" element={<Dashboard />} />
 				<Route path="apps" element={<Apps />} />
 				<Route path="apps/:appId" element={<AppDetails />}>
 					<Route path="" element={<Settings />} />

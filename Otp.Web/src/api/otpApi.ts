@@ -1,6 +1,6 @@
-import { MetricStrategy, MetricInterval, Log } from './../common/types';
+import { MetricStrategy, MetricInterval, Log } from '../types/types';
 import { oauthInstance, otpInstance } from '@/api/https';
-import { App, AppDetail, Channel, OtpRequest, PagedResult } from '@/common/types';
+import { App, AppDetail, Channel, OtpRequest, PagedResult } from '@/types/types';
 
 export const getApps = async (pageIndex: number): Promise<PagedResult<App> | null> => {
 	// const pageSize = 7;
