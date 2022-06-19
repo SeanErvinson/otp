@@ -1,7 +1,6 @@
 using System.Text.Json;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
 using Otp.Application.Common.Models;
@@ -15,21 +14,18 @@ public record GetLogsQuery(string? Before, string? After) : IRequest<CursorResul
 {
 	public class Handler : IRequestHandler<GetLogsQuery, CursorResult<GetLogsQueryDto>>
 	{
-		private const int ItemsPerPage = 2;
+		private const int ItemsPerPage = 10;
 		private readonly IApplicationDbContext _applicationDbContext;
 		private readonly ICurrentUserService _currentUserService;
 		private readonly JsonSerializerOptions _jsonSerializerOptions;
-		private readonly ILogger<Handler> _logger;
 
 		public Handler(IApplicationDbContext applicationDbContext,
 			ICurrentUserService currentUserService,
-			JsonSerializerOptions jsonSerializerOptions,
-			ILogger<Handler> logger)
+			JsonSerializerOptions jsonSerializerOptions)
 		{
 			_applicationDbContext = applicationDbContext;
 			_currentUserService = currentUserService;
 			_jsonSerializerOptions = jsonSerializerOptions;
-			_logger = logger;
 		}
 
 		public async Task<CursorResult<GetLogsQueryDto>> Handle(GetLogsQuery request,
@@ -37,15 +33,15 @@ public record GetLogsQuery(string? Before, string? After) : IRequest<CursorResul
 		{
 			var encodedCursor = request.After ?? request.Before ?? string.Empty;
 			LogCursor? cursor = null;
-			
+
 			if (!string.IsNullOrWhiteSpace(encodedCursor))
 			{
-				if (!StringUtils.TryBase64Decode(encodedCursor, out var cursorDirection))
-				{
-					throw new InvalidRequestException("Invalid cursor");
-				}
+				// if (!StringUtils.TryBase64Decode(encodedCursor, out var cursorDirection))
+				// {
+				// 	throw new InvalidRequestException("Invalid cursor");
+				// }
 
-				cursor = JsonSerializer.Deserialize<LogCursor>(cursorDirection, _jsonSerializerOptions);
+				cursor = JsonSerializer.Deserialize<LogCursor>(encodedCursor, _jsonSerializerOptions);
 
 				if (cursor is null)
 				{
@@ -58,27 +54,32 @@ public record GetLogsQuery(string? Before, string? After) : IRequest<CursorResul
 				.Select(app => app.Id)
 				.ToList();
 
-			Func<IQueryable<OtpRequest>, IOrderedQueryable<OtpRequest>> query = queryable => queryable.OrderBy(otpRequest => otpRequest.CreatedAt);
+			Func<IQueryable<OtpRequest>, IOrderedQueryable<OtpRequest>> query = queryable =>
+				queryable.OrderByDescending(otpRequest => otpRequest.CreatedAt);
 
+			Func<IQueryable<OtpRequest>, IQueryable<OtpRequest>>? cursorQuery = null;
 			if (cursor is not null)
 			{
 				if (!string.IsNullOrWhiteSpace(request.Before))
 				{
-					query = queryable => queryable.Where(otpRequest => otpRequest.CreatedAt < cursor.CreatedAt ||
+					cursorQuery = queryable => queryable.Where(otpRequest => otpRequest.CreatedAt < cursor.CreatedAt ||
 							(otpRequest.CreatedAt == cursor.CreatedAt && otpRequest.Id == cursor.Id))
-						.OrderByDescending(otpRequest => otpRequest.CreatedAt);
+						.OrderByDescending(otpRequest => otpRequest.CreatedAt)
+						.Skip(1);
 				}
 				else
 				{
-					query = queryable => queryable.Where(otpRequest => otpRequest.CreatedAt > cursor.CreatedAt ||
+					cursorQuery = queryable => queryable.Where(otpRequest => otpRequest.CreatedAt > cursor.CreatedAt ||
 							(otpRequest.CreatedAt == cursor.CreatedAt && otpRequest.Id == cursor.Id))
-						.OrderBy(otpRequest => otpRequest.CreatedAt);
+						.OrderBy(otpRequest => otpRequest.CreatedAt)
+						.Skip(1);
 				}
 			}
-			
+
 			var appLogs = _applicationDbContext.OtpRequests
 				.Where(otpRequest => apps.Contains(otpRequest.AppId));
-			var logs = query.Invoke(appLogs)
+			var orderQuery = cursorQuery ?? query;
+			var logs = orderQuery.Invoke(appLogs)
 				.Select(otpRequest => new GetLogsQueryDto
 				{
 					Id = otpRequest.Id,
@@ -88,10 +89,32 @@ public record GetLogsQuery(string? Before, string? After) : IRequest<CursorResul
 					EventDate = otpRequest.CreatedAt,
 				});
 
+			(bool, bool) HasPredicate(GetLogsQueryDto? firstItem, GetLogsQueryDto? lastItem)
+			{
+				if (firstItem is null || lastItem is null)
+				{
+					return (false, false);
+				}
+
+				var hasBeforeAfter = query(appLogs)
+					.GroupBy(x => 1)
+					.Select(g => new
+					{
+						hasBefore = g.Any(l => l.CreatedAt < lastItem.EventDate),
+						hasAfter = g.Any(l => l.CreatedAt > firstItem.EventDate),
+					})
+					.Single();
+				return (hasBeforeAfter.hasBefore, hasBeforeAfter.hasAfter);
+			}
+
 			var result = await CursorResult<GetLogsQueryDto>.CreateAsync(logs,
 				ItemsPerPage,
-				dto => StringUtils.Base64Encode(JsonSerializer.Serialize(new LogCursor(dto.Id, dto.EventDate),
-					_jsonSerializerOptions)));
+				dto => dto.EventDate,
+				HasPredicate,
+				dto => dto is not null
+					? JsonSerializer.Serialize(new LogCursor(dto.Id, dto.EventDate),
+						_jsonSerializerOptions)
+					: string.Empty);
 
 			return result;
 		}
