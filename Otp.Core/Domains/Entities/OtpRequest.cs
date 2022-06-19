@@ -8,7 +8,7 @@ using Otp.Core.Utils;
 
 namespace Otp.Core.Domains.Entities;
 
-[DebuggerDisplay("{Code} - {State} - {Status}")]
+[DebuggerDisplay("{Id} - {Code} - {State} - {Status}")]
 public class OtpRequest : TimedEntity
 {
 	public Guid AppId { get; private set; }

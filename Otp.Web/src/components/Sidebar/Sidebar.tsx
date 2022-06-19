@@ -23,7 +23,7 @@ const Sidebar = (props: Props) => {
 				<label htmlFor="drawer" className="drawer-overlay"></label>
 				<ul className="menu p-3 text-md overflow-y-auto w-56 bg-base-100 text-base-content">
 					<li>
-						<NavLink to="/">Home</NavLink>
+						<NavLink to="/">Dashboard</NavLink>
 					</li>
 					<li>
 						<NavLink to="/apps">Apps</NavLink>

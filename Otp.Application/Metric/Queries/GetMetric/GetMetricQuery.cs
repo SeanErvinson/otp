@@ -30,7 +30,6 @@ public record GetMetricQuery(string MetricName,
 		{
 			var (startDateTime, endDateTime) = ParseTimeSpan(request.TimeSpan);
 
-			var metricStrategyFactory = new MetricStrategyFactory();
 			var query = new MetricQuery(request.MetricName, startDateTime, endDateTime, request.MetricInterval, request.ResourceId);
 
 			IRequest<MetricData> command;

@@ -3,7 +3,7 @@ using Otp.Application.Metric.Queries.GetMetric;
 
 namespace Otp.Application.Metric.Metrics;
 
-public class MetricStrategyFactory
+public static class MetricStrategyFactory
 {
 	public static IRequest<MetricData> GetMetricStrategy(MetricQuery query)
 	{
