@@ -4,7 +4,6 @@ using System.Text;
 using System.Text.Json;
 using MediatR;
 using Otp.Application.Common.Interfaces;
-using Otp.Application.Common.Models;
 using Otp.Core.Domains.Common.Enums;
 using Otp.Core.Domains.Entities;
 using Otp.Core.Domains.Events;
@@ -12,7 +11,7 @@ using Otp.Core.Utils;
 
 namespace Otp.Application.App.EventHandlers;
 
-public class CallbackTriggeredEventHandler : INotificationHandler<DomainEventNotification<CallbackTriggeredEvent>>
+public class CallbackTriggeredEventHandler : INotificationHandler<CallbackTriggeredEvent>
 {
 	private const string SignatureHeaderKey = "OTP_SIGNATURE";
 	private readonly IHttpClientFactory _httpClientFactory;
@@ -24,25 +23,23 @@ public class CallbackTriggeredEventHandler : INotificationHandler<DomainEventNot
 		_dbContext = dbContext;
 	}
 
-	public async Task Handle(DomainEventNotification<CallbackTriggeredEvent> notification, CancellationToken cancellationToken)
+	public async Task Handle(CallbackTriggeredEvent notification, CancellationToken cancellationToken)
 	{
-		var domainEvent = notification.DomainEvent;
-
 		var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
 		var data = JsonSerializer.Serialize(new CallbackEventResponse
 		{
-			RequestId = domainEvent.CallbackEvent.RequestId,
-			Contact = domainEvent.CallbackEvent.Contact,
-			Channel = domainEvent.CallbackEvent.Channel,
-			Type = domainEvent.CallbackEvent.Type
+			RequestId = notification.CallbackEvent.RequestId,
+			Contact = notification.CallbackEvent.Contact,
+			Channel = notification.CallbackEvent.Channel,
+			Type = notification.CallbackEvent.Type
 		});
 
 		var rawSignature = $"{currentTime}.{data}";
 
-		var signature = new SignatureResponse(currentTime, CryptoUtil.Hash256(rawSignature, domainEvent.EndpointSecret));
+		var signature = new SignatureResponse(currentTime, CryptoUtil.Hash256(rawSignature, notification.EndpointSecret));
 
-		var httpMessage = new HttpRequestMessage(HttpMethod.Post, domainEvent.CallbackUrl)
+		var httpMessage = new HttpRequestMessage(HttpMethod.Post, notification.CallbackUrl)
 		{
 			Headers =
 			{
@@ -63,8 +60,8 @@ public class CallbackTriggeredEventHandler : INotificationHandler<DomainEventNot
 		}
 		finally
 		{
-			domainEvent.CallbackEvent.SetResponse((int) responseMessage.StatusCode, responseMessage.ReasonPhrase);
-			await _dbContext.CallbackEvents.AddAsync(domainEvent.CallbackEvent, cancellationToken);
+			notification.CallbackEvent.SetResponse((int) responseMessage.StatusCode, responseMessage.ReasonPhrase);
+			await _dbContext.CallbackEvents.AddAsync(notification.CallbackEvent, cancellationToken);
 			await _dbContext.SaveChangesAsync(cancellationToken);
 		}
 	}

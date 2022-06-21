@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using Otp.Application.Common.Interfaces;
-using Otp.Application.Common.Models;
 using Otp.Core.Domains.Events;
 using Serilog;
 using Serilog.Context;
 
 namespace Otp.Application.Otp.EventHandlers;
 
-public class OtpRequestedEventHandler : INotificationHandler<DomainEventNotification<OtpRequestedEvent>>
+public class OtpRequestedEventHandler : INotificationHandler<OtpRequestedEvent>
 {
 	private readonly IApplicationDbContext _applicationDbContext;
 	private readonly ISenderService _senderService;
@@ -18,9 +17,9 @@ public class OtpRequestedEventHandler : INotificationHandler<DomainEventNotifica
 		_applicationDbContext = applicationDbContext;
 	}
 
-	public async Task Handle(DomainEventNotification<OtpRequestedEvent> notification, CancellationToken cancellationToken)
+	public async Task Handle(OtpRequestedEvent notification, CancellationToken cancellationToken)
 	{
-		var otpRequest = notification.DomainEvent.OtpRequest;
+		var otpRequest = notification.OtpRequest;
 
 		using (LogContext.PushProperty("OtpRequestId", otpRequest.Id))
 		using (LogContext.PushProperty("OtpRequestChannel", otpRequest.Channel))

@@ -1,17 +1,12 @@
-﻿namespace Otp.Core.Domains.Common.Models;
+﻿using MediatR;
+
+namespace Otp.Core.Domains.Common.Models;
 
 public interface IHasDomainEvent
 {
 	public IReadOnlyCollection<DomainEvent> DomainEvents { get; }
 }
 
-public abstract class DomainEvent
+public abstract class DomainEvent : INotification
 {
-	public bool IsPublished { get; set; }
-	public DateTimeOffset OccurredAt { get; }
-
-	protected DomainEvent()
-	{
-		OccurredAt = DateTime.UtcNow;
-	}
 }

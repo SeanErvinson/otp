@@ -44,6 +44,5 @@ public static class DependencyInjection
 		});
 
 		services.AddTransient<IBlobStorageService, AzureBlobStorageService>();
-		services.AddTransient<IDomainEventService, DomainEventService>();
 	}
 }
