@@ -6,7 +6,6 @@ using Otp.Application.Common.Interfaces;
 using Otp.Application.Common.Models;
 using Otp.Application.Common.Utils;
 using Otp.Core.Domains.Common.Enums;
-using Otp.Core.Domains.Entities;
 
 namespace Otp.Application.Logs.Queries.GetLogs;
 
@@ -54,32 +53,29 @@ public record GetLogsQuery(string? Before, string? After) : IRequest<CursorResul
 				.Select(app => app.Id)
 				.ToList();
 
-			Func<IQueryable<OtpRequest>, IOrderedQueryable<OtpRequest>> query = queryable =>
-				queryable.OrderByDescending(otpRequest => otpRequest.CreatedAt);
+			var xxx = (IQueryable<GetLogsQueryDto> queryable) =>
+				queryable.OrderByDescending(otpRequest => otpRequest.EventDate);
 
-			Func<IQueryable<OtpRequest>, IQueryable<OtpRequest>>? cursorQuery = null;
+			var cursorQuery = xxx;
+			
 			if (cursor is not null)
 			{
 				if (!string.IsNullOrWhiteSpace(request.Before))
 				{
-					cursorQuery = queryable => queryable.Where(otpRequest => otpRequest.CreatedAt < cursor.CreatedAt ||
-							(otpRequest.CreatedAt == cursor.CreatedAt && otpRequest.Id == cursor.Id))
-						.OrderByDescending(otpRequest => otpRequest.CreatedAt)
-						.Skip(1);
+					cursorQuery = queryable => queryable.Where(otpRequest => otpRequest.EventDate < cursor.CreatedAt ||
+						(otpRequest.EventDate == cursor.CreatedAt && otpRequest.Id == cursor.Id))
+						.OrderByDescending(otpRequest => otpRequest.EventDate);
 				}
 				else
 				{
-					cursorQuery = queryable => queryable.Where(otpRequest => otpRequest.CreatedAt > cursor.CreatedAt ||
-							(otpRequest.CreatedAt == cursor.CreatedAt && otpRequest.Id == cursor.Id))
-						.OrderBy(otpRequest => otpRequest.CreatedAt)
-						.Skip(1);
+					cursorQuery = queryable => queryable.Where(otpRequest => otpRequest.EventDate > cursor.CreatedAt ||
+						(otpRequest.EventDate == cursor.CreatedAt && otpRequest.Id == cursor.Id))
+						.OrderBy(otpRequest => otpRequest.EventDate);
 				}
 			}
-
+			
 			var appLogs = _applicationDbContext.OtpRequests
-				.Where(otpRequest => apps.Contains(otpRequest.AppId));
-			var orderQuery = cursorQuery ?? query;
-			var logs = orderQuery.Invoke(appLogs)
+				.Where(otpRequest => apps.Contains(otpRequest.AppId))
 				.Select(otpRequest => new GetLogsQueryDto
 				{
 					Id = otpRequest.Id,
@@ -89,38 +85,40 @@ public record GetLogsQuery(string? Before, string? After) : IRequest<CursorResul
 					EventDate = otpRequest.CreatedAt,
 				});
 
-			(bool, bool) HasPredicate(GetLogsQueryDto? firstItem, GetLogsQueryDto? lastItem)
-			{
-				if (firstItem is null || lastItem is null)
-				{
-					return (false, false);
-				}
+			var resultQuery = cursorQuery.Invoke(appLogs);
 
-				var hasBeforeAfter = query(appLogs)
+			var beforeAfterFunc = (GetLogsQueryDto? firstItem, GetLogsQueryDto? lastItem) =>
+			{
+				var result = xxx(appLogs)
 					.GroupBy(x => 1)
 					.Select(g => new
 					{
-						hasBefore = g.Any(l => l.CreatedAt < lastItem.EventDate),
-						hasAfter = g.Any(l => l.CreatedAt > firstItem.EventDate),
+						before = g.OrderByDescending(otpRequest => otpRequest.EventDate)
+							.FirstOrDefault(c => lastItem != null && c.EventDate < lastItem.EventDate),
+						after = g.OrderByDescending(otpRequest => otpRequest.EventDate)
+							.LastOrDefault(c => firstItem != null && c.EventDate > firstItem.EventDate),
 					})
 					.Single();
-				return (hasBeforeAfter.hasBefore, hasBeforeAfter.hasAfter);
-			}
+				return (result.before, result.after);
+			};
 
-			var result = await CursorResult<GetLogsQueryDto>.CreateAsync(logs,
+			return await CursorResult<GetLogsQueryDto>.CreateAsync(resultQuery,
 				ItemsPerPage,
-				dto => dto.EventDate,
-				HasPredicate,
-				dto => dto is not null
-					? JsonSerializer.Serialize(new LogCursor(dto.Id, dto.EventDate),
-						_jsonSerializerOptions)
-					: string.Empty);
-
-			return result;
+				otp => otp.EventDate,
+				beforeAfterFunc,
+				dto => new LogCursor
+				{
+					Id = dto.Id,
+					CreatedAt = dto.EventDate
+				});
 		}
 	}
 
-	private record LogCursor(Guid Id, DateTime CreatedAt);
+	private record LogCursor : ICursor
+	{
+		public Guid Id { get; init; }
+		public DateTime CreatedAt { get; init; }
+	};
 }
 
 public record GetLogsQueryDto()
