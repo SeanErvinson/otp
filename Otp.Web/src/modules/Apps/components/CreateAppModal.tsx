@@ -1,4 +1,6 @@
+import { AxiosError } from 'axios';
 import { useState } from 'react';
+import ReactDOM from 'react-dom';
 import { useForm, useFormState, useWatch } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import 'animate.css';
@@ -6,10 +8,9 @@ import 'animate.css';
 import { OtpApi, CreateAppResponse } from '@/api/otpApi';
 import ErrorIcon from '@/components/misc/ErrorIcon';
 import { TagInput } from '@/components/TagInput';
+import { CustomError } from '@/types/types';
 
 import ApiKeyPreview from './ApiKeyPreview';
-import { AxiosError } from 'axios';
-import { CustomError } from '@/types/types';
 
 interface Props {
 	showModal: boolean;
@@ -148,7 +149,7 @@ const CreateAppModal = (props: Props) => {
 		<ApiKeyPreview apiKey={createAppResponse.apiKey} onClose={onClose} />
 	);
 
-	return (
+	return ReactDOM.createPortal(
 		<div id="createAppModal" className={`modal ${props.showModal && 'modal-open'}`}>
 			<div
 				className={`modal-box flex flex-col justify-between ${
@@ -156,7 +157,8 @@ const CreateAppModal = (props: Props) => {
 				}`}>
 				{defaultComponent}
 			</div>
-		</div>
+		</div>,
+		document.getElementById('portal')!,
 	);
 };
 

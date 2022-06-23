@@ -14,10 +14,7 @@ const DeleteAppButton = ({ appId }: Props) => {
 			<button className="btn btn-sm md:btn-md btn-error" onClick={toggle}>
 				Delete
 			</button>
-			<DeleteAppModal
-				appId={appId}
-				showCreateAppModal={visible}
-				onClose={toggle}></DeleteAppModal>
+			<DeleteAppModal appId={appId} showModal={visible} onClose={toggle}></DeleteAppModal>
 		</>
 	);
 };

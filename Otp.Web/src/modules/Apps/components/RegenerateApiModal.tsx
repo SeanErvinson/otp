@@ -1,8 +1,8 @@
 import 'animate.css';
-import { useState } from 'react';
+import ReactDOM from 'react-dom';
 import { useMutation } from 'react-query';
 
-import { RegenerateApiKeyResponse, regenerateAppApiKey } from '@/api/otpApi';
+import { OtpApi } from '@/api/otpApi';
 
 import ApiKeyPreview from './ApiKeyPreview';
 
@@ -13,30 +13,7 @@ interface Props {
 }
 
 const RegenerateApiModal = (props: Props) => {
-	const [isLoading, setIsLoading] = useState(false);
-	const [createAppResponse, setCreateAppResponse] = useState({} as RegenerateApiKeyResponse);
-	const [isSuccess, setIsSuccess] = useState(false);
-
-	const mutation = useMutation(regenerateAppApiKey, {
-		onMutate: () => {
-			setIsLoading(true);
-		},
-		onSuccess: response => {
-			setCreateAppResponse(response);
-			setIsLoading(false);
-			setIsSuccess(true);
-		},
-	});
-
-	const onClick = (id: string) => {
-		mutation.mutate(id);
-	};
-
-	const onClose = () => {
-		setIsLoading(false);
-		setIsSuccess(false);
-		props.onClose();
-	};
+	const { mutate, isLoading, isSuccess, data } = useMutation(OtpApi.regenerateAppApiKey, {});
 
 	let defaultComponent = !isSuccess ? (
 		<>
@@ -51,27 +28,30 @@ const RegenerateApiModal = (props: Props) => {
 					className="btn btn-error"
 					type="button"
 					disabled={isLoading ? true : false}
-					onClick={() => onClick(props.appId)}>
+					onClick={() => mutate(props.appId)}>
 					{!isLoading ? 'I understand' : 'Regenerating'}
 				</button>
-				<button className="btn btn-ghost" type="button" onClick={onClose}>
+				<button className="btn btn-ghost" type="button" onClick={props.onClose}>
 					Cancel
 				</button>
 			</div>
 		</>
 	) : (
-		<ApiKeyPreview apiKey={createAppResponse.apiKey} onClose={onClose} />
+		<>{data && <ApiKeyPreview apiKey={data.apiKey} onClose={props.onClose} />}</>
 	);
 
-	return (
-		<div id="createAppModal" className={`modal ${props.showCreateAppModal && 'modal-open'}`}>
+	return ReactDOM.createPortal(
+		<div
+			id="regenerateApiModal"
+			className={`modal ${props.showCreateAppModal && 'modal-open'}`}>
 			<div
 				className={`modal-box flex flex-col justify-between ${
 					isSuccess && 'animate__animated animate__flipInY min-h-[21rem]'
 				}`}>
 				{defaultComponent}
 			</div>
-		</div>
+		</div>,
+		document.getElementById('portal')!,
 	);
 };
 

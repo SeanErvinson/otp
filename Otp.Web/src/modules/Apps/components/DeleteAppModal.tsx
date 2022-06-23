@@ -1,13 +1,14 @@
 import 'animate.css';
 import { useState } from 'react';
+import ReactDOM from 'react-dom';
 import { useMutation } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 
 import { OtpApi } from '@/api/otpApi';
-import { useNavigate } from 'react-router-dom';
 
 interface Props {
 	appId: string;
-	showCreateAppModal: boolean;
+	showModal: boolean;
 	onClose: () => void;
 }
 
@@ -34,8 +35,8 @@ const DeleteAppModal = (props: Props) => {
 		props.onClose();
 	};
 
-	return (
-		<div id="createAppModal" className={`modal ${props.showCreateAppModal && 'modal-open'}`}>
+	return ReactDOM.createPortal(
+		<div id="deleteAppModal" className={`modal ${props.showModal && 'modal-open'}`}>
 			<div className="modal-box">
 				<h3 className="text-xl font-semibold">Are you sure you want to delete this app?</h3>
 				<br />
@@ -56,7 +57,8 @@ const DeleteAppModal = (props: Props) => {
 					</button>
 				</div>
 			</div>
-		</div>
+		</div>,
+		document.getElementById('portal')!,
 	);
 };
 
