@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 
 import msalInstance from '@/services/auth/msalInstance';
 import { InteractionRequiredAuthError } from '@azure/msal-browser';
@@ -50,4 +50,11 @@ const acquireAccessToken = async (): Promise<string | null> => {
 		}
 	}
 	return null;
+};
+
+export const request = async <T>(client: AxiosInstance, options: AxiosRequestConfig) => {
+	return client
+		.request<T>(options)
+		.then(response => response.data)
+		.catch((error: AxiosError) => Promise.reject(error.response));
 };

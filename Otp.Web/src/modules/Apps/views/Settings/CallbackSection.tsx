@@ -4,7 +4,7 @@ import { useForm, useFormState } from 'react-hook-form';
 import WarningIcon from '@/components/misc/WarningIcon';
 import { useGeneratedId } from '@/hooks';
 import { useMutation } from 'react-query';
-import { updateAppCallback } from '@/api/otpApi';
+import { OtpApi } from '@/api/otpApi';
 import { isValidUrl } from '@/utils/stringUtils';
 
 interface Props {
@@ -31,7 +31,7 @@ const CallbackSection = ({ appId, callbackUrl }: Props) => {
 	const { isDirty, errors, dirtyFields } = useFormState<FormData>({
 		control,
 	});
-	const mutation = useMutation(updateAppCallback, {
+	const mutation = useMutation(OtpApi.updateAppCallback, {
 		onMutate: () => {
 			setIsLoading(true);
 		},

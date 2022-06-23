@@ -1,9 +1,11 @@
-import { getMetrics } from '@/api/otpApi';
-import { CountMetric } from '@/types/types';
-import PageHeader from '@/components/PageHeader/PageHeader';
-import SingleStat from '@/components/SIngleStat/SingleStat';
-import DateUtils from '@/utils/dateUtils';
 import { useQuery } from 'react-query';
+
+import { OtpApi } from '@/api/otpApi';
+import SingleStat from '@/components/SIngleStat/SingleStat';
+import PageHeader from '@/components/PageHeader/PageHeader';
+import { CountMetric } from '@/types/types';
+import DateUtils from '@/utils/dateUtils';
+
 import ChannelUsageChart from '../components/ChannelUsageChart';
 
 const refreshInterval = 10000;
@@ -16,7 +18,7 @@ const Dashboard = () => {
 	const smsCountMetricQuery = useQuery(
 		['getSmsCountMetric'],
 		() =>
-			getMetrics<CountMetric>(
+			OtpApi.getMetrics<CountMetric>(
 				'SmsUsageCount',
 				`${startMonthDate.toISOString()}/${endMonthDate.toISOString()}`,
 			),
@@ -29,7 +31,7 @@ const Dashboard = () => {
 	const emailCountMetricQuery = useQuery(
 		['getEmailCountMetric'],
 		() =>
-			getMetrics<CountMetric>(
+			OtpApi.getMetrics<CountMetric>(
 				'EmailUsageCount',
 				`${startMonthDate.toISOString()}/${endMonthDate.toISOString()}`,
 			),

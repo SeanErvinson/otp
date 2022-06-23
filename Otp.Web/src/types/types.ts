@@ -12,10 +12,8 @@ export type PagedResult<T> = {
 };
 
 export type CursorResult<T> = {
-	before: string;
-	after: string;
-	hasAfter: boolean;
-	hasBefore: boolean;
+	before?: string;
+	after?: string;
 	items: T[];
 };
 

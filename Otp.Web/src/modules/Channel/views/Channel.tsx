@@ -3,7 +3,7 @@ import React, { FormEvent, useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { cancelOtp, getOtpRequest, resendOtp, verifyOtp, VerifyOtpResponse } from '@/api/otpApi';
+import { OtpApi, VerifyOtpResponse } from '@/api/otpApi';
 import SpinnerIcon from '@/components/misc/SpinnerIcon';
 import { isValidGuid } from '@/utils/stringUtils';
 
@@ -23,7 +23,7 @@ const Channel = () => {
 	const [isValidOtp, setIsValidOtp] = useState(false);
 	const query = useQuery(
 		['getOtpRequest', requestId, hash],
-		() => getOtpRequest(requestId!, key),
+		() => OtpApi.getOtpRequest(requestId!, key),
 		{
 			keepPreviousData: true,
 			enabled: !!requestId,
@@ -49,7 +49,7 @@ const Channel = () => {
 
 	const verifyMutation = useMutation<VerifyOtpResponse, CustomError>(
 		['verifyApp', requestId, key, code],
-		() => verifyOtp(requestId!, key, code),
+		() => OtpApi.verifyOtp(requestId!, key, code),
 		{
 			onSuccess: response => {
 				window.location.replace(response.successUrl);
@@ -58,12 +58,12 @@ const Channel = () => {
 	);
 
 	const resendMutation = useMutation(['resendOtp', requestId, key], () =>
-		resendOtp(requestId!, key),
+		OtpApi.resendOtp(requestId!, key),
 	);
 
 	const cancelMutation = useMutation(
 		['cancelOtp', requestId, key],
-		() => cancelOtp(requestId!, key),
+		() => OtpApi.cancelOtp(requestId!, key),
 		{
 			// onSuccess: response => {
 			// 	window.location.replace(response.cancelUrl);

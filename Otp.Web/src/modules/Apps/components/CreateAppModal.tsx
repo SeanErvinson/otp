@@ -3,7 +3,7 @@ import { useForm, useFormState, useWatch } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import 'animate.css';
 
-import { createApp, CreateAppResponse } from '@/api/otpApi';
+import { OtpApi, CreateAppResponse } from '@/api/otpApi';
 import ErrorIcon from '@/components/misc/ErrorIcon';
 import { TagInput } from '@/components/TagInput';
 
@@ -12,7 +12,7 @@ import { AxiosError } from 'axios';
 import { CustomError } from '@/types/types';
 
 interface Props {
-	showCreateAppModal: boolean;
+	showModal: boolean;
 	onClose: () => void;
 }
 
@@ -33,7 +33,7 @@ const CreateAppModal = (props: Props) => {
 	const [createAppResponse, setCreateAppResponse] = useState({} as CreateAppResponse);
 	const descriptionWatch = useWatch({ control, name: 'description', defaultValue: '' });
 
-	const mutation = useMutation(createApp, {
+	const mutation = useMutation(OtpApi.createApp, {
 		onMutate: () => {
 			setError(undefined);
 			setIsLoading(true);
@@ -149,7 +149,7 @@ const CreateAppModal = (props: Props) => {
 	);
 
 	return (
-		<div id="createAppModal" className={`modal ${props.showCreateAppModal && 'modal-open'}`}>
+		<div id="createAppModal" className={`modal ${props.showModal && 'modal-open'}`}>
 			<div
 				className={`modal-box flex flex-col justify-between ${
 					isSuccess && 'animate__animated animate__flipInY min-h-[21rem]'

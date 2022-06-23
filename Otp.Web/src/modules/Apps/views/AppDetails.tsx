@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
 
-import { getApp } from '@/api/otpApi';
+import { OtpApi } from '@/api/otpApi';
 import { CustomError } from '@/types/types';
 import SpinnerIcon from '@/components/misc/SpinnerIcon';
 
@@ -15,7 +15,7 @@ const AppDetails = () => {
 	const { appId } = useParams();
 	const navigate = useNavigate();
 	const [, setAppId] = useAtom(appIdAtom);
-	const query = useQuery(['getApp', appId], () => getApp(appId), {
+	const query = useQuery(['getApp', appId], () => OtpApi.getApp(appId), {
 		enabled: !!appId,
 		onError: (error: AxiosError<CustomError>) => {
 			if (

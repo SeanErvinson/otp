@@ -52,7 +52,7 @@ const TagInput = ({ onUpdate, initialTags }: Props) => {
 						<span
 							className="pl-1 self-center cursor-pointer"
 							onClick={() => removeTag(tag)}>
-							<XIcon fill="white" />
+							<XIcon className="inline-block w-4 h-4 stroke-current" />
 						</span>
 					</li>
 				))}

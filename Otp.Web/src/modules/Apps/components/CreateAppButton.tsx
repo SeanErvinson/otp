@@ -9,7 +9,7 @@ const CreateAppButton = () => {
 			<button className="btn btn-accent" onClick={toggle}>
 				Create App
 			</button>
-			<CreateAppModal showCreateAppModal={visible} onClose={toggle}></CreateAppModal>
+			<CreateAppModal showModal={visible} onClose={toggle}></CreateAppModal>
 		</>
 	);
 };

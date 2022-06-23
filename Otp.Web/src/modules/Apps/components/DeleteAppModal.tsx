@@ -2,7 +2,7 @@ import 'animate.css';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
 
-import { deleteApp } from '@/api/otpApi';
+import { OtpApi } from '@/api/otpApi';
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
@@ -15,7 +15,7 @@ const DeleteAppModal = (props: Props) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const navigate = useNavigate();
 
-	const mutation = useMutation(deleteApp, {
+	const mutation = useMutation(OtpApi.deleteApp, {
 		onMutate: () => {
 			setIsLoading(true);
 		},

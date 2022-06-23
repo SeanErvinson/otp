@@ -62,7 +62,7 @@ const AppNameInput = ({
 							<button
 								onClick={() => resetField('name')}
 								className="btn btn-outline btn-circle btn-xs">
-								<XIcon />
+								<XIcon className="inline-block w-4 h-4 stroke-current" />
 							</button>
 						)}
 					</div>
@@ -106,7 +106,7 @@ const DescriptionInput = ({
 					<button
 						onClick={() => resetField('description')}
 						className="btn btn-outline btn-circle btn-xs">
-						<XIcon />
+						<XIcon className="inline-block w-4 h-4 stroke-current" />
 					</button>
 				)}
 			</div>
@@ -172,7 +172,7 @@ const TagsInput = ({
 					<button
 						className="btn btn-outline btn-xs border-dashed"
 						onClick={handleOnTagCancel}>
-						<XIcon />
+						<XIcon className="inline-block w-4 h-4 stroke-current" />
 						Cancel
 					</button>
 				</div>

@@ -2,7 +2,7 @@ import { nanoid } from 'nanoid';
 import { useQuery } from 'react-query';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 
-import { getAppRecentCallbacks } from '@/api/otpApi';
+import { OtpApi } from '@/api/otpApi';
 import SpinnerIcon from '@/components/misc/SpinnerIcon';
 import RoundCheckIcon from '@/components/misc/RoundCheckIcon';
 import { AppDetail } from '@/types/types';
@@ -12,7 +12,7 @@ const RecentCallbacks = () => {
 	const app = useOutletContext<AppDetail | null>();
 	const navigate = useNavigate();
 	const query = useQuery(['getAppRecentCallbacks', app?.id], () =>
-		getAppRecentCallbacks(app?.id),
+		OtpApi.getAppRecentCallbacks(app?.id),
 	);
 
 	useEffect(() => {

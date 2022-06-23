@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 
-import { getApps } from '@/api/otpApi';
+import { OtpApi } from '@/api/otpApi';
 import EmptyIcon from '@/components/misc/EmptyIcon';
-
-import CreateAppButton from '@/modules/Apps/components/CreateAppButton';
 import PageHeader from '@/components/PageHeader/PageHeader';
+import CreateAppButton from '@/modules/Apps/components/CreateAppButton';
 
 import AppsTable from '../components/AppsTable';
 
 const Apps = () => {
 	const [page, setPage] = useState(1);
-	const query = useQuery(['getApps', page], () => getApps(page), { keepPreviousData: true });
+	const query = useQuery(['getApps', page], () => OtpApi.getApps(page), {
+		keepPreviousData: true,
+	});
 
 	const incrementPage = () => {
 		setPage(prev => prev + 1);

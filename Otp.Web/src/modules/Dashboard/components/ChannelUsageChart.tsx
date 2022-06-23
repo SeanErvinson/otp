@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Chart from 'react-apexcharts';
 import { useQuery } from 'react-query';
 
-import { getMetrics } from '@/api/otpApi';
+import { OtpApi } from '@/api/otpApi';
 import { MetricInterval } from '@/types/types';
 import PillRadioGroup from '@/components/PillRadioGroup/PillRadioGroup';
 import DateUtils from '@/utils/dateUtils';
@@ -66,7 +66,7 @@ const ChannelUsageChart = () => {
 	const channelCountMetricQuery = useQuery(
 		['getChannelUsageCountMetric', selectedInterval],
 		() =>
-			getMetrics<ChannelUsageMetric>(
+			OtpApi.getMetrics<ChannelUsageMetric>(
 				'ChannelUsageCount',
 				`${selectedInterval
 					.calculate(new Date())
