@@ -47,7 +47,7 @@ export type MetricStrategy = typeof MetricStrategy[number];
 export const Channel = ['SMS', 'Email'] as const;
 export type Channel = typeof Channel[number];
 
-export type OtpRequest = {
+export type OtpRequestConfig = {
 	backgroundUrl?: string;
 	logoUrl?: string;
 	contact: string;

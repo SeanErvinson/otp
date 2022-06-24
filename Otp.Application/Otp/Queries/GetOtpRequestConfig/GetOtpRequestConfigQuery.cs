@@ -6,9 +6,11 @@ using Otp.Core.Domains.Entities;
 
 namespace Otp.Application.Otp.Queries.GetOtpRequest;
 
-public record GetOtpRequestQuery(Guid Id) : IRequest<GetOtpRequestQueryResponse>
+public record GetOtpRequestConfigQueryRequest(string Key);
+
+public record GetOtpRequestConfigQuery(Guid Id, string Key) : IRequest<GetOtpRequestConfigQueryResponse>
 {
-	public class Handler : IRequestHandler<GetOtpRequestQuery, GetOtpRequestQueryResponse>
+	public class Handler : IRequestHandler<GetOtpRequestConfigQuery, GetOtpRequestConfigQueryResponse>
 	{
 		private readonly IApplicationDbContext _dbContext;
 
@@ -17,13 +19,14 @@ public record GetOtpRequestQuery(Guid Id) : IRequest<GetOtpRequestQueryResponse>
 			_dbContext = dbContext;
 		}
 
-		public async Task<GetOtpRequestQueryResponse> Handle(GetOtpRequestQuery requestConfig, CancellationToken cancellationToken)
+		public async Task<GetOtpRequestConfigQueryResponse> Handle(GetOtpRequestConfigQuery requestConfig, CancellationToken cancellationToken)
 		{
 			var otpRequest =
 				await _dbContext.OtpRequests.AsNoTracking()
 								.Include(otpRequest => otpRequest.App)
 								.FirstOrDefaultAsync(otpRequest =>
 														otpRequest.Id == requestConfig.Id
+														&& otpRequest.Key == requestConfig.Key
 														&& otpRequest.State == OtpRequestState.Available
 														&& otpRequest.Status == OtpRequestStatus.Success,
 													cancellationToken);
@@ -43,7 +46,7 @@ public record GetOtpRequestQuery(Guid Id) : IRequest<GetOtpRequestQueryResponse>
 				throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
 			}
 
-			return new GetOtpRequestQueryResponse
+			return new GetOtpRequestConfigQueryResponse
 			{
 				BackgroundUrl = otpRequest.App.Branding.BackgroundUrl,
 				LogoUrl = otpRequest.App.Branding.LogoUrl,
@@ -53,7 +56,7 @@ public record GetOtpRequestQuery(Guid Id) : IRequest<GetOtpRequestQueryResponse>
 	}
 }
 
-public record GetOtpRequestQueryResponse
+public record GetOtpRequestConfigQueryResponse
 {
 	public string? BackgroundUrl { get; init; }
 	public string? LogoUrl { get; init; }

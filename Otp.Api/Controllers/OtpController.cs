@@ -47,13 +47,23 @@ public class OtpController : ControllerBase
 		return Ok(result);
 	}
 
-	[HttpGet("{id:guid}")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetOtpRequestQueryResponse))]
+	[HttpGet("{id:guid}/config")]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetOtpRequestConfigQueryResponse))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> GetRequest([FromRoute] Guid id, [FromQuery] GetOtpRequestQueryRequest request)
+	public async Task<IActionResult> GetRequestConfig([FromRoute] Guid id, [FromQuery] GetOtpRequestConfigQueryRequest requestConfig)
 	{
-		var result = await _mediator.Send(new GetOtpRequestQuery(id, request.Key));
+		var result = await _mediator.Send(new GetOtpRequestConfigQuery(id, requestConfig.Key));
+		return Ok(result);
+	}
+	
+	[HttpGet("{id:guid}")]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetOtpRequestConfigQueryResponse))]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> GetRequest([FromRoute] GetOtpRequestQuery request)
+	{
+		var result = await _mediator.Send(request);
 		return Ok(result);
 	}
 

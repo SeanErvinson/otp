@@ -23,7 +23,7 @@ const Channel = () => {
 	const [isValidOtp, setIsValidOtp] = useState(false);
 	const query = useQuery(
 		['getOtpRequest', requestId, hash],
-		() => OtpApi.getOtpRequest(requestId!, key),
+		() => OtpApi.getOtpRequestConfig(requestId!, key),
 		{
 			keepPreviousData: true,
 			enabled: !!requestId,
