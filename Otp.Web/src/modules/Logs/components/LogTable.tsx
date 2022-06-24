@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import { useAtom } from 'jotai';
 import { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Column, Cell, useTable, useFilters, Row, IdType } from 'react-table';
@@ -10,18 +10,21 @@ import LogErrorIcon from '@/components/misc/LogErrorIcon';
 import LogSentIcon from '@/components/misc/LogSentIcon';
 import LogSuccessIcon from '@/components/misc/LogSuccessIcon';
 import LogWarningIcon from '@/components/misc/LogWarningIcon';
+import PaginationButtonGroup from '@/components/PaginationButtonGroup/PaginationButtons';
+import { dateTimeFormat } from '@/consts/date';
+import useModal from '@/hooks/useModal';
 import { Channel, Log, Status } from '@/types/types';
-import { useAtom } from 'jotai';
+import { toLocalTime } from '@/utils/dayjsUtils';
+
 import { channelFilterAtom } from '../states/ChannelFilterAtom';
 import { statusFilterAtom } from '../states/StatusFilterAtom';
 import { logTablePaginationAtom } from '../states/LogTablePaginationAtom';
-import PaginationButtonGroup from '@/components/PaginationButtonGroup/PaginationButtons';
+import TimelineModal from './TimelineModal';
+import { logAtom } from '../states/LogAtom';
 
 interface Props {
 	logs: Log[];
 }
-
-const dateFormat = 'hh:mm:ss a MMM DD';
 
 const statusMaps = {
 	Success: <LogSuccessIcon className="h-[24px] fill-success" />,
@@ -41,6 +44,8 @@ const LogTable = (props: Props) => {
 	const [pagination] = useAtom(logTablePaginationAtom);
 	const [channels] = useAtom(channelFilterAtom);
 	const [statuses] = useAtom(statusFilterAtom);
+	const [, setLog] = useAtom(logAtom);
+	const { toggle, visible } = useModal();
 
 	const channelFilter = (rows: Row<Log>[], _filler: IdType<Log>[], filterValue: Channel[]) => {
 		const arr: Row<Log>[] = [];
@@ -56,6 +61,11 @@ const LogTable = (props: Props) => {
 			if (filterValue.includes(val.original.status)) arr.push(val);
 		});
 		return arr;
+	};
+
+	const handleOnRowSelect = (selectedLog: Log) => {
+		setLog(selectedLog);
+		toggle();
 	};
 
 	useEffect(() => {
@@ -82,7 +92,7 @@ const LogTable = (props: Props) => {
 					<div className="flex flex-row items-center gap-1">
 						{statusMaps[row.original.status]}
 						<span className="text-md">
-							{dayjs.utc(row.original.eventDate).local().format(dateFormat)}
+							{toLocalTime(row.original.eventDate, dateTimeFormat)}
 						</span>
 					</div>
 				),
@@ -156,7 +166,10 @@ const LogTable = (props: Props) => {
 					{rows.map(row => {
 						prepareRow(row);
 						return (
-							<tr {...row.getRowProps()}>
+							<tr
+								{...row.getRowProps()}
+								onClick={() => handleOnRowSelect(row.original)}
+								className="cursor-pointer">
 								{row.cells.map(cell => (
 									<td {...cell.getCellProps()}>{cell.render('Cell')}</td>
 								))}
@@ -171,6 +184,7 @@ const LogTable = (props: Props) => {
 				nextPage={nextPage}
 				previousPage={previousPage}
 			/>
+			<TimelineModal showModal={visible} onClose={toggle} />
 		</>
 	);
 };

@@ -14,9 +14,10 @@ import { appIdAtom } from '../states/AppIdAtom';
 const AppDetails = () => {
 	const { appId } = useParams();
 	const navigate = useNavigate();
-	const [, setAppId] = useAtom(appIdAtom);
-	const query = useQuery(['getApp', appId], () => OtpApi.getApp(appId), {
-		enabled: !!appId,
+	const [applicationId, setAppId] = useAtom(appIdAtom);
+
+	const query = useQuery(['getApp', applicationId], () => OtpApi.getApp(applicationId), {
+		enabled: !!applicationId,
 		onError: (error: AxiosError<CustomError>) => {
 			if (
 				error.response &&
