@@ -6,41 +6,6 @@ import { App, AppDetail, Channel, OtpRequestConfig, PagedResult } from '@/types/
 export class OtpApi {
 	static getApps = (pageIndex: number): Promise<PagedResult<App>> => {
 		const pageSize = 7;
-
-		return Promise.resolve({
-			hasNextPage: false,
-			hasPreviousPage: false,
-			pageNumber: 1,
-			totalCount: 4,
-			totalPages: 1,
-			items: [
-				{
-					id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf6',
-					createdAt: new Date(),
-					tags: ['Hello'],
-					name: 'Willow',
-				},
-				{
-					id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cba6',
-					createdAt: new Date(),
-					tags: ['Hello'],
-					name: 'Microsoft',
-				},
-				{
-					id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf1',
-					createdAt: new Date(),
-					tags: ['Hello'],
-					name: 'Twitter',
-				},
-				{
-					id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf3',
-					createdAt: new Date(),
-					tags: ['Hello'],
-					name: 'Google',
-				},
-			],
-		});
-
 		return request(oauthInstance, {
 			method: 'GET',
 			url: '/apps',
@@ -52,15 +17,6 @@ export class OtpApi {
 	};
 
 	static getApp = (id: string): Promise<AppDetail> => {
-		return Promise.resolve({
-			id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf3',
-			name: 'Google',
-			description: 'Hello world',
-			tags: ['hello', 'world', 'hellasdfaso1', 'hell2', 'asdfasdfa', 'helzo', 'helz123asdfo'],
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		});
-
 		return request(oauthInstance, {
 			method: 'GET',
 			url: `/apps/${id}`,
@@ -142,6 +98,7 @@ export class OtpApi {
 			url: `/apps/${id}`,
 		});
 	};
+
 	/**
 	 * Otp-Related
 	 */
