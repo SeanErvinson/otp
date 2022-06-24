@@ -1,19 +1,13 @@
 import { CursorResult } from './../types/types';
 import { MetricStrategy, MetricInterval, Log } from '../types/types';
 import { oauthInstance, otpInstance, request } from '@/api/https';
-import { App, AppDetail, Channel, OtpRequest, PagedResult } from '@/types/types';
+import { App, AppDetail, Channel, OtpRequestConfig, PagedResult } from '@/types/types';
 
 export class OtpApi {
-	static getApps = async (pageIndex: number): Promise<PagedResult<App> | null> => {
-		// const pageSize = 7;
-		// const response = await oauthInstance.get('/apps', {
-		// 	params: {
-		// 		pageIndex: pageIndex,
-		// 		pageSize: pageSize,
-		// 	},
-		// });
+	static getApps = (pageIndex: number): Promise<PagedResult<App>> => {
+		const pageSize = 7;
 
-		return {
+		return Promise.resolve({
 			hasNextPage: false,
 			hasPreviousPage: false,
 			pageNumber: 1,
@@ -45,44 +39,42 @@ export class OtpApi {
 					name: 'Google',
 				},
 			],
-		};
+		});
 
-		// return response.data;
+		return request(oauthInstance, {
+			method: 'GET',
+			url: '/apps',
+			params: {
+				pageIndex: pageIndex,
+				pageSize: pageSize,
+			},
+		});
 	};
 
-	static getApp = async (id: string | undefined): Promise<AppDetail | null> => {
-		if (!id) {
-			return null;
-		}
-		return {
+	static getApp = (id: string): Promise<AppDetail> => {
+		return Promise.resolve({
 			id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf3',
 			name: 'Google',
 			description: 'Hello world',
 			tags: ['hello', 'world', 'hellasdfaso1', 'hell2', 'asdfasdfa', 'helzo', 'helz123asdfo'],
 			createdAt: new Date(),
 			updatedAt: new Date(),
-		};
-		const response = await oauthInstance.get(`/apps/${id}`);
-		if (response.status === 404) {
-			return null;
-		}
-		return response.data;
+		});
+
+		return request(oauthInstance, {
+			method: 'GET',
+			url: `/apps/${id}`,
+		});
 	};
 
-	static getAppRecentCallbacks = async (
-		id?: string,
-	): Promise<GetAppRecentCallbacksResponse[] | null> => {
-		if (!id) {
-			return null;
-		}
-		const response = await oauthInstance.get(`/apps/${id}/recent-callbacks`);
-		if (response.status === 404) {
-			return null;
-		}
-		return response.data;
+	static getAppRecentCallbacks = async (id: string): Promise<GetAppRecentCallbacksResponse[]> => {
+		return request(oauthInstance, {
+			method: 'GET',
+			url: `/apps/${id}/recent-callbacks`,
+		});
 	};
 
-	static getLogs = async (
+	static getLogs = (
 		before: string | null = null,
 		after: string | null = null,
 	): Promise<CursorResult<Log>> => {
@@ -96,58 +88,72 @@ export class OtpApi {
 		});
 	};
 
-	static getTimeline = async (id: string) => {
+	static getOtpRequest = (id: string) => {
 		return request(oauthInstance, {
 			method: 'GET',
-			url: `/logs/${id}/timeline`,
+			url: `/otp/${id}`,
 		});
 	};
 
-	static getMetrics = async <T>(
+	static getMetrics = <T>(
 		strategy: MetricStrategy,
 		timeSpan: string,
 		metricInterval?: MetricInterval | null,
 	): Promise<T> => {
-		const response = await oauthInstance.get(`/metrics`, {
+		return request(oauthInstance, {
+			method: 'GET',
+			url: '/metrics',
 			params: {
 				metricName: strategy,
 				timeSpan: timeSpan,
 				metricInterval: metricInterval,
 			},
 		});
-		return response.data;
 	};
 
-	static createApp = async (request: CreateAppRequest): Promise<CreateAppResponse> => {
-		const response = await oauthInstance.post('/apps', request);
-		return response.data;
+	static createApp = (req: CreateAppRequest): Promise<CreateAppResponse> => {
+		return request(oauthInstance, {
+			method: 'POST',
+			url: '/apps',
+			data: req,
+		});
 	};
 
-	static updateAppCallback = async (request: UpdateCallbackRequest): Promise<void> => {
-		await oauthInstance.put(`apps/${request.id}/callback`, request);
+	static updateAppCallback = async (req: UpdateCallbackRequest): Promise<void> => {
+		return request(oauthInstance, {
+			method: 'PUT',
+			url: `/apps/${req.id}/callback`,
+			data: req,
+		});
 	};
 
 	static regenerateAppApiKey = async (
 		id: string | undefined,
 	): Promise<RegenerateApiKeyResponse> => {
-		const response = await oauthInstance.post(`/apps/${id}/regenerate-api-key`);
-		return response.data;
+		return request(oauthInstance, {
+			method: 'POST',
+			url: `/apps/${id}/regenerate-api-key`,
+		});
 	};
 
 	static deleteApp = async (id: string): Promise<void> => {
-		await oauthInstance.delete(`/apps/${id}`);
+		return request(oauthInstance, {
+			method: 'DELETE',
+			url: `/apps/${id}`,
+		});
 	};
 	/**
 	 * Otp-Related
 	 */
 
-	static getOtpRequest = async (id: string, key: string): Promise<OtpRequest> => {
-		const response = await otpInstance(key).get(`/otp/${id}`, {
+	static getOtpRequestConfig = async (id: string, key: string): Promise<OtpRequestConfig> => {
+		return request(otpInstance(key), {
+			method: 'GET',
+			url: `/otp/${id}/config`,
 			params: {
 				key: decodeURI(key),
 			},
 		});
-		return response.data;
 	};
 
 	static verifyOtp = async (
@@ -155,25 +161,34 @@ export class OtpApi {
 		key: string,
 		code: string,
 	): Promise<VerifyOtpResponse> => {
-		const response = await otpInstance(key).post(`/otp/verify`, {
-			id: id,
-			code: code,
+		return request(otpInstance(key), {
+			method: 'POST',
+			url: '/otp/verify',
+			data: {
+				id: id,
+				code: code,
+			},
 		});
-		return response.data;
 	};
 
 	static cancelOtp = async (id: string, key: string): Promise<CancelOtpResponse> => {
-		const response = await otpInstance(key).post(`/otp/cancel`, {
-			id: id,
+		return request(otpInstance(key), {
+			method: 'POST',
+			url: '/otp/cancel',
+			data: {
+				id: id,
+			},
 		});
-		return response.data;
 	};
 
-	static resendOtp = async (id: string, key: string) => {
-		const response = await otpInstance(key).post(`/otp/resend`, {
-			id: id,
+	static resendOtp = async (id: string, key: string): Promise<void> => {
+		return request(otpInstance(key), {
+			method: 'POST',
+			url: '/otp/resend',
+			data: {
+				id: id,
+			},
 		});
-		return response.data;
 	};
 }
 
