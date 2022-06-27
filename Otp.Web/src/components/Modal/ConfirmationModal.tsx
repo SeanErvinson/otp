@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
+import Modal from './Modal';
 
 interface Props {
 	title: string;
@@ -38,7 +39,7 @@ const ConfirmationModal = (props: Props) => {
 	}, []);
 
 	return ReactDOM.createPortal(
-		<div id="confirmationModal" className={`modal ${props.showModal && 'modal-open'}`}>
+		<Modal onClose={props.onClose} showModal={props.showModal}>
 			<div className="modal-box">
 				<h3 className="text-xl font-semibold">{props.title}</h3>
 				<br />
@@ -58,7 +59,7 @@ const ConfirmationModal = (props: Props) => {
 					</button>
 				</div>
 			</div>
-		</div>,
+		</Modal>,
 		document.getElementById('portal')!,
 	);
 };

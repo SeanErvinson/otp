@@ -1,12 +1,12 @@
+import 'animate.css';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
-import ReactDOM from 'react-dom';
 import { useForm, useFormState, useWatch } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import 'animate.css';
 
-import { OtpApi, CreateAppResponse } from '@/api/otpApi';
+import { OtpApi } from '@/api/otpApi';
 import ErrorIcon from '@/components/misc/ErrorIcon';
+import Modal from '@/components/Modal/Modal';
 import { TagInput } from '@/components/TagInput';
 import { CustomError } from '@/types/types';
 
@@ -23,53 +23,33 @@ type FormData = {
 };
 
 const CreateAppModal = (props: Props) => {
-	const [error, setError] = useState<string | undefined>();
-	const [isLoading, setIsLoading] = useState(false);
-	const [isSuccess, setIsSuccess] = useState(false);
 	const [tags, setTags] = useState<string[]>([]);
-	const { handleSubmit, register, reset, control } = useForm<FormData>();
-	const { errors } = useFormState<FormData>({
+	const { handleSubmit, register, reset: formReset, control } = useForm<FormData>();
+	const { errors: formErrors } = useFormState<FormData>({
 		control,
 	});
-	const [createAppResponse, setCreateAppResponse] = useState({} as CreateAppResponse);
 	const descriptionWatch = useWatch({ control, name: 'description', defaultValue: '' });
 
-	const mutation = useMutation(OtpApi.createApp, {
-		onMutate: () => {
-			setError(undefined);
-			setIsLoading(true);
-		},
-		onSuccess: response => {
-			if (response instanceof Error) return;
-			setCreateAppResponse(response);
-			setIsSuccess(true);
-			setIsLoading(false);
-		},
-		onError: (response: AxiosError<CustomError>) => {
-			setIsLoading(false);
-			setError(response.response?.data.detail);
-		},
-	});
+	const { mutate, data, reset, error, isLoading, isSuccess } = useMutation(OtpApi.createApp, {});
 
-	const onSubmit = (data: FormData) => {
-		mutation.mutate({
+	const handleOnSubmit = (data: FormData) => {
+		mutate({
 			name: data.name,
 			tags: tags,
 			description: data.description,
 		});
 	};
 
-	const onClose = () => {
-		setIsLoading(false);
-		setIsSuccess(false);
+	const handleOnClose = () => {
+		formReset();
 		reset();
 		props.onClose();
 	};
 
-	let defaultComponent = !isSuccess ? (
+	let defaultComponent = !data ? (
 		<>
 			<h3 className="text-xl font-semibold">Create App</h3>
-			<form onSubmit={handleSubmit(onSubmit)}>
+			<form onSubmit={handleSubmit(handleOnSubmit)}>
 				<div className="form-control">
 					<label className="label">
 						<span className="label-text">Name</span>
@@ -77,7 +57,7 @@ const CreateAppModal = (props: Props) => {
 					<input
 						type="text"
 						placeholder="best-app"
-						className={`input input-bordered ${errors.name && 'input-error'}`}
+						className={`input input-bordered ${formErrors.name && 'input-error'}`}
 						{...register('name', {
 							required: true,
 							minLength: 5,
@@ -89,9 +69,11 @@ const CreateAppModal = (props: Props) => {
 						})}
 					/>
 
-					{errors.name && (
+					{formErrors.name && (
 						<label className="label">
-							<span className="label-text-alt text-error">{errors.name.message}</span>
+							<span className="label-text-alt text-error">
+								{formErrors.name.message}
+							</span>
 						</label>
 					)}
 				</div>
@@ -104,16 +86,16 @@ const CreateAppModal = (props: Props) => {
 					</div>
 					<textarea
 						className={`textarea h-24 textarea-bordered ${
-							errors.description && 'input-error'
+							formErrors.description && 'input-error'
 						}`}
 						placeholder="Greatest description of all time"
 						{...register('description', {
 							maxLength: 128,
 						})}></textarea>
-					{errors.description && (
+					{formErrors.description && (
 						<label className="label">
 							<span className="label-text-alt text-error">
-								{errors.description.message}
+								{formErrors.description.message}
 							</span>
 						</label>
 					)}
@@ -128,7 +110,9 @@ const CreateAppModal = (props: Props) => {
 					<div className="alert alert-error mt-2">
 						<div className="flex-1">
 							<ErrorIcon />
-							<label>{error}</label>
+							<label>
+								{(error as AxiosError<CustomError>).response?.data.detail}
+							</label>
 						</div>
 					</div>
 				)}
@@ -139,26 +123,25 @@ const CreateAppModal = (props: Props) => {
 						type="submit">
 						{!isLoading ? 'Create' : 'Creating'}
 					</button>
-					<button className="btn btn-ghost" type="button" onClick={onClose}>
+					<button className="btn btn-ghost" type="button" onClick={handleOnClose}>
 						Cancel
 					</button>
 				</div>
 			</form>
 		</>
 	) : (
-		<ApiKeyPreview apiKey={createAppResponse.apiKey} onClose={onClose} />
+		<ApiKeyPreview apiKey={data.apiKey} onClose={handleOnClose} />
 	);
 
-	return ReactDOM.createPortal(
-		<div id="createAppModal" className={`modal ${props.showModal && 'modal-open'}`}>
+	return (
+		<Modal showModal={props.showModal} onClose={props.onClose}>
 			<div
 				className={`modal-box flex flex-col justify-between ${
 					isSuccess && 'animate__animated animate__flipInY min-h-[21rem]'
 				}`}>
 				{defaultComponent}
 			</div>
-		</div>,
-		document.getElementById('portal')!,
+		</Modal>
 	);
 };
 

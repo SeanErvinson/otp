@@ -1,7 +1,7 @@
 import useModal from '@/hooks/useModal';
 import msalInstance from '@/services/auth/msalInstance';
 import { MsalService } from '@/services/auth/msalService';
-import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
+import ConfirmationModal from '../Modal/ConfirmationModal';
 import LogoutIcon from '../misc/LogoutIcon';
 
 const LogoutButton = () => {

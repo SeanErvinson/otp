@@ -92,6 +92,12 @@ export const makeServer = () => {
 				},
 			);
 
+			this.post(`${otpApiBaseUrl}/apps/:id/regenerate-api-key`, () => {
+				return {
+					apiKey: 'hello',
+				};
+			});
+
 			this.passthrough('https://otpdev.b2clogin.com/**');
 		},
 	});
