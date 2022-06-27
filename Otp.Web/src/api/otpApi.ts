@@ -1,4 +1,4 @@
-import { CursorResult } from './../types/types';
+import { CursorResult, OtpRequest } from './../types/types';
 import { MetricStrategy, MetricInterval, Log } from '../types/types';
 import { oauthInstance, otpInstance, request } from '@/api/https';
 import { App, AppDetail, Channel, OtpRequestConfig, PagedResult } from '@/types/types';
@@ -44,7 +44,7 @@ export class OtpApi {
 		});
 	};
 
-	static getOtpRequest = (id: string) => {
+	static getOtpRequest = (id: string): Promise<OtpRequest> => {
 		return request(oauthInstance, {
 			method: 'GET',
 			url: `/otp/${id}`,

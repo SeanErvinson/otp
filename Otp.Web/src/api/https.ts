@@ -1,7 +1,6 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 
-import msalInstance from '@/services/auth/msalInstance';
-import { InteractionRequiredAuthError } from '@azure/msal-browser';
+import { MsalService } from '@/services/auth/msalService';
 
 export const otpInstance = (key: string) => {
 	return axios.create({
@@ -17,7 +16,7 @@ export const oauthInstance = axios.create({
 });
 
 oauthInstance.interceptors.request.use(async config => {
-	var token = await acquireAccessToken();
+	var token = await MsalService.acquireAccessToken();
 
 	if (!!token) {
 		config.headers = {
@@ -29,28 +28,6 @@ oauthInstance.interceptors.request.use(async config => {
 
 	return config;
 });
-
-const acquireAccessToken = async (): Promise<string | null> => {
-	const activeAccount = msalInstance.getActiveAccount();
-	const accounts = msalInstance.getAllAccounts();
-	if (!activeAccount && accounts.length === 0) {
-		console.log('No account');
-	}
-
-	const request = {
-		scopes: ['https://otpdev.onmicrosoft.com/api/access_as_user'],
-		account: activeAccount || accounts[0],
-	};
-	try {
-		const authResult = await msalInstance.acquireTokenSilent(request);
-		return authResult.accessToken;
-	} catch (error) {
-		if (error instanceof InteractionRequiredAuthError) {
-			msalInstance.acquireTokenRedirect(request);
-		}
-	}
-	return null;
-};
 
 export const request = async <T>(client: AxiosInstance, options: AxiosRequestConfig) => {
 	return client
