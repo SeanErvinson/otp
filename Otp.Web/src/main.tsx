@@ -6,7 +6,7 @@ import { QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { ReactQueryDevtools } from 'react-query/devtools';
 
-import { MockOtpApi } from '@/api/mockOtpApi';
+import { makeServer } from '@/api/mockOtpApi';
 import queryClient from '@/api/queryClient';
 import msalInstance from '@/services/auth/msalInstance';
 
@@ -15,7 +15,7 @@ import './global.less';
 import './index.css';
 
 if (import.meta.env.VITE_ENABLE_MOCK_SERVER) {
-	MockOtpApi.LoadMockServer();
+	makeServer();
 }
 
 ReactDOM.render(
