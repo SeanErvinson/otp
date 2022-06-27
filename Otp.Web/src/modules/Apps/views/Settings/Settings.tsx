@@ -1,19 +1,19 @@
 import { useOutletContext } from 'react-router-dom';
 
+import LoadingIndicator from '@/components/LoadingIndicator/LoadingIndicator';
 import { AppDetail } from '@/types/types';
-import SpinnerIcon from '@/components/misc/SpinnerIcon';
 
-import SettingsSection from './SettingsSection';
-import BrandingSection from './BrandingSection';
 import ApiKeySection from './ApiKeySection';
+import BrandingSection from './BrandingSection';
 import CallbackSection from './CallbackSection';
+import SettingsSection from './SettingsSection';
 
 const Settings = () => {
 	const app = useOutletContext<AppDetail | null>();
 
 	return (
 		<article id="settings">
-			{!app && <SpinnerIcon />}
+			{!app && <LoadingIndicator />}
 			{app && (
 				<>
 					<SettingsSection

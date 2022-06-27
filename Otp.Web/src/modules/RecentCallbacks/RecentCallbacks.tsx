@@ -1,12 +1,12 @@
 import { nanoid } from 'nanoid';
+import { Fragment, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 
 import { OtpApi } from '@/api/otpApi';
-import SpinnerIcon from '@/components/misc/SpinnerIcon';
+import LoadingIndicator from '@/components/LoadingIndicator/LoadingIndicator';
 import RoundCheckIcon from '@/components/misc/RoundCheckIcon';
 import { AppDetail } from '@/types/types';
-import { Fragment, useEffect } from 'react';
 
 const RecentCallbacks = () => {
 	const app = useOutletContext<AppDetail | null>();
@@ -25,7 +25,7 @@ const RecentCallbacks = () => {
 		<article id="recent-callbacks">
 			<h2 className="text-lg font-semibold mb-2">Recent delivers</h2>
 			<span className="text-sm font-light mb-2">Last 30 callbacks</span>
-			{query.isLoading && <SpinnerIcon />}
+			{query.isLoading && <LoadingIndicator />}
 			{query.data &&
 				query.data.map((callback, index) => {
 					return (

@@ -6,10 +6,10 @@ import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
 
 import { OtpApi } from '@/api/otpApi';
 import { CustomError } from '@/types/types';
-import SpinnerIcon from '@/components/misc/SpinnerIcon';
 
 import AppDetailForm from '../components/AppDetailForm';
 import { appIdAtom } from '../states/AppIdAtom';
+import LoadingIndicator from '@/components/LoadingIndicator/LoadingIndicator';
 
 const AppDetails = () => {
 	const { appId } = useParams();
@@ -39,11 +39,7 @@ const AppDetails = () => {
 
 	return (
 		<main id="app" className="h-full mx-auto">
-			{query.isLoading && (
-				<div className="flex flex-col gap-3 items-center h-full w-full justify-center">
-					<SpinnerIcon />
-				</div>
-			)}
+			{query.isLoading && <LoadingIndicator />}
 			{query.data && (
 				<>
 					<div className="flex flex-row justify-between mb-4">

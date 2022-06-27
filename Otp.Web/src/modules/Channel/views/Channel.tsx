@@ -4,12 +4,12 @@ import { useMutation, useQuery } from 'react-query';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { OtpApi, VerifyOtpResponse } from '@/api/otpApi';
-import SpinnerIcon from '@/components/misc/SpinnerIcon';
+import LoadingIndicator from '@/components/LoadingIndicator/LoadingIndicator';
+import { Loader } from '@/components/Loader';
+import { CustomError } from '@/types/types';
 import { isValidGuid } from '@/utils/stringUtils';
 
 import OtpInputGroup from '../components/OtpInputGroup';
-import { Loader } from '@/components/Loader';
-import { CustomError } from '@/types/types';
 
 const otpInputLength = 6;
 
@@ -110,7 +110,7 @@ const Channel = () => {
 				<div className="card shadow-lg bg-base-200 my-auto mx-4">
 					<div className="card-body">
 						<h2 className="card-title text-center">One-Time Password</h2>
-						{query.isLoading && <SpinnerIcon />}
+						{query.isLoading && <LoadingIndicator />}
 						{query.isSuccess && (
 							<>
 								<p>A One-Time Password has been sent to {query.data.contact}</p>
