@@ -1,5 +1,5 @@
 {
-  "name": "otp",
+  "name": "ohtp",
   "version": "0.0.0",
   "scripts": {
     "local": "vite -m mock",
