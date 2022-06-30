@@ -19,14 +19,14 @@ const Settings = () => {
 					<SettingsSection
 						title="API Key"
 						description="Regenerate your API Key in case the key has been compromised or leaked.">
-						<ApiKeySection appId={app.id} />
+						<ApiKeySection />
 					</SettingsSection>
 					<SettingsSection
 						title="Callback"
 						description="Callback URL functions like a notification for your application. Every
 						time a user submits an OTP authentication we use this callback URL to
 						send relevant information to you.">
-						<CallbackSection appId={app.id} callbackUrl={app.callbackUrl} />
+						<CallbackSection />
 					</SettingsSection>
 					<SettingsSection
 						title="Branding"

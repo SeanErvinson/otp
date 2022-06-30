@@ -9,14 +9,15 @@ import {
 	UseFormSetValue,
 	useFormState,
 } from 'react-hook-form';
+import { useMutation } from 'react-query';
 
-import { AppDetail } from '@/types/types';
+import { OtpApi } from '@/api/otpApi';
 import XIcon from '@/components/misc/XIcon';
 import { TagCollection } from '@/components/TagCollection';
 import { TagInput } from '@/components/TagInput';
 import DeleteAppButton from '@/modules/Apps/components/DeleteAppButton';
 
-import { appIdAtom } from '../states/AppIdAtom';
+import { selectedAppAtom } from '../states/SelectedAppAtom';
 
 const AppNameInput = ({
 	register,
@@ -29,7 +30,7 @@ const AppNameInput = ({
 	fieldError?: FieldError;
 	resetField: UseFormResetField<FormData>;
 }) => {
-	const [appId] = useAtom(appIdAtom);
+	const [selectedApp] = useAtom(selectedAppAtom);
 
 	return (
 		<div className="flex flex-row justify-between">
@@ -42,15 +43,15 @@ const AppNameInput = ({
 							{...register('name', {
 								required: {
 									value: true,
-									message: 'Title is required',
+									message: 'Name is required',
 								},
 								minLength: {
 									value: 4,
-									message: 'Title must be longer than 4 characters',
+									message: 'Name must be longer than 4 characters',
 								},
 								maxLength: {
 									value: 32,
-									message: 'Title must be shorter than 32 characters',
+									message: 'Name must be shorter than 32 characters',
 								},
 								pattern: {
 									value: /^[\w-]+$/,
@@ -66,7 +67,7 @@ const AppNameInput = ({
 							</button>
 						)}
 					</div>
-					<DeleteAppButton appId={appId} />
+					<DeleteAppButton appId={selectedApp.id} />
 				</div>
 				{fieldError && (
 					<label className="label">
@@ -123,14 +124,12 @@ const TagsInput = ({
 	register,
 	setValue,
 	getValues,
-	fieldError,
 	resetField,
 }: {
 	register: UseFormRegister<FormData>;
 	dirtyFields: Fields;
 	getValues: UseFormGetValues<FormData>;
 	setValue: UseFormSetValue<FormData>;
-	fieldError?: FieldError[];
 	resetField: UseFormResetField<FormData>;
 }) => {
 	const [showTagInput, setShowTagInput] = useState(false);
@@ -181,14 +180,10 @@ const TagsInput = ({
 	);
 };
 
-interface Props {
-	data: AppDetail;
-}
-
 type FormData = {
 	name: string;
 	description: string;
-	tags?: string[];
+	tags: string[];
 };
 
 interface Fields {
@@ -197,18 +192,30 @@ interface Fields {
 	tags?: boolean[] | undefined;
 }
 
-const AppDetailForm = ({ data }: Props) => {
+const AppDetailForm = () => {
+	const [selectedApp, setSelectedApp] = useAtom(selectedAppAtom);
 	const { handleSubmit, register, control, resetField, setValue, getValues } = useForm<FormData>({
 		defaultValues: {
-			name: data.name,
-			description: data.description,
-			tags: data.tags,
+			name: selectedApp.name,
+			description: selectedApp.description,
+			tags: selectedApp.tags,
 		},
 	});
 	const { isDirty, dirtyFields, errors } = useFormState<FormData>({ control });
 
+	const { mutate, isLoading } = useMutation(OtpApi.saveAppDescriptors, {
+		onSuccess(data) {
+			setSelectedApp(data);
+		},
+	});
+
 	const onSubmit = (data: FormData) => {
-		console.log(data);
+		mutate({
+			appId: selectedApp.id,
+			name: data.name,
+			description: data.description,
+			tags: data.tags,
+		});
 	};
 
 	return (
@@ -227,7 +234,6 @@ const AppDetailForm = ({ data }: Props) => {
 			/>
 			<TagsInput
 				dirtyFields={dirtyFields}
-				fieldError={errors.tags}
 				getValues={getValues}
 				register={register}
 				resetField={resetField}
@@ -236,8 +242,11 @@ const AppDetailForm = ({ data }: Props) => {
 
 			{isDirty && (
 				<div>
-					<button className="btn btn-sm btn-success" type="submit">
-						Save
+					<button
+						className={`btn btn-sm btn-success ${isLoading && 'loading'}`}
+						type="submit"
+						disabled={isLoading}>
+						{!isLoading ? 'Save' : 'Saving'}
 					</button>
 				</div>
 			)}

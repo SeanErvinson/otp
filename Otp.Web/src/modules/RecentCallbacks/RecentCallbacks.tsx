@@ -11,8 +11,9 @@ import { AppDetail } from '@/types/types';
 const RecentCallbacks = () => {
 	const app = useOutletContext<AppDetail | null>();
 	const navigate = useNavigate();
-	const query = useQuery(['getAppRecentCallbacks', app?.id], () =>
-		OtpApi.getAppRecentCallbacks(app?.id),
+	const query = useQuery(
+		['getAppRecentCallbacks', app?.id],
+		() => OtpApi.getAppRecentCallbacks(app?.id ?? ''), //TODO make sure that the id is always available
 	);
 
 	useEffect(() => {

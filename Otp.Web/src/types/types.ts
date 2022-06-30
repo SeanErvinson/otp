@@ -44,6 +44,9 @@ export type ChannelUsageMetric = {
 };
 export type MetricStrategy = typeof MetricStrategy[number];
 
+export const OtpRequestStatus = ['Success', 'Failed'] as const;
+export type OtpRequestStatus = typeof OtpRequestStatus[keyof typeof OtpRequestStatus];
+
 export const Channel = ['SMS', 'Email'] as const;
 export type Channel = typeof Channel[number];
 
@@ -51,6 +54,27 @@ export type OtpRequestConfig = {
 	backgroundUrl?: string;
 	logoUrl?: string;
 	contact: string;
+};
+
+type OtpAttempt = {};
+
+type OtpEvent = {};
+
+type ClientInfo = {
+	ipAddress: string;
+	referrer: string;
+	userAgent: string;
+};
+
+export type OtpRequest = {
+	id: string;
+	channel: Channel;
+	app: App;
+	attempts: OtpAttempt[];
+	timeline: OtpEvent[];
+	status: OtpRequestStatus;
+	clientInfo: ClientInfo;
+	requestedAt: Date;
 };
 
 /**
@@ -85,7 +109,7 @@ export type Log = {
 	id: string;
 	status: Status;
 	eventDate: Date;
-	receiver: string;
+	recipient: string;
 	channel: Channel;
 	app: string;
 };

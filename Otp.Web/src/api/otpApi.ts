@@ -1,7 +1,8 @@
-import { CursorResult, OtpRequest } from './../types/types';
-import { MetricStrategy, MetricInterval, Log } from '../types/types';
 import { oauthInstance, otpInstance, request } from '@/api/https';
 import { App, AppDetail, Channel, OtpRequestConfig, PagedResult } from '@/types/types';
+
+import { CursorResult, OtpRequest } from './../types/types';
+import { MetricStrategy, MetricInterval, Log } from '../types/types';
 
 export class OtpApi {
 	static getApps = (pageIndex: number): Promise<PagedResult<App>> => {
@@ -23,7 +24,7 @@ export class OtpApi {
 		});
 	};
 
-	static getAppRecentCallbacks = async (id: string): Promise<GetAppRecentCallbacksResponse[]> => {
+	static getAppRecentCallbacks = (id: string): Promise<GetAppRecentCallbacksResponse[]> => {
 		return request(oauthInstance, {
 			method: 'GET',
 			url: `/apps/${id}/recent-callbacks`,
@@ -75,27 +76,33 @@ export class OtpApi {
 		});
 	};
 
-	static updateAppCallback = async (req: UpdateCallbackRequest): Promise<void> => {
+	static saveAppDescriptors = (req: SaveDescriptorRequest): Promise<AppDetail> => {
 		return request(oauthInstance, {
 			method: 'PUT',
-			url: `/apps/${req.id}/callback`,
+			url: `/apps/${req.appId}/descriptor`,
 			data: req,
 		});
 	};
 
-	static regenerateAppApiKey = async (
-		id: string | undefined,
-	): Promise<RegenerateApiKeyResponse> => {
+	static saveAppCallback = (req: SaveCallbackRequest): Promise<AppDetail> => {
 		return request(oauthInstance, {
-			method: 'POST',
-			url: `/apps/${id}/regenerate-api-key`,
+			method: 'PUT',
+			url: `/apps/${req.appId}/callback`,
+			data: req,
 		});
 	};
 
-	static deleteApp = async (id: string): Promise<void> => {
+	static regenerateAppApiKey = (appId: string | undefined): Promise<RegenerateApiKeyResponse> => {
+		return request(oauthInstance, {
+			method: 'POST',
+			url: `/apps/${appId}/regenerate-api-key`,
+		});
+	};
+
+	static deleteApp = (appId: string): Promise<void> => {
 		return request(oauthInstance, {
 			method: 'DELETE',
-			url: `/apps/${id}`,
+			url: `/apps/${appId}`,
 		});
 	};
 
@@ -103,7 +110,7 @@ export class OtpApi {
 	 * Otp-Related
 	 */
 
-	static getOtpRequestConfig = async (id: string, key: string): Promise<OtpRequestConfig> => {
+	static getOtpRequestConfig = (id: string, key: string): Promise<OtpRequestConfig> => {
 		return request(otpInstance(key), {
 			method: 'GET',
 			url: `/otp/${id}/config`,
@@ -113,11 +120,7 @@ export class OtpApi {
 		});
 	};
 
-	static verifyOtp = async (
-		id: string,
-		key: string,
-		code: string,
-	): Promise<VerifyOtpResponse> => {
+	static verifyOtp = (id: string, key: string, code: string): Promise<VerifyOtpResponse> => {
 		return request(otpInstance(key), {
 			method: 'POST',
 			url: '/otp/verify',
@@ -128,7 +131,7 @@ export class OtpApi {
 		});
 	};
 
-	static cancelOtp = async (id: string, key: string): Promise<CancelOtpResponse> => {
+	static cancelOtp = (id: string, key: string): Promise<CancelOtpResponse> => {
 		return request(otpInstance(key), {
 			method: 'POST',
 			url: '/otp/cancel',
@@ -138,7 +141,7 @@ export class OtpApi {
 		});
 	};
 
-	static resendOtp = async (id: string, key: string): Promise<void> => {
+	static resendOtp = (id: string, key: string): Promise<void> => {
 		return request(otpInstance(key), {
 			method: 'POST',
 			url: '/otp/resend',
@@ -168,8 +171,15 @@ export type CreateAppResponse = {
 	apiKey: string;
 };
 
-type UpdateCallbackRequest = {
-	id: string;
+type SaveDescriptorRequest = {
+	appId: string;
+	name: string;
+	description?: string;
+	tags: string[];
+};
+
+type SaveCallbackRequest = {
+	appId: string;
 	callbackUrl: string;
 	endpointSecret: string;
 };

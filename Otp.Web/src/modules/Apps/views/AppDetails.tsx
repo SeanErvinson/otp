@@ -5,19 +5,19 @@ import { useQuery } from 'react-query';
 import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
 
 import { OtpApi } from '@/api/otpApi';
+import LoadingIndicator from '@/components/LoadingIndicator/LoadingIndicator';
 import { CustomError } from '@/types/types';
 
 import AppDetailForm from '../components/AppDetailForm';
-import { appIdAtom } from '../states/AppIdAtom';
-import LoadingIndicator from '@/components/LoadingIndicator/LoadingIndicator';
+import { selectedAppAtom } from '../states/SelectedAppAtom';
 
 const AppDetails = () => {
 	const { appId } = useParams();
 	const navigate = useNavigate();
-	const [applicationId, setAppId] = useAtom(appIdAtom);
+	const [, setSelectedApp] = useAtom(selectedAppAtom);
 
-	const query = useQuery(['getApp', applicationId], () => OtpApi.getApp(applicationId), {
-		enabled: !!applicationId,
+	const query = useQuery(['getApp', appId], () => OtpApi.getApp(appId!), {
+		enabled: !!appId,
 		onError: (error: AxiosError<CustomError>) => {
 			if (
 				error.response &&
@@ -27,6 +27,9 @@ const AppDetails = () => {
 				return;
 			}
 		},
+		onSuccess: data => {
+			setSelectedApp(data);
+		},
 	});
 
 	useEffect(() => {
@@ -34,7 +37,6 @@ const AppDetails = () => {
 			navigate('/404');
 			return;
 		}
-		setAppId(appId);
 	}, []);
 
 	return (
@@ -43,7 +45,7 @@ const AppDetails = () => {
 			{query.data && (
 				<>
 					<div className="flex flex-row justify-between mb-4">
-						<AppDetailForm data={query.data} />
+						<AppDetailForm />
 					</div>
 
 					<div>

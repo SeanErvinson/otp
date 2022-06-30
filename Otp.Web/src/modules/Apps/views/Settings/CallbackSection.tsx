@@ -1,56 +1,48 @@
+import { useAtom } from 'jotai';
 import { useState } from 'react';
 import { useForm, useFormState } from 'react-hook-form';
+import { useMutation } from 'react-query';
 
+import { OtpApi } from '@/api/otpApi';
 import WarningIcon from '@/components/misc/WarningIcon';
 import { useGeneratedId } from '@/hooks';
-import { useMutation } from 'react-query';
-import { OtpApi } from '@/api/otpApi';
 import { isValidUrl } from '@/utils/stringUtils';
 
-interface Props {
-	appId: string;
-	callbackUrl?: string;
-}
+import { selectedAppAtom } from '../../states/SelectedAppAtom';
 
 type FormData = {
 	callbackUrl: string;
 	secret: string;
 };
 
-const CallbackSection = ({ appId, callbackUrl }: Props) => {
+const CallbackSection = () => {
+	const [selectedApp] = useAtom(selectedAppAtom);
 	const [enableChangeSecret, setEnableChangeSecret] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
-	const [isSuccess, setIsSuccess] = useState(false);
+	const generateId = useGeneratedId();
 
 	const { handleSubmit, register, resetField, control, getValues } = useForm<FormData>({
 		defaultValues: {
-			callbackUrl: callbackUrl ?? '',
+			callbackUrl: selectedApp.callbackUrl ?? '',
 			secret: '',
 		},
 	});
 	const { isDirty, errors, dirtyFields } = useFormState<FormData>({
 		control,
 	});
-	const mutation = useMutation(OtpApi.updateAppCallback, {
-		onMutate: () => {
-			setIsLoading(true);
-		},
+	const { mutate, isLoading, isSuccess } = useMutation(OtpApi.saveAppCallback, {
 		onSuccess: () => {
 			resetField('secret');
 			resetField('callbackUrl', {
 				keepDirty: false,
 				defaultValue: getValues('callbackUrl'),
 			});
-			setIsLoading(false);
-			setIsSuccess(true);
 			setEnableChangeSecret(false);
 		},
 	});
-	const generateId = useGeneratedId();
 
 	const onSubmit = (data: FormData) => {
-		mutation.mutate({
-			id: appId,
+		mutate({
+			appId: selectedApp.id,
 			callbackUrl: data.callbackUrl,
 			endpointSecret: data.secret,
 		});
@@ -71,7 +63,7 @@ const CallbackSection = ({ appId, callbackUrl }: Props) => {
 					<input
 						id={generateId('callback')}
 						type="url"
-						defaultValue={callbackUrl}
+						defaultValue={selectedApp.callbackUrl}
 						{...register('callbackUrl', {
 							validate: value =>
 								isValidUrl(value) || 'This doesn’t look like a valid URL.',
@@ -91,7 +83,7 @@ const CallbackSection = ({ appId, callbackUrl }: Props) => {
 					<label htmlFor={generateId('secret')} className="label">
 						<span className="label-text">Secret</span>
 					</label>
-					{!!callbackUrl && !enableChangeSecret ? (
+					{!!selectedApp.callbackUrl && !enableChangeSecret ? (
 						<div className="alert-warning rounded-2xl p-4 flex flex-row justify-between items-center gap-4">
 							<WarningIcon className="w-6 h-6 mx-1 fill-current" />
 							<p className="flex-1">

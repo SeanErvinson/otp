@@ -100,7 +100,7 @@ const LogTable = (props: Props) => {
 			},
 			{
 				Header: 'Receiver',
-				accessor: row => row.receiver,
+				accessor: row => row.recipient,
 			},
 			{
 				Header: 'App',
@@ -184,7 +184,7 @@ const LogTable = (props: Props) => {
 				nextPage={nextPage}
 				previousPage={previousPage}
 			/>
-			<TimelineModal showModal={visible} onClose={toggle} />
+			{visible && <TimelineModal showModal={visible} onClose={toggle} />}
 		</>
 	);
 };
