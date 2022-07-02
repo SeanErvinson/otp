@@ -63,7 +63,7 @@ public class App : AuditableEntity
 	
 	public void TriggerCanceledCallback(OtpRequest request)
 	{
-		TriggerCallback(request, CallbackEventType.Canceled);
+		TriggerCallback(request, CallbackEventType.Canceled, "Otp request was canceled");
 	}
 	
 	public void TriggerSuccessCallback(OtpRequest request)

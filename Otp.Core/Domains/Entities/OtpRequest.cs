@@ -73,16 +73,15 @@ public class OtpRequest : TimedEntity
 		ClientInfo ??= clientInfo;
 
 		if (ExpiresOn >= DateTime.UtcNow)
-		{
-			const string message = "Request has expired"; 
-			ClaimFailed(message);
-			throw new OtpRequestException(message);
+		{ 
+			ClaimRequest();
+			throw new OtpRequestException("Request has expired");
 		}
 		
 		if (_otpAttempts.Count >= MaxAttempts)
 		{
 			const string message = "OTP has reached max attempt tries. Please request a new OTP";
-			ClaimFailed(message);
+			ClaimRequest();
 			App.TriggerFailedCallback(this, message);
 			throw new OtpRequestException(message);
 		}
@@ -92,27 +91,22 @@ public class OtpRequest : TimedEntity
 		switch (attempt.AttemptStatus)
 		{
 			case OtpAttemptStatus.Success:
-				ClaimSuccessfully();
+				ClaimRequest();
 				App.TriggerSuccessCallback(this);
 				break;
+			case OtpAttemptStatus.Fail:
+				App.TriggerFailedCallback(this, "Code provided by user is incorrect");
+				break;
 			case OtpAttemptStatus.Canceled:
-				ClaimFailed("Request was canceled");
+				ClaimRequest();
 				App.TriggerCanceledCallback(this);
 				break;
 		}
 	}
 
-	private void ClaimSuccessfully()
+	private void ClaimRequest()
 	{
 		Availability = OtpRequestAvailability.Unavailable;
-		// Status = OtpRequestStatus.Success;
-		VerifiedAt = DateTime.UtcNow;
-	}
-
-	private void ClaimFailed(string message)
-	{
-		Availability = OtpRequestAvailability.Unavailable;
-		// Status = OtpRequestStatus.Success;
 		VerifiedAt = DateTime.UtcNow;
 	}
 }
@@ -122,10 +116,3 @@ public enum OtpRequestAvailability
 	Available,
 	Unavailable,
 }
-
-public enum OtpRequestStatus
-{
-	Success,
-	Failed
-}
-
