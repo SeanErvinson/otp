@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Otp.Core.Domains.Common.Models;
 
 namespace Otp.Core.Domains.ValueObjects;
