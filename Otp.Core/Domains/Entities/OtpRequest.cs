@@ -8,7 +8,7 @@ using Otp.Core.Utils;
 
 namespace Otp.Core.Domains.Entities;
 
-[DebuggerDisplay("{Id} - {Code} - {State} - {Status}")]
+[DebuggerDisplay("{Id} - {Code} - {Availability}")]
 public class OtpRequest : TimedEntity
 {
 	public Guid AppId { get; private set; }
@@ -18,16 +18,14 @@ public class OtpRequest : TimedEntity
 	public string Recipient { get; } = default!;
 	public Channel Channel { get; }
 	public DateTime? VerifiedAt { get; private set; }
-	public string Key { get; } = default!;
+	public string Key { get; } = default!; // TODO rename this property to something more descriptive
 	public int ResendCount { get; private set; }
 	public int MaxAttempts { get; private set; } = 3;
-	public OtpRequestState State { get; private set; }
-	public OtpRequestStatus Status { get; private set; }
-	public string? ErrorMessage { get; private set; }
+	public OtpRequestAvailability Availability { get; private set; }
 	public ClientInfo? ClientInfo { get; private set; }
-	//
-	// private readonly List<OtpEvent> _timeline = new();
-	// public IReadOnlyCollection<OtpEvent> Timeline => _timeline.AsReadOnly();
+	
+	private readonly List<OtpEvent> _timeline = new();
+	public IReadOnlyCollection<OtpEvent> Timeline => _timeline.AsReadOnly();
 	
 	private readonly List<OtpAttempt> _otpAttempts = new();
 	public IReadOnlyCollection<OtpAttempt> OtpAttempts => _otpAttempts.AsReadOnly();
@@ -49,8 +47,9 @@ public class OtpRequest : TimedEntity
 		CancelUrl = cancelUrl;
 		Code = OtpUtil.GenerateCode();
 		Key = CryptoUtil.HashKey(CryptoUtil.GenerateKey());
-		State = OtpRequestState.Available;
-
+		Availability = OtpRequestAvailability.Available;
+		AddEvent(OtpEvent.Success(EventState.Request));
+		
 		AddDomainEvent(new OtpRequestedEvent(this));
 	}
 
@@ -62,15 +61,10 @@ public class OtpRequest : TimedEntity
 		AddDomainEvent(new OtpRequestedEvent(this));
 	}
 
-	public void SentSuccessfully()
+	public void AddEvent(OtpEvent otpEvent)
 	{
-		Status = OtpRequestStatus.Success;
-	}
-
-	public void SentFailed(string message)
-	{
-		Status = OtpRequestStatus.Failed;
-		ErrorMessage = message;
+		// TODO Consider adding a state machine to make sure that events are in proper order Request → Sent → Deliver
+		_timeline.Add(otpEvent);
 	}
 
 	// TODO If switched to a microservice, all the trigger, should be replace with an event that sends a message
@@ -108,42 +102,22 @@ public class OtpRequest : TimedEntity
 		}
 	}
 
-	// public void AddEventToTimeline(OtpEvent otpEvent)
-	// {
-	// 	_timeline.Add(otpEvent);
-	// }
-
 	private void ClaimSuccessfully()
 	{
-		State = OtpRequestState.Unavailable;
+		Availability = OtpRequestAvailability.Unavailable;
 		// Status = OtpRequestStatus.Success;
 		VerifiedAt = DateTime.UtcNow;
 	}
 
 	private void ClaimFailed(string message)
 	{
-		State = OtpRequestState.Unavailable;
+		Availability = OtpRequestAvailability.Unavailable;
 		// Status = OtpRequestStatus.Success;
 		VerifiedAt = DateTime.UtcNow;
-		ErrorMessage = message;
 	}
 }
 
-public enum RequestState
-{
-	Request,
-	Sent,
-	Deliver,
-	Fail
-}
-
-public enum AvailabilityStatus
-{
-	Available,
-	Unavailable
-}
-
-public enum OtpRequestState
+public enum OtpRequestAvailability
 {
 	Available,
 	Unavailable,

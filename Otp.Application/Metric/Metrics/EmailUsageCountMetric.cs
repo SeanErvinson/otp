@@ -6,6 +6,7 @@ using Otp.Application.Common.Interfaces;
 using Otp.Application.Metric.Queries.GetMetric;
 using Otp.Core.Domains.Common.Enums;
 using Otp.Core.Domains.Entities;
+using Otp.Core.Domains.ValueObjects;
 using Serilog.Context;
 
 namespace Otp.Application.Metric.Metrics;
@@ -42,7 +43,8 @@ public record EmailUsageCountMetric(DateTime StartDateTime,
 						otpRequest.Channel == Channel.Email &&
 						otpRequest.CreatedAt >= startDateTime &&
 						otpRequest.CreatedAt <= endDateTime &&
-						otpRequest.Status == OtpRequestStatus.Success &&
+						otpRequest.Timeline.Any(@event =>
+								@event.State == EventState.Deliver && @event.Status == EventStatus.Success) &&
 						otpRequest.App.PrincipalId == _currentUserService.PrincipalId;
 				}
 

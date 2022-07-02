@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
-using Otp.Core.Domains.Entities;
+using Otp.Core.Domains.ValueObjects;
 using Serilog.Context;
 
 namespace Otp.Application.Otp.Commands.ResendOtpRequest;
@@ -25,12 +25,13 @@ public record ResendOtpRequest(Guid Id) : IRequest
 			using (LogContext.PushProperty("OtpRequestId", request.Id))
 			{
 				var otpRequest =
-					await _dbContext.OtpRequests.FirstOrDefaultAsync(otpRequest =>
-																		otpRequest.Id == request.Id
-																		&& otpRequest.Key == _otpContextService.Key
-																		&& otpRequest.ExpiresOn > DateTime.UtcNow
-																		&& otpRequest.Status == OtpRequestStatus.Success,
-																	cancellationToken);
+					await _dbContext.OtpRequests.FirstOrDefaultAsync(req =>
+							req.Id == request.Id &&
+							req.Key == _otpContextService.Key &&
+							req.ExpiresOn > DateTime.UtcNow &&
+							req.Timeline.Any(@event =>
+								@event.State == EventState.Deliver && @event.Status == EventStatus.Success),
+						cancellationToken);
 
 				if (otpRequest is null)
 				{

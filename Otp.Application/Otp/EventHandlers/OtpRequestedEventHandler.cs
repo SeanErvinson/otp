@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Events;
+using Otp.Core.Domains.ValueObjects;
 using Serilog;
 using Serilog.Context;
 
@@ -32,12 +33,12 @@ public class OtpRequestedEventHandler : INotificationHandler<OtpRequestedEvent>
 				{
 					Log.Information("Sending otp request");
 					await sender.Send(otpRequest, cancellationToken);
-					otpRequest.SentSuccessfully();
+					otpRequest.AddEvent(OtpEvent.Success(EventState.Send, "Otp request sent"));
 				}
 				catch (Exception e)
 				{
 					Log.Error(e, "Failed to send otp request");
-					otpRequest.SentFailed(e.Message);
+					otpRequest.AddEvent(OtpEvent.Fail(EventState.Send, e.Message));
 					throw new InvalidOperationException(e.Message);
 				}
 				finally

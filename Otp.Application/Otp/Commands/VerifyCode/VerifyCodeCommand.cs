@@ -17,14 +17,17 @@ public record VerifyCodeCommand(Guid Id, string Code) : IRequest<VerifyCodeComma
 		private readonly IOtpContextService _otpContextService;
 		private readonly ICurrentUserService _currentUserService;
 
-		public Handler(IApplicationDbContext dbContext, IOtpContextService otpContextService, ICurrentUserService currentUserService)
+		public Handler(IApplicationDbContext dbContext,
+			IOtpContextService otpContextService,
+			ICurrentUserService currentUserService)
 		{
 			_dbContext = dbContext;
 			_otpContextService = otpContextService;
 			_currentUserService = currentUserService;
 		}
 
-		public async Task<VerifyCodeCommandResponse> Handle(VerifyCodeCommand request, CancellationToken cancellationToken)
+		public async Task<VerifyCodeCommandResponse> Handle(VerifyCodeCommand request,
+			CancellationToken cancellationToken)
 		{
 			using (LogContext.PushProperty("OtpRequestId", request.Id))
 			{
@@ -32,10 +35,11 @@ public record VerifyCodeCommand(Guid Id, string Code) : IRequest<VerifyCodeComma
 					await _dbContext.OtpRequests
 						.Include(otpRequest => otpRequest.App)
 						.FirstOrDefaultAsync(req =>
-								req.Id == request.Id
-								&& req.Key == _otpContextService.Key
-								&& req.State == OtpRequestState.Available
-								&& req.Status == OtpRequestStatus.Success,
+								req.Id == request.Id &&
+								req.Key == _otpContextService.Key &&
+								req.Availability == OtpRequestAvailability.Available &&
+								req.Timeline.Any(@event =>
+									@event.State == EventState.Deliver && @event.Status == EventStatus.Success),
 							cancellationToken);
 
 				if (otpRequest is null)
@@ -53,7 +57,9 @@ public record VerifyCodeCommand(Guid Id, string Code) : IRequest<VerifyCodeComma
 					throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
 				}
 
-				var requestInfo = new ClientInfo(_currentUserService.IpAddress, _currentUserService.UserAgent, _currentUserService.Referrer);
+				var requestInfo = new ClientInfo(_currentUserService.IpAddress,
+					_currentUserService.UserAgent,
+					_currentUserService.Referrer);
 				if (otpRequest.Code != request.Code)
 				{
 					otpRequest.AddAttempt(OtpAttempt.Fail(request.Code), requestInfo);

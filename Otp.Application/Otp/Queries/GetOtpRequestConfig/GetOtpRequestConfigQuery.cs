@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Entities;
+using Otp.Core.Domains.ValueObjects;
 
 namespace Otp.Application.Otp.Queries.GetOtpRequest;
 
@@ -19,23 +20,25 @@ public record GetOtpRequestConfigQuery(Guid Id, string Key) : IRequest<GetOtpReq
 			_dbContext = dbContext;
 		}
 
-		public async Task<GetOtpRequestConfigQueryResponse> Handle(GetOtpRequestConfigQuery requestConfig, CancellationToken cancellationToken)
+		public async Task<GetOtpRequestConfigQueryResponse> Handle(GetOtpRequestConfigQuery requestConfig,
+			CancellationToken cancellationToken)
 		{
 			var otpRequest =
 				await _dbContext.OtpRequests.AsNoTracking()
-								.Include(otpRequest => otpRequest.App)
-								.FirstOrDefaultAsync(otpRequest =>
-														otpRequest.Id == requestConfig.Id
-														&& otpRequest.Key == requestConfig.Key
-														&& otpRequest.State == OtpRequestState.Available
-														&& otpRequest.Status == OtpRequestStatus.Success,
-													cancellationToken);
+					.Include(otpRequest => otpRequest.App)
+					.FirstOrDefaultAsync(req =>
+							req.Id == requestConfig.Id &&
+							req.Key == requestConfig.Key &&
+							req.Availability == OtpRequestAvailability.Available &&
+							req.Timeline.Any(@event =>
+								@event.State == EventState.Deliver && @event.Status == EventStatus.Success),
+						cancellationToken);
 
 			if (otpRequest is null)
 			{
 				throw new NotFoundException($"Otp request {requestConfig.Id} does not exist");
 			}
-			
+
 			if (otpRequest.ExpiresOn < DateTime.UtcNow)
 			{
 				throw new ExpiredResourceException("Otp request has expired");

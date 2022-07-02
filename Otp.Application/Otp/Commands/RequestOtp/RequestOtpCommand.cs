@@ -70,7 +70,7 @@ public record RequestOtpCommand : IRequest<RequestOtpDto>
 				}
 
 				var otpRequest = new OtpRequest(appId, request.Contact, request.Channel, request.SuccessUrl, request.CancelUrl);
-			
+	
 				var result = await _dbContext.OtpRequests.AddAsync(otpRequest, cancellationToken);
 				await _dbContext.SaveChangesAsync(cancellationToken);
 				

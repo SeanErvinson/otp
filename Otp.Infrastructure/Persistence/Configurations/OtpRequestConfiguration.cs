@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Otp.Core.Domains.Entities;
+using Otp.Core.Domains.ValueObjects;
 
 namespace Otp.Infrastructure.Persistence.Configurations;
 
@@ -21,10 +22,15 @@ public class OtpRequestConfiguration : BaseEntityConfiguration<OtpRequest>
 			otpRequest.Id
 		});
 		
-		builder.Property(otpRequest => otpRequest.State)
+		builder.Property(otpRequest => otpRequest.Availability)
 				.HasConversion<string>();
-		builder.Property(otpRequest => otpRequest.Status)
-				.HasConversion<string>();
+		builder.OwnsMany(otpRequest => otpRequest.Timeline,
+			childBuilder =>
+			{
+				childBuilder.ToTable(nameof(OtpRequest.Timeline));
+				childBuilder.Property(child => child.State).HasConversion<string>();
+				childBuilder.Property(child => child.Status).HasConversion<string>();
+			});
 		builder.Property(otpRequest => otpRequest.Channel)
 				.HasConversion<string>();
 		builder.Ignore(otpRequest => otpRequest.RequestPath);

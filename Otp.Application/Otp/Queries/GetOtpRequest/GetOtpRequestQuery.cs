@@ -53,7 +53,6 @@ public record GetOtpRequestQuery(Guid Id) : IRequest<GetOtpRequestQueryResponse>
 				Timeline = Array.Empty<RequestEventResponse>(),
 				ResendCount = otpRequest.ResendCount,
 				MaxAttempts = otpRequest.MaxAttempts,
-				ErrorMessage = otpRequest.ErrorMessage,
 				ExpiresOn = otpRequest.ExpiresOn,
 				ClientInfo = new ClientInfoResponse
 				{
