@@ -50,7 +50,7 @@ public record GetOtpRequestConfigQuery(Guid Id, string Key) : IRequest<GetOtpReq
 			{
 				BackgroundUrl = otpRequest.App.Branding.BackgroundUrl,
 				LogoUrl = otpRequest.App.Branding.LogoUrl,
-				Contact = otpRequest.Contact
+				Contact = otpRequest.Recipient
 			};
 		}
 	}

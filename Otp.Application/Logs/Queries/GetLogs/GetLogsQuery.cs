@@ -81,7 +81,7 @@ public record GetLogsQuery(string? Before, string? After) : IRequest<CursorResul
 					Id = otpRequest.Id,
 					App = new GetLogsQueryAppDto(otpRequest.AppId, otpRequest.App.Name),
 					Channel = otpRequest.Channel,
-					Receiver = otpRequest.Contact,
+					Receiver = otpRequest.Recipient,
 					EventDate = otpRequest.CreatedAt,
 				});
 

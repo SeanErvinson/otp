@@ -48,7 +48,7 @@ public record GetOtpRequestQuery(Guid Id) : IRequest<GetOtpRequestQueryResponse>
 			{
 				Id = otpRequest.Id,
 				Channel = otpRequest.Channel,
-				Recipient = otpRequest.Contact,
+				Recipient = otpRequest.Recipient,
 				RequestedAt = otpRequest.CreatedAt,
 				Timeline = Array.Empty<RequestEventResponse>(),
 				ResendCount = otpRequest.ResendCount,

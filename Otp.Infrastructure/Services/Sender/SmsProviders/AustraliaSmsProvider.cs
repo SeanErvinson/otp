@@ -9,7 +9,7 @@ public class AustraliaSmsProvider : ISmsProvider
 
 	public Task Send(OtpRequest request, CancellationToken cancellationToken = default)
 	{
-		Console.WriteLine($"Sending SMS from AU provider {request.Contact}");
+		Console.WriteLine($"Sending SMS from AU provider {request.Recipient}");
 		return Task.CompletedTask;
 	}
 }

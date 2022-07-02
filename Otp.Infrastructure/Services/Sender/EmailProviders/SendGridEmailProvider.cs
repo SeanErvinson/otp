@@ -7,7 +7,7 @@ public class SendGridEmailProvider : IEmailProvider
 {
 	public Task Send(OtpRequest request, CancellationToken cancellationToken = default)
 	{
-		Console.WriteLine($"Sending Email from SendGridProvider {request.Contact}");
+		Console.WriteLine($"Sending Email from SendGridProvider {request.Recipient}");
 		return Task.CompletedTask;
 	}
 }

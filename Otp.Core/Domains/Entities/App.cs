@@ -80,7 +80,7 @@ public class App : AuditableEntity
 		AddDomainEvent(new CallbackTriggeredEvent(new CallbackEvent(Id,
 																	request.Channel,
 																	request.Id,
-																	request.Contact,
+																	request.Recipient,
 																	type, 
 																	message), CallbackUrl, EndpointSecret));
 	}

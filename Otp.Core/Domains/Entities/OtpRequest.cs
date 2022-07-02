@@ -15,7 +15,7 @@ public class OtpRequest : TimedEntity
 	public string Code { get; private set; } = default!;
 	public string SuccessUrl { get; } = default!;
 	public string CancelUrl { get; } = default!;
-	public string Contact { get; } = default!;
+	public string Recipient { get; } = default!;
 	public Channel Channel { get; }
 	public DateTime? VerifiedAt { get; private set; }
 	public string Key { get; } = default!;
@@ -40,10 +40,10 @@ public class OtpRequest : TimedEntity
 	{
 	}
 
-	public OtpRequest(Guid appId, string contact, Channel channel, string successUrl, string cancelUrl)
+	public OtpRequest(Guid appId, string recipient, Channel channel, string successUrl, string cancelUrl)
 	{
 		AppId = appId;
-		Contact = contact;
+		Recipient = recipient;
 		Channel = channel;
 		SuccessUrl = successUrl;
 		CancelUrl = cancelUrl;

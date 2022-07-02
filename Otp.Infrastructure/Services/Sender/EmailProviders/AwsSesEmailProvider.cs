@@ -31,7 +31,7 @@ public class AwsSesEmailProvider : IEmailProvider
 				ToAddresses =
 					new List<string>
 					{
-						request.Contact
+						request.Recipient
 					}
 			},
 			Content = new EmailContent
@@ -41,7 +41,7 @@ public class AwsSesEmailProvider : IEmailProvider
 					TemplateName = TemplateName,
 					TemplateData = JsonSerializer.Serialize(new TemplateData(request.Code,
 						@"https://pages.getpostman.com/rs/067-UMD-991/images/pm-logo-horiz%402x.png",
-						request.Contact), _jsonSerializerOptions)
+						request.Recipient), _jsonSerializerOptions)
 				}
 			},
 			EmailTags = new List<MessageTag>
@@ -66,7 +66,7 @@ public class AwsSesEmailProvider : IEmailProvider
 			Console.WriteLine("The email was not sent.");
 			Console.WriteLine("Error message: " + ex.Message);
 		}
-		Console.WriteLine($"Sending Email from SendGridProvider {request.Contact}");
+		Console.WriteLine($"Sending Email from SendGridProvider {request.Recipient}");
 	}
 
 	private record TemplateData(string Code, string LogoUrl, string ReceiverAddress);

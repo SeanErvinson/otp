@@ -9,7 +9,7 @@ public class PhilippinesSmsProvider : ISmsProvider
 
 	public Task Send(OtpRequest request, CancellationToken cancellationToken = default)
 	{
-		Console.WriteLine($"Sending SMS from PH provider {request.Contact}");
+		Console.WriteLine($"Sending SMS from PH provider {request.Recipient}");
 		return Task.CompletedTask;
 	}
 }

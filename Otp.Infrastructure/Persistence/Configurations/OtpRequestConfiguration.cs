@@ -13,7 +13,7 @@ public class OtpRequestConfiguration : BaseEntityConfiguration<OtpRequest>
 		builder.Property(otpRequest => otpRequest.CancelUrl);
 		builder.Property(otpRequest => otpRequest.Key);
 		builder.Property(otpRequest => otpRequest.ExpiresOn);
-		builder.Property(otpRequest => otpRequest.Contact);
+		builder.Property(otpRequest => otpRequest.Recipient);
 
 		builder.HasIndex(otpRequest => new
 		{
