@@ -45,9 +45,10 @@ try
 		options.ReportApiVersions = true;
 		options.ApiVersionReader = new HeaderApiVersionReader("api-version");
 	});
-
-	builder.Services.AddHealthChecks();
-
+	
+	builder.Services.AddOptions<StorageAccountOptions>().Bind(builder.Configuration.GetSection(StorageAccountOptions.Section));
+	
+	builder.Services.AddHealthChecks(builder.Configuration);
 	builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 	builder.Services.AddRouting(option =>
@@ -66,7 +67,6 @@ try
 		})
 		.AddFluentValidation();
 
-	builder.Services.AddOptions<StorageAccountOptions>().Bind(builder.Configuration.GetSection(StorageAccountOptions.Section));
 	builder.Services.AddEndpointsApiExplorer();
 	builder.Services.AddSwagger();
 	builder.Services.AddJwtBearerAuthentication(builder.Configuration, builder.Environment);
