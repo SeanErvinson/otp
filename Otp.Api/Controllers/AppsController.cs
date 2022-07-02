@@ -38,7 +38,7 @@ public class AppsController : ControllerBase
 	public async Task<IActionResult> CreateApp([FromBody] CreateApp request)
 	{
 		var result = await _mediator.Send(request);
-		return Created(Url.RouteUrl(nameof(GetApp), new { id = result.Id }), result);
+		return CreatedAtAction(nameof(GetApp), new { id = result.Id }, result);
 	}
 
 	[HttpPut("{id:guid}/callback")]

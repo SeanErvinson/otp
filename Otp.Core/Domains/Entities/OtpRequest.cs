@@ -95,7 +95,7 @@ public class OtpRequest : TimedEntity
 				App.TriggerSuccessCallback(this);
 				break;
 			case OtpAttemptStatus.Fail:
-				App.TriggerFailedCallback(this, "Code provided by user is incorrect");
+				App.TriggerFailedCallback(this, "Code provided by user was incorrect");
 				break;
 			case OtpAttemptStatus.Canceled:
 				ClaimRequest();

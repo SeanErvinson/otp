@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Common.Enums;
+using Otp.Core.Domains.ValueObjects;
 
 namespace Otp.Application.Otp.Queries.GetOtp;
 
@@ -50,7 +51,18 @@ public record GetOtp(Guid Id) : IRequest<GetOtpResponse>
 				Channel = otpRequest.Channel,
 				Recipient = otpRequest.Recipient,
 				RequestedAt = otpRequest.CreatedAt,
-				Timeline = Array.Empty<RequestEventResponse>(),
+				Timeline = otpRequest.Timeline.Select(@event => new OtpEventResponse
+				{
+					State = @event.State,
+					OccuredAt = @event.OccuredAt,
+					Response = @event.Response,
+					Status = @event.Status,
+				}),
+				Attempts = otpRequest.OtpAttempts.Select(attempt => new OtpAttemptResponse
+				{
+					AttemptedOn = attempt.AttemptedOn,
+					AttemptStatus = attempt.AttemptStatus
+				}),
 				ResendCount = otpRequest.ResendCount,
 				MaxAttempts = otpRequest.MaxAttempts,
 				ExpiresOn = otpRequest.ExpiresOn,
@@ -71,10 +83,10 @@ public record GetOtpResponse
 	public Channel Channel { get; init; }
 	public string Recipient { get; init; } = default!;
 	public DateTime RequestedAt { get; init; }
-	public IEnumerable<RequestEventResponse> Timeline { get; init; } = default!;
+	public IEnumerable<OtpEventResponse> Timeline { get; init; } = default!;
 	public int ResendCount { get; init; }
 	public int MaxAttempts { get; init; }
-	public string? ErrorMessage { get; init; }
+	public IEnumerable<OtpAttemptResponse> Attempts { get; init; } = default!;
 	public DateTime ExpiresOn { get; init; }
 	public ClientInfoResponse ClientInfo { get; init; } = default!;
 }
@@ -86,7 +98,16 @@ public record ClientInfoResponse
 	public string? UserAgent { get; init; }
 }
 
-public record RequestEventResponse
+public record OtpEventResponse
 {
+	public EventState State { get; init; }
+	public DateTime OccuredAt { get; init; }
+	public string? Response { get; init; }
+	public EventStatus Status { get; init; }
+}
 
+public record OtpAttemptResponse
+{
+	public DateTime AttemptedOn { get; init; }
+	public OtpAttemptStatus AttemptStatus { get; init; }
 }

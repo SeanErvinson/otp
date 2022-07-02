@@ -19,7 +19,7 @@ public class AppConfiguration : BaseEntityConfiguration<App>
 					v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null!),
 					v => JsonSerializer.Deserialize<IReadOnlyCollection<string>>(v, (JsonSerializerOptions)null!)!,
 					new ValueComparer<IReadOnlyCollection<string>>(
-						(c1, c2) => c1.SequenceEqual(c2),
+						(c1, c2) => c1!.SequenceEqual(c2!),
 						c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
 						c => c.ToList()));
 		builder.HasIndex(c => new { c.Name, c.PrincipalId }).IsUnique();

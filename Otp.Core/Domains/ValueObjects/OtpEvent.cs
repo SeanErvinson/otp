@@ -7,7 +7,6 @@ public class OtpEvent : ValueObject
 	public EventState State { get; private set; }
 	public DateTime OccuredAt { get; private set; }
 	public string? Response { get; private set; }
-
 	public EventStatus Status { get; private set; }
 
 	public static OtpEvent Success(EventState state, string? response = null)
