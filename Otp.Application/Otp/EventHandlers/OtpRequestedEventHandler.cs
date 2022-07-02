@@ -9,13 +9,11 @@ namespace Otp.Application.Otp.EventHandlers;
 
 public class OtpRequestedEventHandler : INotificationHandler<OtpRequestedEvent>
 {
-	private readonly IApplicationDbContext _applicationDbContext;
 	private readonly ISenderService _senderService;
 
-	public OtpRequestedEventHandler(ISenderService senderService, IApplicationDbContext applicationDbContext)
+	public OtpRequestedEventHandler(ISenderService senderService)
 	{
 		_senderService = senderService;
-		_applicationDbContext = applicationDbContext;
 	}
 
 	public async Task Handle(OtpRequestedEvent notification, CancellationToken cancellationToken)
@@ -40,10 +38,6 @@ public class OtpRequestedEventHandler : INotificationHandler<OtpRequestedEvent>
 					Log.Error(e, "Failed to send otp request");
 					otpRequest.AddEvent(OtpEvent.Fail(EventState.Send, e.Message));
 					throw new InvalidOperationException(e.Message);
-				}
-				finally
-				{
-					await _applicationDbContext.SaveChangesAsync(cancellationToken);
 				}
 			}
 		}
