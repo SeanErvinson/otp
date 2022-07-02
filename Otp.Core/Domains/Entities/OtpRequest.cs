@@ -24,7 +24,11 @@ public class OtpRequest : TimedEntity
 	public OtpRequestState State { get; private set; }
 	public OtpRequestStatus Status { get; private set; }
 	public string? ErrorMessage { get; private set; }
-	public RequestInfo? RequestInfo { get; private set; }
+	public ClientInfo? ClientInfo { get; private set; }
+	//
+	// private readonly List<OtpEvent> _timeline = new();
+	// public IReadOnlyCollection<OtpEvent> Timeline => _timeline.AsReadOnly();
+	
 	private readonly List<OtpAttempt> _otpAttempts = new();
 	public IReadOnlyCollection<OtpAttempt> OtpAttempts => _otpAttempts.AsReadOnly();
 	public DateTime ExpiresOn { get; } = DateTime.UtcNow.AddMinutes(5);
@@ -70,9 +74,16 @@ public class OtpRequest : TimedEntity
 	}
 
 	// TODO If switched to a microservice, all the trigger, should be replace with an event that sends a message
-	public void AddAttempt(OtpAttempt attempt, RequestInfo requestInfo)
+	public void AddAttempt(OtpAttempt attempt, ClientInfo clientInfo)
 	{
-		RequestInfo ??= requestInfo;
+		ClientInfo ??= clientInfo;
+
+		if (ExpiresOn >= DateTime.UtcNow)
+		{
+			const string message = "Request has expired"; 
+			ClaimFailed(message);
+			throw new OtpRequestException(message);
+		}
 		
 		if (_otpAttempts.Count >= MaxAttempts)
 		{
@@ -97,26 +108,45 @@ public class OtpRequest : TimedEntity
 		}
 	}
 
+	// public void AddEventToTimeline(OtpEvent otpEvent)
+	// {
+	// 	_timeline.Add(otpEvent);
+	// }
+
 	private void ClaimSuccessfully()
 	{
-		State = OtpRequestState.Claimed;
-		Status = OtpRequestStatus.Success;
+		State = OtpRequestState.Unavailable;
+		// Status = OtpRequestStatus.Success;
 		VerifiedAt = DateTime.UtcNow;
 	}
 
 	private void ClaimFailed(string message)
 	{
-		State = OtpRequestState.Claimed;
-		Status = OtpRequestStatus.Success;
+		State = OtpRequestState.Unavailable;
+		// Status = OtpRequestStatus.Success;
 		VerifiedAt = DateTime.UtcNow;
 		ErrorMessage = message;
 	}
 }
 
+public enum RequestState
+{
+	Request,
+	Sent,
+	Deliver,
+	Fail
+}
+
+public enum AvailabilityStatus
+{
+	Available,
+	Unavailable
+}
+
 public enum OtpRequestState
 {
 	Available,
-	Claimed,
+	Unavailable,
 }
 
 public enum OtpRequestStatus
@@ -124,3 +154,4 @@ public enum OtpRequestStatus
 	Success,
 	Failed
 }
+

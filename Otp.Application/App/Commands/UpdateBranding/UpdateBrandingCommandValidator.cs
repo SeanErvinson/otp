@@ -34,6 +34,6 @@ public class UpdateBrandingCommandValidator : AbstractValidator<UpdateBrandingCo
 					.WithMessage($"Content type must be one of {string.Join(",", _allowedImageContentType)}");
 			});
 		When(request => !string.IsNullOrEmpty(request.SmsMessageTemplate),
-			() => { RuleFor(request => request.SmsMessageTemplate).Must(template => template.Contains(Branding.MessageKeyword)); });
+			() => { RuleFor(request => request.SmsMessageTemplate!).Must(template => template.Contains(Branding.MessageKeyword)); });
 	}
 }

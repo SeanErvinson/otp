@@ -53,7 +53,7 @@ public record VerifyCodeCommand(Guid Id, string Code) : IRequest<VerifyCodeComma
 					throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
 				}
 
-				var requestInfo = new RequestInfo(_currentUserService.IpAddress, _currentUserService.UserAgent, _currentUserService.Referrer);
+				var requestInfo = new ClientInfo(_currentUserService.IpAddress, _currentUserService.UserAgent, _currentUserService.Referrer);
 				if (otpRequest.Code != request.Code)
 				{
 					otpRequest.AddAttempt(OtpAttempt.Fail(request.Code), requestInfo);

@@ -10,6 +10,7 @@ using Otp.Application.App.Commands.UpdateCallback;
 using Otp.Application.App.Queries.GetApp;
 using Otp.Application.App.Queries.GetAppRecentCallbacks;
 using Otp.Application.App.Queries.GetApps;
+using Otp.Application.Common.Models;
 using Otp.Application.Logs.Queries.GetLogs;
 using Otp.Application.Otp.Commands.RequestOtp;
 
@@ -116,7 +117,7 @@ public class AppsController : ControllerBase
 
 
 	[HttpGet]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAppsQueryDto))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedResult<GetAppSimpleDto>))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]

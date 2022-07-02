@@ -121,12 +121,12 @@ public record GetLogsQuery(string? Before, string? After) : IRequest<CursorResul
 	};
 }
 
-public record GetLogsQueryDto()
+public record GetLogsQueryDto
 {
 	public Guid Id { get; init; }
-	public GetLogsQueryAppDto App { get; init; }
+	public GetLogsQueryAppDto App { get; init; } = default!;
 	public DateTime EventDate { get; init; }
-	public string Receiver { get; init; }
+	public string Receiver { get; init; } = default!;
 	public Channel Channel { get; init; }
 }
 

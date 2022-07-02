@@ -70,7 +70,7 @@ public class CallbackTriggeredEventHandler : INotificationHandler<CallbackTrigge
 	{
 		public Guid RequestId { get; init; }
 		public Channel Channel { get; init; }
-		public string Contact { get; init; }
+		public string Contact { get; init; } = default!;
 		public CallbackEventType Type { get; init; }
 	};
 	

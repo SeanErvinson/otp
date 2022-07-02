@@ -31,6 +31,4 @@ public record GetAppsQuery(int PageIndex, int PageSize) : IRequest<PaginatedResu
 	}
 }
 
-public record GetAppsQueryDto(IEnumerable<GetAppSimpleDto> Apps);
-
 public record GetAppSimpleDto(Guid Id, string Name, string? Description, DateTime CreatedAt, IEnumerable<string>? Tags);

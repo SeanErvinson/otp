@@ -33,6 +33,6 @@ public class OtpRequestConfiguration : BaseEntityConfiguration<OtpRequest>
 			attempts.ToTable(nameof(OtpRequest.OtpAttempts));
 			attempts.Property(attempt => attempt.AttemptStatus).HasConversion<string>();
 		});
-		builder.OwnsOne(otpRequest => otpRequest.RequestInfo);
+		builder.OwnsOne(otpRequest => otpRequest.ClientInfo);
 	}
 }
