@@ -2,5 +2,5 @@
 
 public interface IOtpContextService
 {
-	public string? Key { get; }
+	public string? AuthenticityKey { get; }
 }

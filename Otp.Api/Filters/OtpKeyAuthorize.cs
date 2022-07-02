@@ -12,7 +12,7 @@ public class OtpKeyAuthorize : Attribute, IAsyncAuthorizationFilter
 	public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
 	{
 		var otpContextService = context.HttpContext.RequestServices.GetRequiredService<IOtpContextService>();
-		if (string.IsNullOrEmpty(otpContextService.Key))
+		if (string.IsNullOrEmpty(otpContextService.AuthenticityKey))
 		{
 			context.Result = new ContentResult
 			{
@@ -24,7 +24,7 @@ public class OtpKeyAuthorize : Attribute, IAsyncAuthorizationFilter
 		}
 
 		var applicationDbContext = context.HttpContext.RequestServices.GetRequiredService<IApplicationDbContext>();
-		if (await applicationDbContext.OtpRequests.CountAsync(c => c.Key == otpContextService.Key) == 0)
+		if (await applicationDbContext.OtpRequests.CountAsync(c => c.AuthenticityKey == otpContextService.AuthenticityKey) == 0)
 			context.Result = new ContentResult
 			{
 				StatusCode = StatusCodes.Status401Unauthorized,

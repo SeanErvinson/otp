@@ -36,7 +36,7 @@ public record VerifyCodeCommand(Guid Id, string Code) : IRequest<VerifyCodeComma
 						.Include(otpRequest => otpRequest.App)
 						.FirstOrDefaultAsync(req =>
 								req.Id == request.Id &&
-								req.Key == _otpContextService.Key &&
+								req.AuthenticityKey == _otpContextService.AuthenticityKey &&
 								req.Availability == OtpRequestAvailability.Available &&
 								req.Timeline.Any(@event =>
 									@event.State == EventState.Deliver && @event.Status == EventStatus.Success),

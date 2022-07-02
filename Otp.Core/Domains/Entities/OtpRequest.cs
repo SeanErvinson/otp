@@ -18,7 +18,7 @@ public class OtpRequest : TimedEntity
 	public string Recipient { get; } = default!;
 	public Channel Channel { get; }
 	public DateTime? VerifiedAt { get; private set; }
-	public string Key { get; } = default!; // TODO rename this property to something more descriptive
+	public string AuthenticityKey { get; } = default!;
 	public int ResendCount { get; private set; }
 	public int MaxAttempts { get; private set; } = 3;
 	public OtpRequestAvailability Availability { get; private set; }
@@ -32,7 +32,7 @@ public class OtpRequest : TimedEntity
 	public DateTime ExpiresOn { get; } = DateTime.UtcNow.AddMinutes(5);
 	public App App { get; private set; } = default!;
 
-	public string RequestPath => new($"/{Enum.GetName(Channel)?.ToLower()}/{Id.ToString()}#{Key}/");
+	public string RequestPath => new($"/{Enum.GetName(Channel)?.ToLower()}/{Id.ToString()}#{AuthenticityKey}/");
 
 	private OtpRequest()
 	{
@@ -46,7 +46,7 @@ public class OtpRequest : TimedEntity
 		SuccessUrl = successUrl;
 		CancelUrl = cancelUrl;
 		Code = OtpUtil.GenerateCode();
-		Key = CryptoUtil.HashKey(CryptoUtil.GenerateKey());
+		AuthenticityKey = CryptoUtil.HashKey(CryptoUtil.GenerateKey());
 		Availability = OtpRequestAvailability.Available;
 		AddEvent(OtpEvent.Success(EventState.Request));
 		

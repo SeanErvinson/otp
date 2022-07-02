@@ -28,7 +28,7 @@ public record GetOtpRequestConfigQuery(Guid Id, string Key) : IRequest<GetOtpReq
 					.Include(otpRequest => otpRequest.App)
 					.FirstOrDefaultAsync(req =>
 							req.Id == requestConfig.Id &&
-							req.Key == requestConfig.Key &&
+							req.AuthenticityKey == requestConfig.Key &&
 							req.Availability == OtpRequestAvailability.Available &&
 							req.Timeline.Any(@event =>
 								@event.State == EventState.Deliver && @event.Status == EventStatus.Success),

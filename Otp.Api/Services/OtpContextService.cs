@@ -12,7 +12,7 @@ public class OtpContextService : IOtpContextService
 		_httpContextAccessor = httpContextAccessor;
 	}
 
-	public string? Key
+	public string? AuthenticityKey
 	{
 		get
 		{
