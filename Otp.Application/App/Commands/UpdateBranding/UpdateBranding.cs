@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Otp.Application.App.Common.Responses;
 using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Common.Exceptions;
@@ -11,14 +12,14 @@ public record UpdateBrandingRequest(IFormFile? BackgroundImage,
 											IFormFile? LogoImage,
 											string? SmsMessageTemplate);
 
-public record UpdateBranding : IRequest
+public record UpdateBranding : IRequest<AppResponse>
 {
 	public Guid Id { get; init; }
 	public IFormFile? BackgroundImage { get; init; }
 	public IFormFile? LogoImage { get; init; }
 	public string? SmsMessageTemplate { get; init; }
 
-	public class Handler : IRequestHandler<UpdateBranding>
+	public class Handler : IRequestHandler<UpdateBranding, AppResponse>
 	{
 		private const string AppsContainerName = "apps";
 		private readonly IApplicationDbContext _applicationDbContext;
@@ -32,7 +33,7 @@ public record UpdateBranding : IRequest
 			_currentUserService = currentUserService;
 		}
 
-		public async Task<Unit> Handle(UpdateBranding request, CancellationToken cancellationToken)
+		public async Task<AppResponse> Handle(UpdateBranding request, CancellationToken cancellationToken)
 		{
 			var app = await _applicationDbContext.Apps.SingleOrDefaultAsync(app => app.Id == request.Id && app.PrincipalId == _currentUserService.PrincipalId,
 																			cancellationToken);
@@ -72,7 +73,18 @@ public record UpdateBranding : IRequest
 
 			await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-			return Unit.Value;
+			return new AppResponse
+			{
+				Id = app.Id,
+				Name = app.Name,
+				Tags = app.Tags,
+				BackgroundUrl = app.Branding.BackgroundUrl,
+				LogoUrl = app.Branding.LogoUrl,
+				Description = app.Description,
+				CallbackUrl = app.CallbackUrl,
+				CreatedAt = app.CreatedAt,
+				UpdatedAt = app.UpdatedAt
+			};
 		}
 
 		private async Task<Uri> UploadAppImage(IFormFile file, string resourcePath, CancellationToken cancellationToken)

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Otp.Application.App.Common.Responses;
 using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Entities;
@@ -29,13 +30,24 @@ public record CreateApp(string Name, string? Description, IEnumerable<string>? T
 				throw new InvalidRequestException("App already exists.");
 
 			var generatedApiKey = CryptoUtil.GenerateKey();
-			var newApp = new Core.Domains.Entities.App(_currentUserService.PrincipalId, request.Name, generatedApiKey, request.Tags?.ToList(), request.Description);
-			var result = await _applicationDbContext.Apps.AddAsync(newApp, cancellationToken);
+			var app = new Core.Domains.Entities.App(_currentUserService.PrincipalId, request.Name, generatedApiKey, request.Tags?.ToList(), request.Description);
+			await _applicationDbContext.Apps.AddAsync(app, cancellationToken);
 			await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-			return new CreateAppResponse(result.Entity.Id, generatedApiKey);
+			return new CreateAppResponse(new AppResponse
+			{
+				Id = app.Id,
+				Name = app.Name,
+				Tags = app.Tags,
+				BackgroundUrl = app.Branding.BackgroundUrl,
+				LogoUrl = app.Branding.LogoUrl,
+				Description = app.Description,
+				CallbackUrl = app.CallbackUrl,
+				CreatedAt = app.CreatedAt,
+				UpdatedAt = app.UpdatedAt
+			}, generatedApiKey);
 		}
 	}
 }
 
-public record CreateAppResponse(Guid Id, string ApiKey);
+public record CreateAppResponse(AppResponse App, string ApiKey);

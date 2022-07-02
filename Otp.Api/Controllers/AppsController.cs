@@ -7,6 +7,7 @@ using Otp.Application.App.Commands.DeleteApp;
 using Otp.Application.App.Commands.RegenerateApiKey;
 using Otp.Application.App.Commands.UpdateBranding;
 using Otp.Application.App.Commands.UpdateCallback;
+using Otp.Application.App.Common.Responses;
 using Otp.Application.App.Queries.GetApp;
 using Otp.Application.App.Queries.GetAppRecentCallbacks;
 using Otp.Application.App.Queries.GetApps;
@@ -38,19 +39,19 @@ public class AppsController : ControllerBase
 	public async Task<IActionResult> CreateApp([FromBody] CreateApp request)
 	{
 		var result = await _mediator.Send(request);
-		return CreatedAtAction(nameof(GetApp), new { id = result.Id }, result);
+		return CreatedAtAction(nameof(GetApp), new { id = result.App.Id }, result);
 	}
 
 	[HttpPut("{id:guid}/callback")]
-	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> UpdateCallback(Guid id, [FromBody] UpdateCallbackRequest request)
 	{
-		await _mediator.Send(new UpdateCallback(id, request.CallbackUrl, request.EndpointSecret));
-		return NoContent();
+		var result = await _mediator.Send(new UpdateCallback(id, request.CallbackUrl, request.EndpointSecret));
+		return Ok(result);
 	}
 
 	[HttpGet("{id:guid}/recent-callbacks")]
@@ -61,17 +62,6 @@ public class AppsController : ControllerBase
 	public async Task<IActionResult> GetAppRecentCallbacks(Guid id)
 	{
 		var result = await _mediator.Send(new GetAppRecentCallbacks(id));
-		return Ok(result);
-	}
-
-	[HttpPatch("{id:guid}")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RequestOtpResponse))]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	[ProducesResponseType(StatusCodes.Status403Forbidden)]
-	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	public async Task<IActionResult> UpdateApp(Guid id, [FromBody] RequestOtpEmailRequest request)
-	{
-		var result = await _mediator.Send(RequestOtp.Email(request.EmailAddress, request.SuccessUrl, request.CancelUrl));
 		return Ok(result);
 	}
 
@@ -99,20 +89,20 @@ public class AppsController : ControllerBase
 
 	[HttpPut("{id:guid}/branding")]
 	[Consumes(MediaTypeNames.Application.Json, "multipart/form-data")]
-	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppResponse))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> UpdateBranding([FromRoute] Guid id, [FromForm] UpdateBrandingRequest request)
 	{
-		await _mediator.Send(new UpdateBranding
+		var result = await _mediator.Send(new UpdateBranding
 		{
 			Id = id,
 			BackgroundImage = request.BackgroundImage,
 			LogoImage = request.LogoImage,
 			SmsMessageTemplate = request.SmsMessageTemplate
 		});
-		return NoContent();
+		return Ok(result);
 	}
 
 
@@ -128,7 +118,7 @@ public class AppsController : ControllerBase
 	}
 
 	[HttpGet("{id:guid}", Name = nameof(GetApp))]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAppResponse))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -139,7 +129,7 @@ public class AppsController : ControllerBase
 	}
 	
 	[HttpGet("logs")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAppResponse))]
+	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]

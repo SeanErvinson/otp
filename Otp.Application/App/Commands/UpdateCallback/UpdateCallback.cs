@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Otp.Application.App.Common.Responses;
 using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Entities;
@@ -8,9 +9,9 @@ namespace Otp.Application.App.Commands.UpdateCallback;
 
 public record UpdateCallbackRequest(string CallbackUrl, string? EndpointSecret);
 
-public record UpdateCallback(Guid Id, string CallbackUrl, string? EndpointSecret) : IRequest
+public record UpdateCallback(Guid Id, string CallbackUrl, string? EndpointSecret) : IRequest<AppResponse>
 {
-	public class Handler : IRequestHandler<UpdateCallback>
+	public class Handler : IRequestHandler<UpdateCallback, AppResponse>
 	{
 		private readonly IApplicationDbContext _applicationDbContext;
 		private readonly ICurrentUserService _currentUserService;
@@ -21,7 +22,7 @@ public record UpdateCallback(Guid Id, string CallbackUrl, string? EndpointSecret
 			_currentUserService = currentUserService;
 		}
 
-		public async Task<Unit> Handle(UpdateCallback request, CancellationToken cancellationToken)
+		public async Task<AppResponse> Handle(UpdateCallback request, CancellationToken cancellationToken)
 		{
 			
 			var app = await _applicationDbContext.Apps.SingleOrDefaultAsync(app => app.Id == request.Id 
@@ -33,7 +34,18 @@ public record UpdateCallback(Guid Id, string CallbackUrl, string? EndpointSecret
 			app.UpdateCallbackUrl(request.CallbackUrl, request.EndpointSecret);
 			await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-			return Unit.Value;
+			return new AppResponse
+			{
+				Id = app.Id,
+				Name = app.Name,
+				Tags = app.Tags,
+				BackgroundUrl = app.Branding.BackgroundUrl,
+				LogoUrl = app.Branding.LogoUrl,
+				Description = app.Description,
+				CallbackUrl = app.CallbackUrl,
+				CreatedAt = app.CreatedAt,
+				UpdatedAt = app.UpdatedAt
+			};
 		}
 	}
 }
