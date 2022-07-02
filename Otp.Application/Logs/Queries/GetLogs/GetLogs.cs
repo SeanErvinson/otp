@@ -4,14 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
 using Otp.Application.Common.Models;
-using Otp.Application.Common.Utils;
 using Otp.Core.Domains.Common.Enums;
 
 namespace Otp.Application.Logs.Queries.GetLogs;
 
-public record GetLogsQuery(string? Before, string? After) : IRequest<CursorResult<GetLogsQueryDto>>
+public record GetLogs(string? Before, string? After) : IRequest<CursorResult<GetLogsResponse>>
 {
-	public class Handler : IRequestHandler<GetLogsQuery, CursorResult<GetLogsQueryDto>>
+	public class Handler : IRequestHandler<GetLogs, CursorResult<GetLogsResponse>>
 	{
 		private const int ItemsPerPage = 10;
 		private readonly IApplicationDbContext _applicationDbContext;
@@ -27,7 +26,7 @@ public record GetLogsQuery(string? Before, string? After) : IRequest<CursorResul
 			_jsonSerializerOptions = jsonSerializerOptions;
 		}
 
-		public async Task<CursorResult<GetLogsQueryDto>> Handle(GetLogsQuery request,
+		public async Task<CursorResult<GetLogsResponse>> Handle(GetLogs request,
 			CancellationToken cancellationToken)
 		{
 			var encodedCursor = request.After ?? request.Before ?? string.Empty;
@@ -53,7 +52,7 @@ public record GetLogsQuery(string? Before, string? After) : IRequest<CursorResul
 				.Select(app => app.Id)
 				.ToList();
 
-			var xxx = (IQueryable<GetLogsQueryDto> queryable) =>
+			var xxx = (IQueryable<GetLogsResponse> queryable) =>
 				queryable.OrderByDescending(otpRequest => otpRequest.EventDate);
 
 			var cursorQuery = xxx;
@@ -76,10 +75,10 @@ public record GetLogsQuery(string? Before, string? After) : IRequest<CursorResul
 			
 			var appLogs = _applicationDbContext.OtpRequests
 				.Where(otpRequest => apps.Contains(otpRequest.AppId))
-				.Select(otpRequest => new GetLogsQueryDto
+				.Select(otpRequest => new GetLogsResponse
 				{
 					Id = otpRequest.Id,
-					App = new GetLogsQueryAppDto(otpRequest.AppId, otpRequest.App.Name),
+					App = new GetLogsAppResponse(otpRequest.AppId, otpRequest.App.Name),
 					Channel = otpRequest.Channel,
 					Receiver = otpRequest.Recipient,
 					EventDate = otpRequest.CreatedAt,
@@ -87,7 +86,7 @@ public record GetLogsQuery(string? Before, string? After) : IRequest<CursorResul
 
 			var resultQuery = cursorQuery.Invoke(appLogs);
 
-			var beforeAfterFunc = (GetLogsQueryDto? firstItem, GetLogsQueryDto? lastItem) =>
+			var beforeAfterFunc = (GetLogsResponse? firstItem, GetLogsResponse? lastItem) =>
 			{
 				var result = xxx(appLogs)
 					.GroupBy(x => 1)
@@ -102,7 +101,7 @@ public record GetLogsQuery(string? Before, string? After) : IRequest<CursorResul
 				return (result.before, result.after);
 			};
 
-			return await CursorResult<GetLogsQueryDto>.CreateAsync(resultQuery,
+			return await CursorResult<GetLogsResponse>.CreateAsync(resultQuery,
 				ItemsPerPage,
 				otp => otp.EventDate,
 				beforeAfterFunc,
@@ -121,13 +120,13 @@ public record GetLogsQuery(string? Before, string? After) : IRequest<CursorResul
 	};
 }
 
-public record GetLogsQueryDto
+public record GetLogsResponse
 {
 	public Guid Id { get; init; }
-	public GetLogsQueryAppDto App { get; init; } = default!;
+	public GetLogsAppResponse App { get; init; } = default!;
 	public DateTime EventDate { get; init; }
 	public string Receiver { get; init; } = default!;
 	public Channel Channel { get; init; }
 }
 
-public record GetLogsQueryAppDto(Guid AppId, string AppName);
+public record GetLogsAppResponse(Guid AppId, string AppName);

@@ -2,14 +2,13 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
-using Otp.Core.Domains.Common.Enums;
 using Otp.Core.Domains.Entities;
 
 namespace Otp.Application.Principal.Queries.GetCurrentPrincipal;
 
-public record GetCurrentPrincipalQuery : IRequest<GetCurrentPrincipalQueryDto>
+public record GetCurrentPrincipal : IRequest<GetCurrentPrincipalResponse>
 {
-	public class Handler : IRequestHandler<GetCurrentPrincipalQuery, GetCurrentPrincipalQueryDto>
+	public class Handler : IRequestHandler<GetCurrentPrincipal, GetCurrentPrincipalResponse>
 	{
 		private readonly ICurrentUserService _currentUserService;
 		private readonly IApplicationDbContext _applicationDbContext;
@@ -20,7 +19,7 @@ public record GetCurrentPrincipalQuery : IRequest<GetCurrentPrincipalQueryDto>
 			_applicationDbContext = applicationDbContext;
 		}
 
-		public async Task<GetCurrentPrincipalQueryDto> Handle(GetCurrentPrincipalQuery request, CancellationToken cancellationToken)
+		public async Task<GetCurrentPrincipalResponse> Handle(GetCurrentPrincipal request, CancellationToken cancellationToken)
 		{
 			var principal = await _applicationDbContext.Principals.AsNoTracking()
 				.FirstOrDefaultAsync(principal => principal.UserId == _currentUserService.UserId &&
@@ -31,9 +30,9 @@ public record GetCurrentPrincipalQuery : IRequest<GetCurrentPrincipalQueryDto>
 				throw new NotFoundException("Principal does not exists");
 			}
 
-			return new GetCurrentPrincipalQueryDto();
+			return new GetCurrentPrincipalResponse();
 		}
 	}
 }
 
-public record GetCurrentPrincipalQueryDto();
+public record GetCurrentPrincipalResponse();

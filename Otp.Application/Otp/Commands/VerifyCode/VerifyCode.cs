@@ -7,11 +7,11 @@ using Otp.Core.Domains.ValueObjects;
 using Serilog;
 using Serilog.Context;
 
-namespace Otp.Application.Otp.Commands.CancelRequest;
+namespace Otp.Application.Otp.Commands.VerifyCode;
 
-public record CancelRequestCommand(Guid Id) : IRequest<CancelRequestCommandResponse>
+public record VerifyCode(Guid Id, string Code) : IRequest<VerifyCodeResponse>
 {
-	public class Handler : IRequestHandler<CancelRequestCommand, CancelRequestCommandResponse>
+	public class Handler : IRequestHandler<VerifyCode, VerifyCodeResponse>
 	{
 		private readonly IApplicationDbContext _dbContext;
 		private readonly IOtpContextService _otpContextService;
@@ -26,7 +26,7 @@ public record CancelRequestCommand(Guid Id) : IRequest<CancelRequestCommandRespo
 			_currentUserService = currentUserService;
 		}
 
-		public async Task<CancelRequestCommandResponse> Handle(CancelRequestCommand request,
+		public async Task<VerifyCodeResponse> Handle(VerifyCode request,
 			CancellationToken cancellationToken)
 		{
 			using (LogContext.PushProperty("OtpRequestId", request.Id))
@@ -57,17 +57,24 @@ public record CancelRequestCommand(Guid Id) : IRequest<CancelRequestCommandRespo
 					throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
 				}
 
-				Log.Information("Cancelling otp request");
-				otpRequest.AddAttempt(OtpAttempt.Cancel(),
-					new ClientInfo(_currentUserService.IpAddress,
-						_currentUserService.UserAgent,
-						_currentUserService.Referrer));
+				var requestInfo = new ClientInfo(_currentUserService.IpAddress,
+					_currentUserService.UserAgent,
+					_currentUserService.Referrer);
+				if (otpRequest.Code != request.Code)
+				{
+					otpRequest.AddAttempt(OtpAttempt.Fail(request.Code), requestInfo);
+					await _dbContext.SaveChangesAsync(cancellationToken);
+					throw new InvalidRequestException("Code provided was incorrect");
+				}
+
+				Log.Information("Setting request to success");
+				otpRequest.AddAttempt(OtpAttempt.Success(request.Code), requestInfo);
 				await _dbContext.SaveChangesAsync(cancellationToken);
 
-				return new CancelRequestCommandResponse(otpRequest.CancelUrl);
+				return new VerifyCodeResponse(otpRequest.SuccessUrl);
 			}
 		}
 	}
 }
 
-public record CancelRequestCommandResponse(string CancelUrl);
+public record VerifyCodeResponse(string SuccessUrl);

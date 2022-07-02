@@ -2,11 +2,12 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Otp.Api.Filters;
-using Otp.Application.Otp.Commands.CancelRequest;
+using Otp.Application.Otp.Commands.CancelOtp;
 using Otp.Application.Otp.Commands.RequestOtp;
-using Otp.Application.Otp.Commands.ResendOtpRequest;
+using Otp.Application.Otp.Commands.ResendOtp;
 using Otp.Application.Otp.Commands.VerifyCode;
-using Otp.Application.Otp.Queries.GetOtpRequest;
+using Otp.Application.Otp.Queries.GetOtp;
+using Otp.Application.Otp.Queries.GetOtpRequestConfig;
 
 namespace Otp.Api.Controllers;
 
@@ -25,43 +26,43 @@ public class OtpController : ControllerBase
 
 	[HttpPost("email")]
 	[ApiKeyAuthorize]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RequestOtpDto))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RequestOtpResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> RequestEmail([FromBody] RequestOtpEmailRequest request)
 	{
-		var result = await _mediator.Send(RequestOtpCommand.Email(request.EmailAddress, request.SuccessUrl, request.CancelUrl));
+		var result = await _mediator.Send(RequestOtp.Email(request.EmailAddress, request.SuccessUrl, request.CancelUrl));
 		return Ok(result);
 	}
 
 	[HttpPost("sms")]
 	[ApiKeyAuthorize]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RequestOtpDto))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RequestOtpResponse))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> RequestSms([FromBody] RequestOtpSmsRequest request)
 	{
-		var result = await _mediator.Send(RequestOtpCommand.Sms(request.PhoneNumber, request.SuccessUrl, request.CancelUrl));
+		var result = await _mediator.Send(RequestOtp.Sms(request.PhoneNumber, request.SuccessUrl, request.CancelUrl));
 		return Ok(result);
 	}
 
 	[HttpGet("{id:guid}/config")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetOtpRequestConfigQueryResponse))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetOtpConfigResponse))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetRequestConfig([FromRoute] Guid id, [FromQuery] GetOtpRequestConfigQueryRequest requestConfig)
 	{
-		var result = await _mediator.Send(new GetOtpRequestConfigQuery(id, requestConfig.Key));
+		var result = await _mediator.Send(new GetOtpConfig(id, requestConfig.Key));
 		return Ok(result);
 	}
 	
 	[HttpGet("{id:guid}")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetOtpRequestConfigQueryResponse))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetOtpConfigResponse))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> GetRequest([FromRoute] GetOtpRequestQuery request)
+	public async Task<IActionResult> GetRequest([FromRoute] GetOtp request)
 	{
 		var result = await _mediator.Send(request);
 		return Ok(result);
@@ -69,10 +70,10 @@ public class OtpController : ControllerBase
 
 	[HttpPost("verify")]
 	[OtpKeyAuthorize]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(VerifyCodeCommandResponse))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(VerifyCodeResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> VerifyCode([FromBody] VerifyCodeCommand request)
+	public async Task<IActionResult> VerifyCode([FromBody] VerifyCode request)
 	{
 		var result = await _mediator.Send(request);
 		return Ok(result);
@@ -80,12 +81,12 @@ public class OtpController : ControllerBase
 
 	[HttpPost("cancel")]
 	[OtpKeyAuthorize]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CancelRequestCommandResponse))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CancelOtpResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> Cancel([FromBody] CancelRequestCommand request)
+	public async Task<IActionResult> Cancel([FromBody] CancelOtp otp)
 	{
-		var result = await _mediator.Send(request);
+		var result = await _mediator.Send(otp);
 		return Ok(result);
 	}
 
@@ -93,7 +94,7 @@ public class OtpController : ControllerBase
 	[OtpKeyAuthorize]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)] //TODO: Return bad request if resend too fast
-	public async Task<IActionResult> RequestResend([FromBody] ResendOtpRequest request)
+	public async Task<IActionResult> RequestResend([FromBody] ResendOtp request)
 	{
 		await _mediator.Send(request);
 		return NoContent();

@@ -7,11 +7,11 @@ using Otp.Core.Domains.ValueObjects;
 using Serilog;
 using Serilog.Context;
 
-namespace Otp.Application.Otp.Commands.VerifyCode;
+namespace Otp.Application.Otp.Commands.CancelOtp;
 
-public record VerifyCodeCommand(Guid Id, string Code) : IRequest<VerifyCodeCommandResponse>
+public record CancelOtp(Guid Id) : IRequest<CancelOtpResponse>
 {
-	public class Handler : IRequestHandler<VerifyCodeCommand, VerifyCodeCommandResponse>
+	public class Handler : IRequestHandler<CancelOtp, CancelOtpResponse>
 	{
 		private readonly IApplicationDbContext _dbContext;
 		private readonly IOtpContextService _otpContextService;
@@ -26,16 +26,16 @@ public record VerifyCodeCommand(Guid Id, string Code) : IRequest<VerifyCodeComma
 			_currentUserService = currentUserService;
 		}
 
-		public async Task<VerifyCodeCommandResponse> Handle(VerifyCodeCommand request,
+		public async Task<CancelOtpResponse> Handle(CancelOtp otp,
 			CancellationToken cancellationToken)
 		{
-			using (LogContext.PushProperty("OtpRequestId", request.Id))
+			using (LogContext.PushProperty("OtpRequestId", otp.Id))
 			{
 				var otpRequest =
 					await _dbContext.OtpRequests
 						.Include(otpRequest => otpRequest.App)
 						.FirstOrDefaultAsync(req =>
-								req.Id == request.Id &&
+								req.Id == otp.Id &&
 								req.AuthenticityKey == _otpContextService.AuthenticityKey &&
 								req.Availability == OtpRequestAvailability.Available &&
 								req.Timeline.Any(@event =>
@@ -57,24 +57,17 @@ public record VerifyCodeCommand(Guid Id, string Code) : IRequest<VerifyCodeComma
 					throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
 				}
 
-				var requestInfo = new ClientInfo(_currentUserService.IpAddress,
-					_currentUserService.UserAgent,
-					_currentUserService.Referrer);
-				if (otpRequest.Code != request.Code)
-				{
-					otpRequest.AddAttempt(OtpAttempt.Fail(request.Code), requestInfo);
-					await _dbContext.SaveChangesAsync(cancellationToken);
-					throw new InvalidRequestException("Code provided was incorrect");
-				}
-
-				Log.Information("Setting request to success");
-				otpRequest.AddAttempt(OtpAttempt.Success(request.Code), requestInfo);
+				Log.Information("Cancelling otp request");
+				otpRequest.AddAttempt(OtpAttempt.Cancel(),
+					new ClientInfo(_currentUserService.IpAddress,
+						_currentUserService.UserAgent,
+						_currentUserService.Referrer));
 				await _dbContext.SaveChangesAsync(cancellationToken);
 
-				return new VerifyCodeCommandResponse(otpRequest.SuccessUrl);
+				return new CancelOtpResponse(otpRequest.CancelUrl);
 			}
 		}
 	}
 }
 
-public record VerifyCodeCommandResponse(string SuccessUrl);
+public record CancelOtpResponse(string CancelUrl);

@@ -6,9 +6,9 @@ using Otp.Core.Domains.Entities;
 
 namespace Otp.Application.App.Queries.GetApps;
 
-public record GetAppsQuery(int PageIndex, int PageSize) : IRequest<PaginatedResult<GetAppSimpleDto>>
+public record GetApps(int PageIndex, int PageSize) : IRequest<PaginatedResult<GetAppSimpleResponse>>
 {
-	public class Handler : IRequestHandler<GetAppsQuery, PaginatedResult<GetAppSimpleDto>>
+	public class Handler : IRequestHandler<GetApps, PaginatedResult<GetAppSimpleResponse>>
 	{
 		private readonly IApplicationDbContext _applicationDbContext;
 		private readonly ICurrentUserService _currentUserService;
@@ -19,16 +19,16 @@ public record GetAppsQuery(int PageIndex, int PageSize) : IRequest<PaginatedResu
 			_currentUserService = currentUserService;
 		}
 
-		public async Task<PaginatedResult<GetAppSimpleDto>> Handle(GetAppsQuery request, CancellationToken cancellationToken)
+		public async Task<PaginatedResult<GetAppSimpleResponse>> Handle(GetApps request, CancellationToken cancellationToken)
 		{
 			var apps = await _applicationDbContext.Apps.Where(app => app.PrincipalId == _currentUserService.PrincipalId
 																	&& app.Status != AppStatus.Deleted)
 												.OrderByDescending(app => app.CreatedAt)
-												.Select(app => new GetAppSimpleDto(app.Id, app.Name, app.Description, app.CreatedAt, app.Tags))
+												.Select(app => new GetAppSimpleResponse(app.Id, app.Name, app.Description, app.CreatedAt, app.Tags))
 												.PaginatedResultAsync(request.PageIndex, request.PageSize);
 			return apps;
 		}
 	}
 }
 
-public record GetAppSimpleDto(Guid Id, string Name, string? Description, DateTime CreatedAt, IEnumerable<string>? Tags);
+public record GetAppSimpleResponse(Guid Id, string Name, string? Description, DateTime CreatedAt, IEnumerable<string>? Tags);

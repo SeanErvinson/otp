@@ -4,14 +4,14 @@ using Otp.Core.Domains.ValueObjects;
 
 namespace Otp.Application.App.Commands.UpdateBranding;
 
-public class UpdateBrandingCommandValidator : AbstractValidator<UpdateBrandingCommand>
+public class UpdateBrandingValidator : AbstractValidator<UpdateBranding>
 {
 	private const int MbInBytes = 1048576;
 	private const int MaxBackgroundSize = 5 * MbInBytes;
 	private const int MaxLogoSize = 2 * MbInBytes;
 	private readonly string[] _allowedImageContentType = { MediaTypeNames.Image.Jpeg, "image/png", "image/svg+xml" };
 
-	public UpdateBrandingCommandValidator()
+	public UpdateBrandingValidator()
 	{
 		When(request => request.BackgroundImage is not null,
 			() =>

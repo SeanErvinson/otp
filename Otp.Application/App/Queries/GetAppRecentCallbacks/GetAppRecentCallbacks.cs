@@ -7,9 +7,9 @@ using Otp.Core.Domains.Entities;
 
 namespace Otp.Application.App.Queries.GetAppRecentCallbacks;
 
-public record GetAppRecentCallbacks(Guid Id) : IRequest<IEnumerable<GetAppRecentCallbacksDto>>
+public record GetAppRecentCallbacks(Guid Id) : IRequest<IEnumerable<GetAppRecentCallbacksResponse>>
 {
-	public class Handler : IRequestHandler<GetAppRecentCallbacks, IEnumerable<GetAppRecentCallbacksDto>>
+	public class Handler : IRequestHandler<GetAppRecentCallbacks, IEnumerable<GetAppRecentCallbacksResponse>>
 	{
 		private const int MaxCallbackEventCount = 30;
 		private readonly IApplicationDbContext _applicationDbContext;
@@ -21,7 +21,7 @@ public record GetAppRecentCallbacks(Guid Id) : IRequest<IEnumerable<GetAppRecent
 			_currentUserService = currentUserService;
 		}
 
-		public async Task<IEnumerable<GetAppRecentCallbacksDto>> Handle(GetAppRecentCallbacks request, CancellationToken cancellationToken)
+		public async Task<IEnumerable<GetAppRecentCallbacksResponse>> Handle(GetAppRecentCallbacks request, CancellationToken cancellationToken)
 		{
 			var app = await _applicationDbContext.Apps.AsNoTracking()
 												.CountAsync(app => app.Id == request.Id
@@ -36,7 +36,7 @@ public record GetAppRecentCallbacks(Guid Id) : IRequest<IEnumerable<GetAppRecent
 													.Take(MaxCallbackEventCount)
 													.ToList();
 
-			return callbackEvents.Select(c => new GetAppRecentCallbacksDto
+			return callbackEvents.Select(c => new GetAppRecentCallbacksResponse
 			{
 				Channel = c.Channel,
 				RequestId = c.RequestId,
@@ -48,7 +48,7 @@ public record GetAppRecentCallbacks(Guid Id) : IRequest<IEnumerable<GetAppRecent
 	}
 }
 
-public record GetAppRecentCallbacksDto
+public record GetAppRecentCallbacksResponse
 {
 	public Guid RequestId { get; init; }
 	public DateTime CreatedAt { get; init; }

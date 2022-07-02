@@ -7,18 +7,18 @@ using Otp.Core.Domains.Common.Exceptions;
 
 namespace Otp.Application.App.Commands.UpdateBranding;
 
-public record UpdateBrandingCommandRequest(IFormFile? BackgroundImage,
+public record UpdateBrandingRequest(IFormFile? BackgroundImage,
 											IFormFile? LogoImage,
 											string? SmsMessageTemplate);
 
-public record UpdateBrandingCommand : IRequest
+public record UpdateBranding : IRequest
 {
 	public Guid Id { get; init; }
 	public IFormFile? BackgroundImage { get; init; }
 	public IFormFile? LogoImage { get; init; }
 	public string? SmsMessageTemplate { get; init; }
 
-	public class Handler : IRequestHandler<UpdateBrandingCommand>
+	public class Handler : IRequestHandler<UpdateBranding>
 	{
 		private const string AppsContainerName = "apps";
 		private readonly IApplicationDbContext _applicationDbContext;
@@ -32,7 +32,7 @@ public record UpdateBrandingCommand : IRequest
 			_currentUserService = currentUserService;
 		}
 
-		public async Task<Unit> Handle(UpdateBrandingCommand request, CancellationToken cancellationToken)
+		public async Task<Unit> Handle(UpdateBranding request, CancellationToken cancellationToken)
 		{
 			var app = await _applicationDbContext.Apps.SingleOrDefaultAsync(app => app.Id == request.Id && app.PrincipalId == _currentUserService.PrincipalId,
 																			cancellationToken);

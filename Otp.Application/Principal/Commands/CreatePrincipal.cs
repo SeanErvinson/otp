@@ -2,18 +2,18 @@
 
 namespace Otp.Application.Principal.Commands;
 
-public record CreatePrincipalCommand : IRequest<CreatePrincipalCommandDto>
+public record CreatePrincipal : IRequest<CreatePrincipalResponse>
 {
 	public string ObjectId { get; init; }
 	public string DisplayName { get; init; }
 	
-	public class Handler : IRequestHandler<CreatePrincipalCommand, CreatePrincipalCommandDto>
+	public class Handler : IRequestHandler<CreatePrincipal, CreatePrincipalResponse>
 	{
-		public async Task<CreatePrincipalCommandDto> Handle(CreatePrincipalCommand request, CancellationToken cancellationToken)
+		public async Task<CreatePrincipalResponse> Handle(CreatePrincipal request, CancellationToken cancellationToken)
 		{
 			
 
-			return new CreatePrincipalCommandDto();
+			return new CreatePrincipalResponse();
 		}
 	}
 }
@@ -25,7 +25,7 @@ public enum CreatePrincipalCommandActions
 	ValidationError
 }
 
-public record CreatePrincipalCommandDto()
+public record CreatePrincipalResponse()
 {
 	public string Version { get; } = "1.0.0";
 	public CreatePrincipalCommandActions Action { get; init; }

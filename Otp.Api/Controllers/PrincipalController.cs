@@ -19,11 +19,11 @@ public class PrincipalController : ControllerBase
 	}
 	
 	[HttpGet("current")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetCurrentPrincipalQueryDto))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetCurrentPrincipalResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	public async Task<IActionResult> GetCurrentPrincipal()
 	{
-		var result = await _mediator.Send(new GetCurrentPrincipalQuery());
+		var result = await _mediator.Send(new GetCurrentPrincipal());
 		return Ok(result);
 	}
 	
@@ -32,7 +32,7 @@ public class PrincipalController : ControllerBase
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	public async Task<IActionResult> CreatePrincipal([FromBody] CreatePrincipalCommand request)
+	public async Task<IActionResult> CreatePrincipal([FromBody] CreatePrincipal request)
 	{
 		var result = await _mediator.Send(request);
 		return Ok(result);

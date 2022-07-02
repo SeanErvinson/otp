@@ -9,7 +9,7 @@ using Serilog.Context;
 
 namespace Otp.Application.Otp.Commands.RequestOtp;
 
-public record RequestOtpCommand : IRequest<RequestOtpDto>
+public record RequestOtp : IRequest<RequestOtpResponse>
 {
 	public Channel Channel { get; init; }
 	public string Contact { get; init; } = default!;
@@ -21,9 +21,9 @@ public record RequestOtpCommand : IRequest<RequestOtpDto>
 	 * maxRetries, allowResend, and etc
 	*/
 
-	public static RequestOtpCommand Sms(string contact, string successUrl, string cancelUrl)
+	public static RequestOtp Sms(string contact, string successUrl, string cancelUrl)
 	{
-		return new RequestOtpCommand
+		return new RequestOtp
 		{
 			Channel = Channel.Sms,
 			Contact = contact,
@@ -32,9 +32,9 @@ public record RequestOtpCommand : IRequest<RequestOtpDto>
 		};
 	}
 
-	public static RequestOtpCommand Email(string contact, string successUrl, string cancelUrl)
+	public static RequestOtp Email(string contact, string successUrl, string cancelUrl)
 	{
-		return new RequestOtpCommand
+		return new RequestOtp
 		{
 			Channel = Channel.Email,
 			Contact = contact,
@@ -43,7 +43,7 @@ public record RequestOtpCommand : IRequest<RequestOtpDto>
 		};
 	}
 
-	public class Handler : IRequestHandler<RequestOtpCommand, RequestOtpDto>
+	public class Handler : IRequestHandler<RequestOtp, RequestOtpResponse>
 	{
 		private readonly IAppContextService _appContextService;
 		private readonly IApplicationDbContext _dbContext;
@@ -54,7 +54,7 @@ public record RequestOtpCommand : IRequest<RequestOtpDto>
 			_dbContext = dbContext;
 		}
 
-		public async Task<RequestOtpDto> Handle(RequestOtpCommand request, CancellationToken cancellationToken)
+		public async Task<RequestOtpResponse> Handle(RequestOtp request, CancellationToken cancellationToken)
 		{
 			using (LogContext.PushProperty("Channel", request.Channel))
 			{
@@ -74,10 +74,10 @@ public record RequestOtpCommand : IRequest<RequestOtpDto>
 				var result = await _dbContext.OtpRequests.AddAsync(otpRequest, cancellationToken);
 				await _dbContext.SaveChangesAsync(cancellationToken);
 				
-				return new RequestOtpDto(result.Entity.Id, new Uri(new Uri("http://localhost:3000/"), otpRequest.RequestPath));
+				return new RequestOtpResponse(result.Entity.Id, new Uri(new Uri("http://localhost:3000/"), otpRequest.RequestPath));
 			}
 		}
 	}
 }
 
-public record RequestOtpDto(Guid Id, Uri RedirectUri);
+public record RequestOtpResponse(Guid Id, Uri RedirectUri);

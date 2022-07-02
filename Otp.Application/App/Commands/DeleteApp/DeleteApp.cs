@@ -5,9 +5,9 @@ using Otp.Application.Common.Interfaces;
 
 namespace Otp.Application.App.Commands.DeleteApp;
 
-public record DeleteAppCommand(Guid Id) : IRequest
+public record DeleteApp(Guid Id) : IRequest
 {
-	public class Handler : IRequestHandler<DeleteAppCommand>
+	public class Handler : IRequestHandler<DeleteApp>
 	{
 		private readonly IApplicationDbContext _applicationDbContext;
 		private readonly ICurrentUserService _currentUserService;
@@ -18,7 +18,7 @@ public record DeleteAppCommand(Guid Id) : IRequest
 			_currentUserService = currentUserService;
 		}
 
-		public async Task<Unit> Handle(DeleteAppCommand request, CancellationToken cancellationToken)
+		public async Task<Unit> Handle(DeleteApp request, CancellationToken cancellationToken)
 		{
 			var app = await _applicationDbContext.Apps.SingleOrDefaultAsync(app => app.Id == request.Id && app.PrincipalId == _currentUserService.PrincipalId,
 																			cancellationToken);

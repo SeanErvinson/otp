@@ -2,9 +2,9 @@
 
 namespace Otp.Application.Logs.Queries.GetLogs;
 
-public class GetLogsQueryValidator : AbstractValidator<GetLogsQuery>
+public class GetLogsValidator : AbstractValidator<GetLogs>
 {
-	public GetLogsQueryValidator()
+	public GetLogsValidator()
 	{
 		CascadeMode = CascadeMode.Stop;
 		RuleFor(request => request.After)

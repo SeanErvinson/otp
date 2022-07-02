@@ -2,9 +2,9 @@
 
 namespace Otp.Application.App.Commands.CreateApp;
 
-public class CreateAppCommandValidator : AbstractValidator<CreateAppCommand>
+public class CreateAppValidator : AbstractValidator<CreateApp>
 {
-	public CreateAppCommandValidator()
+	public CreateAppValidator()
 	{
 		RuleFor(request => request.Name).NotEmpty().Matches(@"[\w-]");
 		RuleFor(request => request.Name.Length).InclusiveBetween(5, 64);

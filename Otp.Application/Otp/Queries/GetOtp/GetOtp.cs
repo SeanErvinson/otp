@@ -4,11 +4,11 @@ using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Common.Enums;
 
-namespace Otp.Application.Otp.Queries.GetOtpRequest;
+namespace Otp.Application.Otp.Queries.GetOtp;
 
-public record GetOtpRequestQuery(Guid Id) : IRequest<GetOtpRequestQueryResponse>
+public record GetOtp(Guid Id) : IRequest<GetOtpResponse>
 {
-	public class Handler : IRequestHandler<GetOtpRequestQuery, GetOtpRequestQueryResponse>
+	public class Handler : IRequestHandler<GetOtp, GetOtpResponse>
 	{
 		private readonly IApplicationDbContext _dbContext;
 		private readonly ICurrentUserService _currentUserService;
@@ -19,7 +19,7 @@ public record GetOtpRequestQuery(Guid Id) : IRequest<GetOtpRequestQueryResponse>
 			_currentUserService = currentUserService;
 		}
 
-		public async Task<GetOtpRequestQueryResponse> Handle(GetOtpRequestQuery requestConfig,
+		public async Task<GetOtpResponse> Handle(GetOtp requestConfig,
 			CancellationToken cancellationToken)
 		{
 			var otpRequest =
@@ -44,7 +44,7 @@ public record GetOtpRequestQuery(Guid Id) : IRequest<GetOtpRequestQueryResponse>
 				throw new UnauthorizedAccessException("Resource does not belong to the user");
 			}
 
-			return new GetOtpRequestQueryResponse
+			return new GetOtpResponse
 			{
 				Id = otpRequest.Id,
 				Channel = otpRequest.Channel,
@@ -65,7 +65,7 @@ public record GetOtpRequestQuery(Guid Id) : IRequest<GetOtpRequestQueryResponse>
 	}
 }
 
-public record GetOtpRequestQueryResponse
+public record GetOtpResponse
 {
 	public Guid Id { get; init; }
 	public Channel Channel { get; init; }

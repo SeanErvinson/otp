@@ -5,7 +5,7 @@ using Otp.Core.Domains.Common.Enums;
 
 namespace Otp.Application.Otp.Commands.RequestOtp;
 
-public class RequestOtpCommandValidator : AbstractValidator<RequestOtpCommand>
+public class RequestOtpCommandValidator : AbstractValidator<RequestOtp>
 {
 	public RequestOtpCommandValidator(IEnumerable<ISmsProvider> smsProviders)
 	{

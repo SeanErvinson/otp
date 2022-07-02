@@ -7,9 +7,9 @@ using Otp.Core.Utils;
 
 namespace Otp.Application.App.Commands.CreateApp;
 
-public record CreateAppCommand(string Name, string? Description, IEnumerable<string>? Tags) : IRequest<CreateAppCommandDto>
+public record CreateApp(string Name, string? Description, IEnumerable<string>? Tags) : IRequest<CreateAppResponse>
 {
-	public class Handler : IRequestHandler<CreateAppCommand, CreateAppCommandDto>
+	public class Handler : IRequestHandler<CreateApp, CreateAppResponse>
 	{
 		private readonly IApplicationDbContext _applicationDbContext;
 		private readonly ICurrentUserService _currentUserService;
@@ -20,7 +20,7 @@ public record CreateAppCommand(string Name, string? Description, IEnumerable<str
 			_currentUserService = currentUserService;
 		}
 
-		public async Task<CreateAppCommandDto> Handle(CreateAppCommand request, CancellationToken cancellationToken)
+		public async Task<CreateAppResponse> Handle(CreateApp request, CancellationToken cancellationToken)
 		{
 			var count = await _applicationDbContext.Apps.CountAsync(app => app.PrincipalId == _currentUserService.PrincipalId
 																			&& app.Name == request.Name
@@ -33,9 +33,9 @@ public record CreateAppCommand(string Name, string? Description, IEnumerable<str
 			var result = await _applicationDbContext.Apps.AddAsync(newApp, cancellationToken);
 			await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-			return new CreateAppCommandDto(result.Entity.Id, generatedApiKey);
+			return new CreateAppResponse(result.Entity.Id, generatedApiKey);
 		}
 	}
 }
 
-public record CreateAppCommandDto(Guid Id, string ApiKey);
+public record CreateAppResponse(Guid Id, string ApiKey);

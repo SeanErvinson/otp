@@ -5,11 +5,11 @@ using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.ValueObjects;
 using Serilog.Context;
 
-namespace Otp.Application.Otp.Commands.ResendOtpRequest;
+namespace Otp.Application.Otp.Commands.ResendOtp;
 
-public record ResendOtpRequest(Guid Id) : IRequest
+public record ResendOtp(Guid Id) : IRequest
 {
-	public class Handler : IRequestHandler<ResendOtpRequest>
+	public class Handler : IRequestHandler<ResendOtp>
 	{
 		private readonly IApplicationDbContext _dbContext;
 		private readonly IOtpContextService _otpContextService;
@@ -20,7 +20,7 @@ public record ResendOtpRequest(Guid Id) : IRequest
 			_otpContextService = otpContextService;
 		}
 
-		public async Task<Unit> Handle(ResendOtpRequest request, CancellationToken cancellationToken)
+		public async Task<Unit> Handle(ResendOtp request, CancellationToken cancellationToken)
 		{
 			using (LogContext.PushProperty("OtpRequestId", request.Id))
 			{

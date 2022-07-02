@@ -6,9 +6,11 @@ using Otp.Core.Domains.Entities;
 
 namespace Otp.Application.App.Commands.UpdateCallback;
 
-public record UpdateCallbackCommand(Guid Id, string CallbackUrl, string? EndpointSecret) : IRequest
+public record UpdateCallbackRequest(string CallbackUrl, string? EndpointSecret);
+
+public record UpdateCallback(Guid Id, string CallbackUrl, string? EndpointSecret) : IRequest
 {
-	public class Handler : IRequestHandler<UpdateCallbackCommand>
+	public class Handler : IRequestHandler<UpdateCallback>
 	{
 		private readonly IApplicationDbContext _applicationDbContext;
 		private readonly ICurrentUserService _currentUserService;
@@ -19,7 +21,7 @@ public record UpdateCallbackCommand(Guid Id, string CallbackUrl, string? Endpoin
 			_currentUserService = currentUserService;
 		}
 
-		public async Task<Unit> Handle(UpdateCallbackCommand request, CancellationToken cancellationToken)
+		public async Task<Unit> Handle(UpdateCallback request, CancellationToken cancellationToken)
 		{
 			
 			var app = await _applicationDbContext.Apps.SingleOrDefaultAsync(app => app.Id == request.Id 

@@ -5,9 +5,9 @@ using Otp.Application.Common.Interfaces;
 
 namespace Otp.Application.App.Commands.RegenerateApiKey;
 
-public record RegenerateApiKeyCommand(Guid Id) : IRequest<RegenerateApiKeyDto>
+public record RegenerateApiKey(Guid Id) : IRequest<RegenerateApiKeyResponse>
 {
-	public class Handler : IRequestHandler<RegenerateApiKeyCommand, RegenerateApiKeyDto>
+	public class Handler : IRequestHandler<RegenerateApiKey, RegenerateApiKeyResponse>
 	{
 		private readonly IApplicationDbContext _applicationDbContext;
 		private readonly ICurrentUserService _currentUserService;
@@ -18,7 +18,7 @@ public record RegenerateApiKeyCommand(Guid Id) : IRequest<RegenerateApiKeyDto>
 			_currentUserService = currentUserService;
 		}
 
-		public async Task<RegenerateApiKeyDto> Handle(RegenerateApiKeyCommand request, CancellationToken cancellationToken)
+		public async Task<RegenerateApiKeyResponse> Handle(RegenerateApiKey request, CancellationToken cancellationToken)
 		{
 			var app = await _applicationDbContext.Apps.SingleOrDefaultAsync(app => app.Id == request.Id && app.PrincipalId == _currentUserService.PrincipalId,
 																			cancellationToken);
@@ -28,9 +28,9 @@ public record RegenerateApiKeyCommand(Guid Id) : IRequest<RegenerateApiKeyDto>
 
 			await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-			return new RegenerateApiKeyDto(apiKey);
+			return new RegenerateApiKeyResponse(apiKey);
 		}
 	}
 }
 
-public record RegenerateApiKeyDto(string ApiKey);
+public record RegenerateApiKeyResponse(string ApiKey);

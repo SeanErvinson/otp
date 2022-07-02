@@ -22,12 +22,12 @@ public class LogsController : ControllerBase
 	}
 
 	[HttpGet]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CursorResult<GetLogsQueryDto>))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CursorResult<GetLogsResponse>))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	public async Task<IActionResult> GetLogs([FromQuery] GetLogsQuery query)
+	public async Task<IActionResult> GetLogs([FromQuery] GetLogs query)
 	{
 		var result = await _mediator.Send(query);
 		return Ok(result);
