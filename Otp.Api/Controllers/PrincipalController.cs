@@ -1,6 +1,7 @@
 ﻿using System.Net.Mime;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Otp.Api.Filters;
 using Otp.Application.Principal.Commands;
 using Otp.Application.Principal.Queries.GetCurrentPrincipal;
 
@@ -12,7 +13,7 @@ namespace Otp.Api.Controllers;
 public class PrincipalController : ControllerBase
 {
 	private readonly IMediator _mediator;
-	
+
 	public PrincipalController(IMediator mediator)
 	{
 		_mediator = mediator;
@@ -28,6 +29,7 @@ public class PrincipalController : ControllerBase
 	}
 	
 	[HttpPost]
+	[OnCreateBasicAuthAuthorize]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]

@@ -27,7 +27,7 @@ public class CurrentUserService : ICurrentUserService
 		{
 			using var scope = _serviceProvider.CreateScope();
 			var dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-			return dbContext.Principals.SingleOrDefault(c => c.UserId == UserId)?.Id ?? throw new ApplicationException();
+			return dbContext.Principals.SingleOrDefault(c => c.UserId == UserId)?.Id ?? Guid.Empty;
 		}
 	}
 }

@@ -14,6 +14,7 @@ public static class ServiceCollectionExtensions
 		IConfiguration configuration,
 		IWebHostEnvironment hostEnvironment)
 	{
+		services.AddOptions<AzureB2COptions>().BindConfiguration(AzureB2COptions.Section);
 		var azureB2COptions = configuration.GetSection(AzureB2COptions.Section).Get<AzureB2COptions>();
 		services.AddAuthentication(options =>
 			{

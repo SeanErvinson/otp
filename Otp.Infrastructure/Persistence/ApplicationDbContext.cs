@@ -48,7 +48,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 					entry.Entity.CreatedBy = _currentUserService.PrincipalId.ToString();
 					break;
 				case EntityState.Modified:
-					entry.Entity.CreatedBy = _currentUserService.PrincipalId.ToString();
+					entry.Entity.UpdatedBy = _currentUserService.PrincipalId.ToString();
 					break;
 			}
 
