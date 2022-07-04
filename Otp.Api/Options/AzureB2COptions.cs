@@ -7,6 +7,7 @@ public class AzureB2COptions
 	public string ClientId { get; set; } = default!;
 	public string Domain { get; set; } = default!;
 	public string SignInPolicy { get; set; } = default!;
+
 	public string Authority => $"{Instance}/{Domain}/{SignInPolicy}/v2.0".ToString();
 
 	public ApiConnector ApiConnector { get; set; } = default!;

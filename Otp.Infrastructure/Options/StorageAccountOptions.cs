@@ -1,6 +1,5 @@
 namespace Otp.Infrastructure.Options;
 
-
 public sealed class StorageAccountOptions
 {
 	public static string Section = "Azure:StorageAccount";

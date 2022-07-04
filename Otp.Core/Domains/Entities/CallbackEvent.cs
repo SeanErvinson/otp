@@ -20,7 +20,12 @@ public class CallbackEvent : TimedEntity
 	{
 	}
 
-	public CallbackEvent(Guid appId, Channel channel, Guid requestId, string contact, CallbackEventType type, string? message)
+	public CallbackEvent(Guid appId,
+		Channel channel,
+		Guid requestId,
+		string contact,
+		CallbackEventType type,
+		string? message)
 	{
 		AppId = appId;
 		Channel = channel;

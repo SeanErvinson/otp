@@ -10,7 +10,7 @@ public class Branding : ValueObject
 	public string? LogoUrl { get; private set; }
 
 	public const string MessageKeyword = "{code}";
-	
+
 	public void UpdateBranding(string? logoUrl, string? backgroundUrl, string? smsMessageTemplate)
 	{
 		if (!string.IsNullOrEmpty(smsMessageTemplate))

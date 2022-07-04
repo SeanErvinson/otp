@@ -22,12 +22,16 @@ public record GetApp(Guid Id) : IRequest<AppResponse>
 
 		public async Task<AppResponse> Handle(GetApp request, CancellationToken cancellationToken)
 		{
-			var app = await _applicationDbContext.Apps.SingleOrDefaultAsync(app => app.Id == request.Id 
-																					&& app.PrincipalId == _currentUserService.PrincipalId 
-																					&& app.Status != AppStatus.Deleted,
-																			cancellationToken);
-			if (app is null) throw new NotFoundException(nameof(app));
-			
+			var app = await _applicationDbContext.Apps.SingleOrDefaultAsync(app => app.Id == request.Id &&
+					app.PrincipalId ==
+					_currentUserService.PrincipalId &&
+					app.Status != AppStatus.Deleted,
+				cancellationToken);
+
+			if (app is null)
+			{
+				throw new NotFoundException(nameof(app));
+			}
 			return new AppResponse
 			{
 				Id = app.Id,

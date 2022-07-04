@@ -23,29 +23,36 @@ public record CreateApp(string Name, string? Description, IEnumerable<string>? T
 
 		public async Task<CreateAppResponse> Handle(CreateApp request, CancellationToken cancellationToken)
 		{
-			var count = await _applicationDbContext.Apps.CountAsync(app => app.PrincipalId == _currentUserService.PrincipalId
-																			&& app.Name == request.Name
-																			&& app.Status != AppStatus.Deleted, cancellationToken);
-			if (count != 0)
-				throw new InvalidRequestException("App already exists.");
+			var count = await _applicationDbContext.Apps.CountAsync(app => app.PrincipalId == _currentUserService.PrincipalId &&
+					app.Name == request.Name &&
+					app.Status != AppStatus.Deleted,
+				cancellationToken);
 
+			if (count != 0)
+			{
+				throw new InvalidRequestException("App already exists.");
+			}
 			var generatedApiKey = CryptoUtil.GenerateKey();
-			var app = new Core.Domains.Entities.App(_currentUserService.PrincipalId, request.Name, generatedApiKey, request.Tags?.ToList(), request.Description);
+			var app = new Core.Domains.Entities.App(_currentUserService.PrincipalId,
+				request.Name,
+				generatedApiKey,
+				request.Tags?.ToList(),
+				request.Description);
 			await _applicationDbContext.Apps.AddAsync(app, cancellationToken);
 			await _applicationDbContext.SaveChangesAsync(cancellationToken);
-
 			return new CreateAppResponse(new AppResponse
-			{
-				Id = app.Id,
-				Name = app.Name,
-				Tags = app.Tags,
-				BackgroundUrl = app.Branding.BackgroundUrl,
-				LogoUrl = app.Branding.LogoUrl,
-				Description = app.Description,
-				CallbackUrl = app.CallbackUrl,
-				CreatedAt = app.CreatedAt,
-				UpdatedAt = app.UpdatedAt
-			}, generatedApiKey);
+				{
+					Id = app.Id,
+					Name = app.Name,
+					Tags = app.Tags,
+					BackgroundUrl = app.Branding.BackgroundUrl,
+					LogoUrl = app.Branding.LogoUrl,
+					Description = app.Description,
+					CallbackUrl = app.CallbackUrl,
+					CreatedAt = app.CreatedAt,
+					UpdatedAt = app.UpdatedAt
+				},
+				generatedApiKey);
 		}
 	}
 }

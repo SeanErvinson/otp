@@ -20,13 +20,17 @@ public record DeleteApp(Guid Id) : IRequest
 
 		public async Task<Unit> Handle(DeleteApp request, CancellationToken cancellationToken)
 		{
-			var app = await _applicationDbContext.Apps.SingleOrDefaultAsync(app => app.Id == request.Id && app.PrincipalId == _currentUserService.PrincipalId,
-																			cancellationToken);
-			if (app is null) throw new NotFoundException(nameof(app));
+			var app = await _applicationDbContext.Apps.SingleOrDefaultAsync(app => app.Id == request.Id &&
+					app.PrincipalId ==
+					_currentUserService.PrincipalId,
+				cancellationToken);
 
+			if (app is null)
+			{
+				throw new NotFoundException(nameof(app));
+			}
 			app.MarkAsDeleted();
 			await _applicationDbContext.SaveChangesAsync(cancellationToken);
-
 			return Unit.Value;
 		}
 	}

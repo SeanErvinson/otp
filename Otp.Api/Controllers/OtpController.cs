@@ -52,12 +52,13 @@ public class OtpController : ControllerBase
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetOtpConfigResponse))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> GetRequestConfig([FromRoute] Guid id, [FromQuery] GetOtpRequestConfigQueryRequest requestConfig)
+	public async Task<IActionResult> GetRequestConfig([FromRoute] Guid id,
+		[FromQuery] GetOtpRequestConfigQueryRequest requestConfig)
 	{
 		var result = await _mediator.Send(new GetOtpConfig(id, requestConfig.Key));
 		return Ok(result);
 	}
-	
+
 	[HttpGet("{id:guid}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetOtpConfigResponse))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]

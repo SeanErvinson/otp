@@ -5,8 +5,7 @@ namespace Otp.Application.Common.Models;
 
 public class CursorResult<T> where T : class
 {
-	private CursorResult(
-		string? before,
+	private CursorResult(string? before,
 		string? after,
 		IEnumerable<T> items)
 	{
@@ -30,14 +29,12 @@ public class CursorResult<T> where T : class
 		Func<T?, T?, (T?, T?)> beforeAfterFunc,
 		Func<T, ICursor?> cursorFunc)
 	{
-
 		var totalItems = await source.Take(count).ToArrayAsync();
 		var minItemCount = Math.Min(totalItems.Length, count);
 		var items = totalItems[..minItemCount].OrderByDescending(orderBy).ToList();
 		var firstItem = items.FirstOrDefault();
 		var lastItem = items.LastOrDefault();
 		var (before, after) = beforeAfterFunc(firstItem, lastItem);
-
 		return new CursorResult<T>(GenerateCursor(before is null ? null : cursorFunc.Invoke(before)),
 			GenerateCursor(after is null ? null : cursorFunc.Invoke(after)),
 			items);
@@ -47,10 +44,12 @@ public class CursorResult<T> where T : class
 	public string? After { get; }
 	public IEnumerable<T> Items { get; }
 
-	private static string? GenerateCursor<TCursor>(TCursor? cursor) where TCursor : ICursor
-	{
-		return cursor is null ? null : JsonConvert.SerializeObject(cursor); //TODO Replace once Text.JsonSerializer supports inheritance parsing
-	}
+	private static string? GenerateCursor<TCursor>(TCursor? cursor) where TCursor : ICursor =>
+		cursor is null
+			? null
+			: JsonConvert.SerializeObject(cursor); //TODO Replace once Text.JsonSerializer supports inheritance parsing
 }
 
-public interface ICursor{};
+public interface ICursor
+{
+};

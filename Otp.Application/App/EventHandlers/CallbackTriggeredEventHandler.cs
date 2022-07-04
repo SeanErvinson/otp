@@ -26,7 +26,6 @@ public class CallbackTriggeredEventHandler : INotificationHandler<CallbackTrigge
 	public async Task Handle(CallbackTriggeredEvent notification, CancellationToken cancellationToken)
 	{
 		var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
 		var data = JsonSerializer.Serialize(new CallbackEventResponse
 		{
 			RequestId = notification.CallbackEvent.RequestId,
@@ -34,24 +33,20 @@ public class CallbackTriggeredEventHandler : INotificationHandler<CallbackTrigge
 			Channel = notification.CallbackEvent.Channel,
 			Type = notification.CallbackEvent.Type
 		});
-
 		var rawSignature = $"{currentTime}.{data}";
-
 		var signature = new SignatureResponse(currentTime, CryptoUtil.Hash256(rawSignature, notification.EndpointSecret));
-
 		var httpMessage = new HttpRequestMessage(HttpMethod.Post, notification.CallbackUrl)
 		{
-			Headers =
-			{
-				{ SignatureHeaderKey, JsonSerializer.Serialize(signature) },
-			},
-			Content = new StringContent(data, Encoding.UTF8, MediaTypeNames.Application.Json),
+			Headers = { { SignatureHeaderKey, JsonSerializer.Serialize(signature) } },
+			Content = new StringContent(data, Encoding.UTF8, MediaTypeNames.Application.Json)
 		};
 		var httpClient = _httpClientFactory.CreateClient();
-		HttpResponseMessage responseMessage = new HttpResponseMessage();
+		var responseMessage = new HttpResponseMessage();
+
 		try
 		{
-			responseMessage = await httpClient.SendAsync(httpMessage, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+			responseMessage =
+				await httpClient.SendAsync(httpMessage, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 		}
 		catch (HttpRequestException ex)
 		{
@@ -60,7 +55,7 @@ public class CallbackTriggeredEventHandler : INotificationHandler<CallbackTrigge
 		}
 		finally
 		{
-			notification.CallbackEvent.SetResponse((int) responseMessage.StatusCode, responseMessage.ReasonPhrase);
+			notification.CallbackEvent.SetResponse((int)responseMessage.StatusCode, responseMessage.ReasonPhrase);
 			await _dbContext.CallbackEvents.AddAsync(notification.CallbackEvent, cancellationToken);
 			await _dbContext.SaveChangesAsync(cancellationToken);
 		}
@@ -73,6 +68,6 @@ public class CallbackTriggeredEventHandler : INotificationHandler<CallbackTrigge
 		public string Contact { get; init; } = default!;
 		public CallbackEventType Type { get; init; }
 	};
-	
+
 	public record SignatureResponse(long Timestamp, string Value);
 }

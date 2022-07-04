@@ -21,28 +21,31 @@ public record GetAppRecentCallbacks(Guid Id) : IRequest<IEnumerable<GetAppRecent
 			_currentUserService = currentUserService;
 		}
 
-		public async Task<IEnumerable<GetAppRecentCallbacksResponse>> Handle(GetAppRecentCallbacks request, CancellationToken cancellationToken)
+		public async Task<IEnumerable<GetAppRecentCallbacksResponse>> Handle(GetAppRecentCallbacks request,
+			CancellationToken cancellationToken)
 		{
 			var app = await _applicationDbContext.Apps.AsNoTracking()
-												.CountAsync(app => app.Id == request.Id
-																	&& app.PrincipalId == _currentUserService.PrincipalId
-																	&& app.Status != AppStatus.Deleted,
-															cancellationToken);
-			if (app == 0) throw new NotFoundException(nameof(app));
+				.CountAsync(app => app.Id == request.Id &&
+						app.PrincipalId == _currentUserService.PrincipalId &&
+						app.Status != AppStatus.Deleted,
+					cancellationToken);
 
+			if (app == 0)
+			{
+				throw new NotFoundException(nameof(app));
+			}
 			var callbackEvents = _applicationDbContext.CallbackEvents.AsNoTracking()
-													.Where(callback => callback.AppId == request.Id)
-													.OrderByDescending(callback => callback.CreatedAt)
-													.Take(MaxCallbackEventCount)
-													.ToList();
-
+				.Where(callback => callback.AppId == request.Id)
+				.OrderByDescending(callback => callback.CreatedAt)
+				.Take(MaxCallbackEventCount)
+				.ToList();
 			return callbackEvents.Select(c => new GetAppRecentCallbacksResponse
 			{
 				Channel = c.Channel,
 				RequestId = c.RequestId,
 				CreatedAt = c.CreatedAt,
 				ResponseMessage = c.ResponseMessage,
-				StatusCode = c.StatusCode,
+				StatusCode = c.StatusCode
 			});
 		}
 	}

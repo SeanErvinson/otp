@@ -23,12 +23,15 @@ public class OtpRequest : TimedEntity
 	public int MaxAttempts { get; private set; } = 3;
 	public OtpRequestAvailability Availability { get; private set; }
 	public ClientInfo? ClientInfo { get; private set; }
-	
+
 	private readonly List<OtpEvent> _timeline = new();
+
 	public IReadOnlyCollection<OtpEvent> Timeline => _timeline.AsReadOnly();
-	
+
 	private readonly List<OtpAttempt> _otpAttempts = new();
+
 	public IReadOnlyCollection<OtpAttempt> OtpAttempts => _otpAttempts.AsReadOnly();
+
 	public DateTime ExpiresOn { get; } = DateTime.UtcNow.AddMinutes(5);
 	public App App { get; private set; } = default!;
 
@@ -38,7 +41,11 @@ public class OtpRequest : TimedEntity
 	{
 	}
 
-	public OtpRequest(Guid appId, string recipient, Channel channel, string successUrl, string cancelUrl)
+	public OtpRequest(Guid appId,
+		string recipient,
+		Channel channel,
+		string successUrl,
+		string cancelUrl)
 	{
 		AppId = appId;
 		Recipient = recipient;
@@ -49,7 +56,6 @@ public class OtpRequest : TimedEntity
 		AuthenticityKey = CryptoUtil.HashKey(CryptoUtil.GenerateKey());
 		Availability = OtpRequestAvailability.Available;
 		AddEvent(OtpEvent.Success(EventState.Request));
-		
 		AddDomainEvent(new OtpRequestedEvent(this));
 	}
 
@@ -57,7 +63,6 @@ public class OtpRequest : TimedEntity
 	{
 		ResendCount += 1;
 		Code = OtpUtil.GenerateCode();
-
 		AddDomainEvent(new OtpRequestedEvent(this));
 	}
 
@@ -73,11 +78,11 @@ public class OtpRequest : TimedEntity
 		ClientInfo ??= clientInfo;
 
 		if (ExpiresOn >= DateTime.UtcNow)
-		{ 
+		{
 			ClaimRequest();
 			throw new OtpRequestException("Request has expired");
 		}
-		
+
 		if (_otpAttempts.Count >= MaxAttempts)
 		{
 			const string message = "OTP has reached max attempt tries. Please request a new OTP";
@@ -85,7 +90,6 @@ public class OtpRequest : TimedEntity
 			App.TriggerFailedCallback(this, message);
 			throw new OtpRequestException(message);
 		}
-
 		_otpAttempts.Add(attempt);
 
 		switch (attempt.AttemptStatus)
@@ -114,5 +118,5 @@ public class OtpRequest : TimedEntity
 public enum OtpRequestAvailability
 {
 	Available,
-	Unavailable,
+	Unavailable
 }

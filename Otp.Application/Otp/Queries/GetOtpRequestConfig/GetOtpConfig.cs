@@ -31,7 +31,8 @@ public record GetOtpConfig(Guid Id, string Key) : IRequest<GetOtpConfigResponse>
 							req.AuthenticityKey == config.Key &&
 							req.Availability == OtpRequestAvailability.Available &&
 							req.Timeline.Any(@event =>
-								@event.State == EventState.Deliver && @event.Status == EventStatus.Success),
+								@event.State == EventState.Deliver &&
+								@event.Status == EventStatus.Success),
 						cancellationToken);
 
 			if (otpRequest is null)
@@ -48,7 +49,6 @@ public record GetOtpConfig(Guid Id, string Key) : IRequest<GetOtpConfigResponse>
 			{
 				throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
 			}
-
 			return new GetOtpConfigResponse
 			{
 				BackgroundUrl = otpRequest.App.Branding.BackgroundUrl,

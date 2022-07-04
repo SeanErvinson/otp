@@ -4,6 +4,7 @@ public abstract class BaseEntity : IHasDomainEvent
 {
 	public Guid Id { get; }
 	private readonly List<DomainEvent> _domainEvents = new();
+
 	public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.ToList().AsReadOnly();
 
 	protected BaseEntity()

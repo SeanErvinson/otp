@@ -25,11 +25,11 @@ public record GetCurrentPrincipal : IRequest<GetCurrentPrincipalResponse>
 				.FirstOrDefaultAsync(principal => principal.UserId == _currentUserService.UserId &&
 						principal.Status != PrincipalStatus.Deleted,
 					cancellationToken);
+
 			if (principal is null)
 			{
 				throw new NotFoundException("Principal does not exists");
 			}
-
 			return new GetCurrentPrincipalResponse();
 		}
 	}

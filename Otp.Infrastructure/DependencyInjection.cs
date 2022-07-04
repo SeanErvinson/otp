@@ -16,33 +16,37 @@ public static class DependencyInjection
 	public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
 	{
 		if (configuration.GetValue<bool>("UseInMemoryDatabase"))
+		{
 			services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("ApplicationDb"));
+		}
 		else
-			services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("ApplicationDb"),
-																						b =>
-																							b.MigrationsAssembly(
-																								typeof(ApplicationDbContext).Assembly.FullName)));
+		{
+			services.AddDbContext<ApplicationDbContext>(options =>
+				options.UseSqlServer(configuration
+						.GetConnectionString("ApplicationDb"),
+					b =>
+						b.MigrationsAssembly(typeof(
+								ApplicationDbContext)
+							.Assembly
+							.FullName)));
+		}
 		services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
-
 		services.TryAddEnumerable(new[]
 		{
 			ServiceDescriptor.Transient<ISenderFactory, SmsSenderFactory>(),
-			ServiceDescriptor.Transient<ISenderFactory, EmailSenderFactory>(),
+			ServiceDescriptor.Transient<ISenderFactory, EmailSenderFactory>()
 		});
-
 		services.TryAddEnumerable(new[]
 		{
 			ServiceDescriptor.Transient<ISmsProvider, PhilippinesSmsProvider>(),
-			ServiceDescriptor.Transient<ISmsProvider, AustraliaSmsProvider>(),
+			ServiceDescriptor.Transient<ISmsProvider, AustraliaSmsProvider>()
 		});
 		services.AddTransient<ISenderService, SenderService>();
-		
-		services.TryAddEnumerable(new []
+		services.TryAddEnumerable(new[]
 		{
 			// ServiceDescriptor.Transient<IEmailProvider, SendGridEmailProvider>(),
-			ServiceDescriptor.Transient<IEmailProvider, AwsSesEmailProvider>(), 
+			ServiceDescriptor.Transient<IEmailProvider, AwsSesEmailProvider>()
 		});
-
 		services.AddTransient<IBlobStorageService, AzureBlobStorageService>();
 	}
 }

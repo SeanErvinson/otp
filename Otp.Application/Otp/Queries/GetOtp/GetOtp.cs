@@ -33,7 +33,6 @@ public record GetOtp(Guid Id) : IRequest<GetOtpResponse>
 			{
 				throw new NotFoundException($"Otp request {requestConfig.Id} does not exist");
 			}
-
 			var app = await _dbContext.Apps.AsNoTracking()
 				.SingleOrDefaultAsync(app =>
 						app.Id == otpRequest.AppId &&
@@ -44,25 +43,25 @@ public record GetOtp(Guid Id) : IRequest<GetOtpResponse>
 			{
 				throw new UnauthorizedAccessException("Resource does not belong to the user");
 			}
-
 			return new GetOtpResponse
 			{
 				Id = otpRequest.Id,
 				Channel = otpRequest.Channel,
 				Recipient = otpRequest.Recipient,
 				RequestedAt = otpRequest.CreatedAt,
-				Timeline = otpRequest.Timeline.Select(@event => new OtpEventResponse
-				{
-					State = @event.State,
-					OccuredAt = @event.OccuredAt,
-					Response = @event.Response,
-					Status = @event.Status,
-				}),
-				Attempts = otpRequest.OtpAttempts.Select(attempt => new OtpAttemptResponse
-				{
-					AttemptedOn = attempt.AttemptedOn,
-					AttemptStatus = attempt.AttemptStatus
-				}),
+				Timeline =
+					otpRequest.Timeline.Select(@event => new OtpEventResponse
+					{
+						State = @event.State,
+						OccuredAt = @event.OccuredAt,
+						Response = @event.Response,
+						Status = @event.Status
+					}),
+				Attempts =
+					otpRequest.OtpAttempts.Select(attempt => new OtpAttemptResponse
+					{
+						AttemptedOn = attempt.AttemptedOn, AttemptStatus = attempt.AttemptStatus
+					}),
 				ResendCount = otpRequest.ResendCount,
 				MaxAttempts = otpRequest.MaxAttempts,
 				ExpiresOn = otpRequest.ExpiresOn,
@@ -70,8 +69,8 @@ public record GetOtp(Guid Id) : IRequest<GetOtpResponse>
 				{
 					IpAddress = otpRequest.ClientInfo?.IpAddress,
 					Referrer = otpRequest.ClientInfo?.Referrer,
-					UserAgent = otpRequest.ClientInfo?.UserAgent,
-				},
+					UserAgent = otpRequest.ClientInfo?.UserAgent
+				}
 			};
 		}
 	}

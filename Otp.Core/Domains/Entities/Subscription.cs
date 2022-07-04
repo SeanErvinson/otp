@@ -27,8 +27,6 @@ public class Subscription : TimedEntity
 		{
 			throw SubscriptionException.AlreadySubscribed(TieredPlan);
 		}
-
 		TieredPlan = tieredPlan;
 	}
 }
-

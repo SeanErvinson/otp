@@ -29,10 +29,7 @@ public class AwsSesEmailProvider : IEmailProvider
 			Destination = new Destination
 			{
 				ToAddresses =
-					new List<string>
-					{
-						request.Recipient
-					}
+					new List<string> { request.Recipient }
 			},
 			Content = new EmailContent
 			{
@@ -40,18 +37,12 @@ public class AwsSesEmailProvider : IEmailProvider
 				{
 					TemplateName = TemplateName,
 					TemplateData = JsonSerializer.Serialize(new TemplateData(request.Code,
-						@"https://pages.getpostman.com/rs/067-UMD-991/images/pm-logo-horiz%402x.png",
-						request.Recipient), _jsonSerializerOptions)
+							@"https://pages.getpostman.com/rs/067-UMD-991/images/pm-logo-horiz%402x.png",
+							request.Recipient),
+						_jsonSerializerOptions)
 				}
 			},
-			EmailTags = new List<MessageTag>
-			{
-				new ()
-				{
-					Name = nameof(request.AppId),
-					Value = request.AppId.ToString()
-				},
-			},
+			EmailTags = new List<MessageTag> { new() { Name = nameof(request.AppId), Value = request.AppId.ToString() } },
 			ConfigurationSetName = ConfigurationSet
 		};
 

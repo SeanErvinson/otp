@@ -105,7 +105,6 @@ public class AppsController : ControllerBase
 		return Ok(result);
 	}
 
-
 	[HttpGet]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedResult<GetAppSimpleResponse>))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -127,7 +126,7 @@ public class AppsController : ControllerBase
 		var result = await _mediator.Send(new GetApp(id));
 		return Ok(result);
 	}
-	
+
 	[HttpGet("logs")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]

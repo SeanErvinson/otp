@@ -17,8 +17,9 @@ public class SenderService : ISenderService
 		var senderFactory = _senderFactories.SingleOrDefault(sender => sender.SupportedChannel == channel);
 
 		if (senderFactory is null)
+		{
 			throw new NotSupportedException($"{channel} is not supported by factory");
-		
+		}
 		return senderFactory;
 	}
 }

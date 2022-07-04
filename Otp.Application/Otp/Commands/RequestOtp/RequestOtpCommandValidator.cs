@@ -11,7 +11,8 @@ public class RequestOtpCommandValidator : AbstractValidator<RequestOtp>
 	{
 		var supportedCountryCodes = smsProviders.SelectMany(c => c.SupportedCountryCodes);
 		RuleFor(c => c.Contact).NotEmpty();
-		When(c => c.Channel == Channel.Email, () => { RuleFor(c => c.Contact).EmailAddress().WithMessage("Email provided is not a valid one."); });
+		When(c => c.Channel == Channel.Email,
+			() => { RuleFor(c => c.Contact).EmailAddress().WithMessage("Email provided is not a valid one."); });
 		When(c => c.Channel == Channel.Sms,
 			() =>
 			{

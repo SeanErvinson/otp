@@ -27,10 +27,12 @@ public record ResendOtp(Guid Id) : IRequest
 				var otpRequest =
 					await _dbContext.OtpRequests.FirstOrDefaultAsync(req =>
 							req.Id == request.Id &&
-							req.AuthenticityKey == _otpContextService.AuthenticityKey &&
+							req.AuthenticityKey ==
+							_otpContextService.AuthenticityKey &&
 							req.ExpiresOn > DateTime.UtcNow &&
 							req.Timeline.Any(@event =>
-								@event.State == EventState.Deliver && @event.Status == EventStatus.Success),
+								@event.State == EventState.Deliver &&
+								@event.Status == EventStatus.Success),
 						cancellationToken);
 
 				if (otpRequest is null)
@@ -41,9 +43,7 @@ public record ResendOtp(Guid Id) : IRequest
 				using (LogContext.PushProperty("NumberOfResend", otpRequest.ResendCount))
 				{
 					otpRequest.Resend();
-
 					await _dbContext.SaveChangesAsync(cancellationToken);
-
 					return Unit.Value;
 				}
 			}

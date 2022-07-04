@@ -23,7 +23,7 @@ public class ReceiverController : ControllerBase
 		_logger.LogInformation("No Secret - Successfully decoded and received");
 		return Ok(response);
 	}
-	
+
 	[HttpPost("no-secret-check")]
 	public IActionResult NoSecretButCheck([FromBody] CallbackEventResponse response)
 	{
@@ -31,13 +31,12 @@ public class ReceiverController : ControllerBase
 		var signatureResponse = JsonSerializer.Deserialize<SignatureResponse>(signature);
 		var data = $"{signatureResponse.Timestamp}.{JsonSerializer.Serialize(response)}";
 		var result = CryptoUtil.Hash256(data, null);
-		
+
 		if (result == signatureResponse.Value)
 		{
 			_logger.LogInformation("No Secret Check - Successfully decoded and received");
 			return Ok(response);
 		}
-		
 		return NotFound();
 	}
 
@@ -51,16 +50,18 @@ public class ReceiverController : ControllerBase
 
 		if (result == signatureResponse.Value)
 		{
-			_logger.LogInformation("Secret - Successfully decoded and received {Mode} {Contact} - {Type}", response.Contact, response.Channel, response.Type);
+			_logger.LogInformation("Secret - Successfully decoded and received {Mode} {Contact} - {Type}",
+				response.Contact,
+				response.Channel,
+				response.Type);
 			return Ok(response);
 		}
-		
 		_logger.LogInformation("Secret - Failed to decoded");
 		return NotFound();
 	}
 
 	public record SignatureResponse(long Timestamp, string Value);
-	
+
 	public record CallbackEventResponse
 	{
 		public Guid RequestId { get; init; }

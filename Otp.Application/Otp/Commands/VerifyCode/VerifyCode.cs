@@ -39,7 +39,8 @@ public record VerifyCode(Guid Id, string Code) : IRequest<VerifyCodeResponse>
 								req.AuthenticityKey == _otpContextService.AuthenticityKey &&
 								req.Availability == OtpRequestAvailability.Available &&
 								req.Timeline.Any(@event =>
-									@event.State == EventState.Deliver && @event.Status == EventStatus.Success),
+									@event.State == EventState.Deliver &&
+									@event.Status == EventStatus.Success),
 							cancellationToken);
 
 				if (otpRequest is null)
@@ -56,21 +57,19 @@ public record VerifyCode(Guid Id, string Code) : IRequest<VerifyCodeResponse>
 				{
 					throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
 				}
-
 				var requestInfo = new ClientInfo(_currentUserService.IpAddress,
 					_currentUserService.UserAgent,
 					_currentUserService.Referrer);
+
 				if (otpRequest.Code != request.Code)
 				{
 					otpRequest.AddAttempt(OtpAttempt.Fail(request.Code), requestInfo);
 					await _dbContext.SaveChangesAsync(cancellationToken);
 					throw new InvalidRequestException("Code provided was incorrect");
 				}
-
 				Log.Information("Setting request to success");
 				otpRequest.AddAttempt(OtpAttempt.Success(request.Code), requestInfo);
 				await _dbContext.SaveChangesAsync(cancellationToken);
-
 				return new VerifyCodeResponse(otpRequest.SuccessUrl);
 			}
 		}

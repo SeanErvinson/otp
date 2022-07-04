@@ -18,7 +18,7 @@ public class PrincipalController : ControllerBase
 	{
 		_mediator = mediator;
 	}
-	
+
 	[HttpGet("current")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetCurrentPrincipalResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -27,7 +27,7 @@ public class PrincipalController : ControllerBase
 		var result = await _mediator.Send(new GetCurrentPrincipal());
 		return Ok(result);
 	}
-	
+
 	[HttpPost]
 	[OnCreateBasicAuthAuthorize]
 	[ProducesResponseType(StatusCodes.Status200OK)]

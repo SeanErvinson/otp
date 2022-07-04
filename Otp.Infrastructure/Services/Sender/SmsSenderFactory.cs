@@ -19,10 +19,15 @@ public class SmsSenderFactory : ISenderFactory
 	public async Task Send(OtpRequest request, CancellationToken cancellationToken = default)
 	{
 		var countryCode = PhoneUtils.ExtractCountryCode(request.Recipient);
-		var provider = _smsProviders.FirstOrDefault(
-			provider => provider.SupportedCountryCodes.Contains(countryCode, StringComparer.InvariantCultureIgnoreCase));
+		var provider =
+			_smsProviders.FirstOrDefault(provider =>
+				provider.SupportedCountryCodes.Contains(countryCode,
+					StringComparer.InvariantCultureIgnoreCase));
+
 		if (provider is null)
+		{
 			throw new NotSupportedException($"{request.Recipient} is not supported by any SMS provider.");
+		}
 		await provider.Send(request, cancellationToken);
 	}
 }

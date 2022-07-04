@@ -17,9 +17,13 @@ public class AppContextService : IAppContextService
 	{
 		get
 		{
-			if(_httpContextAccessor.HttpContext is null)
+			if (_httpContextAccessor.HttpContext is null)
+			{
 				return string.Empty;
-			return _httpContextAccessor.HttpContext.Request.Headers.TryGetValue(ApiHeaderKey, out var apiKey) ? CryptoUtil.HashKey(apiKey) : string.Empty;
+			}
+			return _httpContextAccessor.HttpContext.Request.Headers.TryGetValue(ApiHeaderKey, out var apiKey)
+				? CryptoUtil.HashKey(apiKey)
+				: string.Empty;
 		}
 	}
 }

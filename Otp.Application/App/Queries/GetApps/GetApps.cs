@@ -21,14 +21,18 @@ public record GetApps(int PageIndex, int PageSize) : IRequest<PaginatedResult<Ge
 
 		public async Task<PaginatedResult<GetAppSimpleResponse>> Handle(GetApps request, CancellationToken cancellationToken)
 		{
-			var apps = await _applicationDbContext.Apps.Where(app => app.PrincipalId == _currentUserService.PrincipalId
-																	&& app.Status != AppStatus.Deleted)
-												.OrderByDescending(app => app.CreatedAt)
-												.Select(app => new GetAppSimpleResponse(app.Id, app.Name, app.Description, app.CreatedAt, app.Tags))
-												.PaginatedResultAsync(request.PageIndex, request.PageSize);
+			var apps = await _applicationDbContext.Apps
+				.Where(app => app.PrincipalId == _currentUserService.PrincipalId && app.Status != AppStatus.Deleted)
+				.OrderByDescending(app => app.CreatedAt)
+				.Select(app => new GetAppSimpleResponse(app.Id, app.Name, app.Description, app.CreatedAt, app.Tags))
+				.PaginatedResultAsync(request.PageIndex, request.PageSize);
 			return apps;
 		}
 	}
 }
 
-public record GetAppSimpleResponse(Guid Id, string Name, string? Description, DateTime CreatedAt, IEnumerable<string>? Tags);
+public record GetAppSimpleResponse(Guid Id,
+	string Name,
+	string? Description,
+	DateTime CreatedAt,
+	IEnumerable<string>? Tags);

@@ -12,7 +12,7 @@ public class CustomExceptionMiddleware
 	private readonly RequestDelegate _next;
 
 	public CustomExceptionMiddleware(RequestDelegate next,
-									ILogger<CustomExceptionMiddleware> logger)
+		ILogger<CustomExceptionMiddleware> logger)
 	{
 		_next = next;
 		_logger = logger;
@@ -41,6 +41,7 @@ public class CustomExceptionMiddleware
 	{
 		context.Response.ContentType = MediaTypeNames.Application.Json;
 		var type = exception.GetType();
+
 		if (_exceptionHandlers.ContainsKey(type))
 		{
 			await _exceptionHandlers[type].Invoke(context, exception);
@@ -57,7 +58,6 @@ public class CustomExceptionMiddleware
 	{
 		context.Response.StatusCode = StatusCodes.Status404NotFound;
 		var exception = ex as NotFoundException;
-
 		var details = new ProblemDetails
 		{
 			Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
@@ -72,34 +72,24 @@ public class CustomExceptionMiddleware
 	{
 		context.Response.StatusCode = StatusCodes.Status400BadRequest;
 		var exception = ex as InvalidRequestException;
-
-		var details = new ValidationProblemDetails
-		{
-			Detail = exception.Message
-		};
+		var details = new ValidationProblemDetails { Detail = exception.Message };
 		var result = JsonSerializer.Serialize(details, new JsonSerializerOptions { WriteIndented = true });
 		await context.Response.WriteAsync(result);
 	}
-	
+
 	private async Task HandleUnauthorizedAccessException(HttpContext context, Exception ex)
 	{
 		context.Response.StatusCode = StatusCodes.Status401Unauthorized;
 		var exception = ex as UnauthorizedAccessException;
-
-		var details = new ValidationProblemDetails
-		{
-			Title = "Unauthorized access",
-			Detail = exception.Message
-		};
+		var details = new ValidationProblemDetails { Title = "Unauthorized access", Detail = exception.Message };
 		var result = JsonSerializer.Serialize(details, new JsonSerializerOptions { WriteIndented = true });
 		await context.Response.WriteAsync(result);
-	}	
-	
+	}
+
 	private async Task HandleExpiredResourceException(HttpContext context, Exception ex)
 	{
 		context.Response.StatusCode = StatusCodes.Status410Gone;
 		var exception = ex as ExpiredResourceException;
-
 		var details = new ValidationProblemDetails
 		{
 			Type = "https://tools.ietf.org/html/rfc7231#section-6.5.9",

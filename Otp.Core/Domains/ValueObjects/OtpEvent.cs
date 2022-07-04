@@ -9,15 +9,9 @@ public class OtpEvent : ValueObject
 	public string? Response { get; private set; }
 	public EventStatus Status { get; private set; }
 
-	public static OtpEvent Success(EventState state, string? response = null)
-	{
-		return new OtpEvent(state, response, EventStatus.Success);
-	}
+	public static OtpEvent Success(EventState state, string? response = null) => new(state, response, EventStatus.Success);
 
-	public static OtpEvent Fail(EventState state, string? response = null)
-	{
-		return new OtpEvent(state, response, EventStatus.Fail);
-	}
+	public static OtpEvent Fail(EventState state, string? response = null) => new(state, response, EventStatus.Fail);
 
 	private OtpEvent(EventState state, string? response, EventStatus status)
 	{
@@ -32,7 +26,7 @@ public enum EventState
 {
 	Request,
 	Send,
-	Deliver,
+	Deliver
 }
 
 public enum EventStatus

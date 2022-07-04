@@ -17,25 +17,35 @@ public class App : AuditableEntity
 	public string HashedApiKey { get; private set; }
 	public string? EndpointSecret { get; private set; }
 	public AppStatus Status { get; private set; }
+
 	public IReadOnlyCollection<string>? Tags => _tags?.AsReadOnly();
+
 	private readonly List<string>? _tags = new();
 
 	public Principal Principal { get; set; }
+
 	public bool IsDeleted => Status == AppStatus.Deleted;
 
 	private App()
 	{
 	}
 
-	public App(Guid principalId, string name, string apiKey, ICollection<string>? tags, string? description = null)
+	public App(Guid principalId,
+		string name,
+		string apiKey,
+		ICollection<string>? tags,
+		string? description = null)
 	{
 		PrincipalId = principalId;
 		Name = name;
 		HashedApiKey = CryptoUtil.HashKey(apiKey);
 		Status = AppStatus.Active;
 		Description = description;
+
 		if (tags?.Any() == true)
+		{
 			_tags?.AddRange(tags);
+		}
 	}
 
 	public void UpdateDescription(string description)
@@ -60,12 +70,12 @@ public class App : AuditableEntity
 	{
 		TriggerCallback(request, CallbackEventType.Failed, message);
 	}
-	
+
 	public void TriggerCanceledCallback(OtpRequest request)
 	{
 		TriggerCallback(request, CallbackEventType.Canceled, "Otp request was canceled");
 	}
-	
+
 	public void TriggerSuccessCallback(OtpRequest request)
 	{
 		TriggerCallback(request, CallbackEventType.Success);
@@ -75,14 +85,17 @@ public class App : AuditableEntity
 	private void TriggerCallback(OtpRequest request, CallbackEventType type, string? message = null)
 	{
 		if (string.IsNullOrEmpty(CallbackUrl))
+		{
 			return;
-
+		}
 		AddDomainEvent(new CallbackTriggeredEvent(new CallbackEvent(Id,
-																	request.Channel,
-																	request.Id,
-																	request.Recipient,
-																	type, 
-																	message), CallbackUrl, EndpointSecret));
+				request.Channel,
+				request.Id,
+				request.Recipient,
+				type,
+				message),
+			CallbackUrl,
+			EndpointSecret));
 	}
 
 	public void MarkAsDeleted()
@@ -90,10 +103,7 @@ public class App : AuditableEntity
 		Status = AppStatus.Deleted;
 	}
 
-	public override string ToString()
-	{
-		return Name;
-	}
+	public override string ToString() => Name;
 }
 
 public enum AppStatus

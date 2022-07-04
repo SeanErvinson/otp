@@ -24,16 +24,18 @@ public record UpdateCallback(Guid Id, string CallbackUrl, string? EndpointSecret
 
 		public async Task<AppResponse> Handle(UpdateCallback request, CancellationToken cancellationToken)
 		{
-			
-			var app = await _applicationDbContext.Apps.SingleOrDefaultAsync(app => app.Id == request.Id 
-																					&& app.PrincipalId == _currentUserService.PrincipalId 
-																					&& app.Status != AppStatus.Deleted,
-																			cancellationToken);
-			if (app is null) throw new NotFoundException(nameof(app));
+			var app = await _applicationDbContext.Apps.SingleOrDefaultAsync(app => app.Id == request.Id &&
+					app.PrincipalId ==
+					_currentUserService.PrincipalId &&
+					app.Status != AppStatus.Deleted,
+				cancellationToken);
 
+			if (app is null)
+			{
+				throw new NotFoundException(nameof(app));
+			}
 			app.UpdateCallbackUrl(request.CallbackUrl, request.EndpointSecret);
 			await _applicationDbContext.SaveChangesAsync(cancellationToken);
-
 			return new AppResponse
 			{
 				Id = app.Id,

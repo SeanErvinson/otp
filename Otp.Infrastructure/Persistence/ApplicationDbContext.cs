@@ -31,6 +31,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 	public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{
 		foreach (var entry in ChangeTracker.Entries<TimedEntity>())
+		{
 			switch (entry.State)
 			{
 				case EntityState.Added:
@@ -40,8 +41,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 					entry.Entity.UpdatedAt = DateTime.UtcNow;
 					break;
 			}
+		}
 
 		foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
+		{
 			switch (entry.State)
 			{
 				case EntityState.Added:
@@ -51,14 +54,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 					entry.Entity.UpdatedBy = _currentUserService.PrincipalId.ToString();
 					break;
 			}
-
+		}
 		var entities = ChangeTracker.Entries<BaseEntity>()
 			.Select(entry => entry.Entity);
-
 		await PublishDomainEvents(entities, cancellationToken);
-
 		var result = await base.SaveChangesAsync(cancellationToken);
-
 		return result;
 	}
 
@@ -73,7 +73,6 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 			domainEventTasks.AddRange(domainEvents.Select(domainEvent =>
 				_mediator.Publish(domainEvent, cancellationToken)));
 		}
-
 		return Task.WhenAll(domainEventTasks);
 	}
 

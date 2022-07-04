@@ -52,8 +52,7 @@ public abstract class BasicAuthAuthorize : Attribute, IAsyncAuthorizationFilter
 
 	protected abstract (string username, string password) GetCredential(AuthorizationFilterContext context);
 
-	private static string ExtractAuth(string basicAuth) 
-		=> basicAuth.Replace(AuthorizationType, string.Empty).Trim();
+	private static string ExtractAuth(string basicAuth) => basicAuth.Replace(AuthorizationType, string.Empty).Trim();
 
 	private static (string username, string password) ParseBasicAuth(string basicAuth)
 	{

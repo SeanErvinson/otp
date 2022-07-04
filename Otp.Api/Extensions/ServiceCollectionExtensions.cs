@@ -26,13 +26,10 @@ public static class ServiceCollectionExtensions
 			{
 				options.Authority = azureB2COptions.Authority;
 				options.Audience = azureB2COptions.ClientId;
-				options.TokenValidationParameters = new TokenValidationParameters
-				{
-					ValidateLifetime = !hostEnvironment.IsDevelopment()
-				};
+				options.TokenValidationParameters =
+					new TokenValidationParameters { ValidateLifetime = !hostEnvironment.IsDevelopment() };
 				options.RequireHttpsMetadata = !hostEnvironment.IsDevelopment();
 			});
-
 		services.AddAuthorization(options =>
 		{
 			var defaultAuthorizationPolicyBuilder =
@@ -47,11 +44,7 @@ public static class ServiceCollectionExtensions
 		services.AddSwaggerGen(c =>
 		{
 			c.SwaggerDoc("v1",
-				new OpenApiInfo
-				{
-					Title = "Otp",
-					Version = "v1"
-				});
+				new OpenApiInfo { Title = "Otp", Version = "v1" });
 			c.AddSecurityDefinition("Bearer",
 				new OpenApiSecurityScheme
 				{
@@ -67,11 +60,7 @@ public static class ServiceCollectionExtensions
 				{
 					new OpenApiSecurityScheme
 					{
-						Reference = new OpenApiReference
-						{
-							Type = ReferenceType.SecurityScheme,
-							Id = "Bearer"
-						},
+						Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" },
 						Scheme = "oauth2",
 						Name = "Bearer",
 						In = ParameterLocation.Header

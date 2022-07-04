@@ -16,27 +16,26 @@ public class AzureBlobStorageService : IBlobStorageService
 	}
 
 	public async Task<Uri> UploadBlobAsync(string containerName,
-											string blobPath,
-											Stream stream,
-											string contentType,
-											bool publiclyAccessible = false,
-											IDictionary<string, string>? metadata = null,
-											CancellationToken cancellationToken = default)
+		string blobPath,
+		Stream stream,
+		string contentType,
+		bool publiclyAccessible = false,
+		IDictionary<string, string>? metadata = null,
+		CancellationToken cancellationToken = default)
 	{
 		var container = GetContainerClient(containerName);
-		await container.CreateIfNotExistsAsync(publiclyAccessible ? PublicAccessType.Blob : PublicAccessType.None, cancellationToken: cancellationToken);
+		await container.CreateIfNotExistsAsync(publiclyAccessible ? PublicAccessType.Blob : PublicAccessType.None,
+			cancellationToken: cancellationToken);
 		var blobClient = container.GetBlobClient(blobPath);
-		await blobClient.UploadAsync(stream, new BlobHttpHeaders
-		{
-			ContentType = contentType,
-		}, metadata, cancellationToken: cancellationToken);
+		await blobClient.UploadAsync(stream,
+			new BlobHttpHeaders { ContentType = contentType },
+			metadata,
+			cancellationToken: cancellationToken);
 		return blobClient.Uri;
 	}
 
-	public Task<Stream> DownloadBlobAsync(string uri, CancellationToken cancellationToken = default)
-	{
+	public Task<Stream> DownloadBlobAsync(string uri, CancellationToken cancellationToken = default) =>
 		throw new NotImplementedException();
-	}
 
 	private BlobContainerClient GetContainerClient(string containerName)
 	{

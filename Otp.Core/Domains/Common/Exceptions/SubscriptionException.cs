@@ -14,8 +14,6 @@ public class SubscriptionException : Exception
 	{
 	}
 
-	public static SubscriptionException AlreadySubscribed(TieredPlan tieredPlan)
-	{
-		return new SubscriptionException($"Entity is already subscribed to {tieredPlan}");
-	}
+	public static SubscriptionException AlreadySubscribed(TieredPlan tieredPlan) =>
+		new($"Entity is already subscribed to {tieredPlan}");
 }

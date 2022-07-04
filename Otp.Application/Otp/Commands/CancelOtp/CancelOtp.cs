@@ -39,7 +39,8 @@ public record CancelOtp(Guid Id) : IRequest<CancelOtpResponse>
 								req.AuthenticityKey == _otpContextService.AuthenticityKey &&
 								req.Availability == OtpRequestAvailability.Available &&
 								req.Timeline.Any(@event =>
-									@event.State == EventState.Deliver && @event.Status == EventStatus.Success),
+									@event.State == EventState.Deliver &&
+									@event.Status == EventStatus.Success),
 							cancellationToken);
 
 				if (otpRequest is null)
@@ -56,14 +57,12 @@ public record CancelOtp(Guid Id) : IRequest<CancelOtpResponse>
 				{
 					throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
 				}
-
 				Log.Information("Cancelling otp request");
 				otpRequest.AddAttempt(OtpAttempt.Cancel(),
 					new ClientInfo(_currentUserService.IpAddress,
 						_currentUserService.UserAgent,
 						_currentUserService.Referrer));
 				await _dbContext.SaveChangesAsync(cancellationToken);
-
 				return new CancelOtpResponse(otpRequest.CancelUrl);
 			}
 		}

@@ -8,7 +8,7 @@ public static class StringUtils
 	public static string Base64Encode(string value, [CallerArgumentExpression("value")] string valueName = "")
 	{
 		ArgumentNullException.ThrowIfNull(value, nameof(valueName));
-		var valueBytes = System.Text.Encoding.UTF8.GetBytes(value);
+		var valueBytes = Encoding.UTF8.GetBytes(value);
 		return Convert.ToBase64String(valueBytes);
 	}
 
@@ -17,6 +17,7 @@ public static class StringUtils
 		[CallerArgumentExpression("base64")] string base64Name = "")
 	{
 		ArgumentNullException.ThrowIfNull(base64, nameof(base64Name));
+
 		try
 		{
 			var bytes = Convert.FromBase64String(base64);
