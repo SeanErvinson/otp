@@ -1,23 +1,30 @@
 import { InteractionRequiredAuthError } from '@azure/msal-browser';
+
+import { loginRequest } from './authConfig';
 import msalInstance from './msalInstance';
 
 export class MsalService {
-	static getActiveAccount = () => {
+	static logout = (): void => {
 		const activeAccount = msalInstance.getActiveAccount();
-		const accounts = msalInstance.getAllAccounts();
-		if (!activeAccount && accounts.length === 0) {
-			console.log('No account');
-		}
-		return activeAccount || accounts[0];
+
+		msalInstance.logoutRedirect({
+			account: activeAccount,
+		});
 	};
 
 	static acquireAccessToken = async (): Promise<string | null> => {
-		const activeAccount = MsalService.getActiveAccount();
+		const account = msalInstance.getActiveAccount();
+		if (!account) {
+			throw Error(
+				'No active account! Verify a user has been signed in and setActiveAccount has been called.',
+			);
+		}
 
 		const request = {
-			scopes: ['https://otpdev.onmicrosoft.com/api/access_as_user'],
-			account: activeAccount,
+			...loginRequest,
+			account: account,
 		};
+
 		try {
 			const authResult = await msalInstance.acquireTokenSilent(request);
 			return authResult.accessToken;

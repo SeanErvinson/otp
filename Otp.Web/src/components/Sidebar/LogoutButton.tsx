@@ -1,17 +1,13 @@
 import useModal from '@/hooks/useModal';
-import msalInstance from '@/services/auth/msalInstance';
 import { MsalService } from '@/services/auth/msalService';
+
 import ConfirmationModal from '../Modal/ConfirmationModal';
 import LogoutIcon from '../misc/LogoutIcon';
 
 const LogoutButton = () => {
 	const { visible, toggle } = useModal();
 	const handleOnLogout = async () => {
-		const activeAccount = MsalService.getActiveAccount();
-
-		msalInstance.logoutRedirect({
-			account: activeAccount,
-		});
+		MsalService.logout();
 		toggle();
 	};
 
