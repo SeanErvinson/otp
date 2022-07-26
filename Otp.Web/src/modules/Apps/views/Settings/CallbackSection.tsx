@@ -5,7 +5,7 @@ import { useMutation } from 'react-query';
 
 import { OtpApi } from '@/api/otpApi';
 import WarningIcon from '@/components/misc/WarningIcon';
-import { useGeneratedId } from '@/hooks';
+import useGeneratedId from '@/hooks/useGeneratedId';
 import { isValidUrl } from '@/utils/stringUtils';
 
 import { selectedAppAtom } from '../../states/SelectedAppAtom';

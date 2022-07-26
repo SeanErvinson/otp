@@ -105,8 +105,8 @@ const LogTable = (props: Props) => {
 			{
 				Header: 'App',
 				Cell: ({ row }: Cell<Log>) => (
-					<Link className="btn btn-ghost btn-xs" to={`/apps/${row.original.id}`}>
-						{row.original.app}
+					<Link className="btn btn-ghost btn-xs" to={`/apps/${row.original.app.appId}`}>
+						{row.original.app.appName}
 					</Link>
 				),
 			},

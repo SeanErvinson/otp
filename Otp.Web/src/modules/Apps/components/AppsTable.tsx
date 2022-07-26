@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { Column, useTable, useSortBy, Cell } from 'react-table';
 
 import { App } from '@/types/types';
-import { useGeneratedId } from '@/hooks';
+import useGeneratedId from '@/hooks/useGeneratedId';
 import SortIcon from '@/components/misc/SortIcon';
 import { TagCollection } from '@/components/TagCollection';
 import { truncate } from '@/utils/stringUtils';

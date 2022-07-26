@@ -56,25 +56,33 @@ export type OtpRequestConfig = {
 	contact: string;
 };
 
-type OtpAttempt = {};
-
-type OtpEvent = {};
-
-type ClientInfo = {
-	ipAddress: string;
-	referrer: string;
-	userAgent: string;
-};
+export const OtpAttemptStatus = ['Success', 'Fail', 'Canceled'] as const;
+export type OtpAttemptStatus = typeof OtpAttemptStatus[keyof typeof OtpAttemptStatus];
 
 export type OtpRequest = {
 	id: string;
+	attempts: {
+		attemptedOn: Date;
+		attemptStatus: OtpAttemptStatus;
+	}[];
 	channel: Channel;
-	app: App;
-	attempts: OtpAttempt[];
-	timeline: OtpEvent[];
-	status: OtpRequestStatus;
-	clientInfo: ClientInfo;
+	clientInfo: {
+		ipAddress: string;
+		referrer: string;
+		userAgent: string;
+	};
+	expiresOn: Date;
+	maxAttempts: number;
+	recipient: string;
 	requestedAt: Date;
+	resendCount: number;
+	status: OtpRequestStatus;
+	timeline: {
+		state: EventStatus;
+		occuredAt: Date;
+		response?: string;
+		status: string;
+	}[];
 };
 
 /**
@@ -111,8 +119,19 @@ export type Log = {
 	eventDate: Date;
 	recipient: string;
 	channel: Channel;
-	app: string;
+	app: {
+		appId: string;
+		appName: string;
+	};
 };
+
+export const EventStatus = {
+	request: 'Request',
+	send: 'Send',
+	deliver: 'Deliver',
+};
+
+export type EventStatus = typeof EventStatus[keyof typeof EventStatus];
 
 export const Status = {
 	success: 'Success',
