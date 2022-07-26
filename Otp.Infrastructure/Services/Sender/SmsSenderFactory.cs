@@ -16,7 +16,7 @@ public class SmsSenderFactory : ISenderFactory
 
 	public Channel SupportedChannel => Channel.Sms;
 
-	public async Task Send(OtpRequest request, CancellationToken cancellationToken = default)
+	public async Task<string> Send(OtpRequest request, CancellationToken cancellationToken = default)
 	{
 		var countryCode = PhoneUtils.ExtractCountryCode(request.Recipient);
 		var provider =
@@ -28,6 +28,6 @@ public class SmsSenderFactory : ISenderFactory
 		{
 			throw new NotSupportedException($"{request.Recipient} is not supported by any SMS provider.");
 		}
-		await provider.Send(request, cancellationToken);
+		return await provider.Send(request, cancellationToken);
 	}
 }

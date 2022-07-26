@@ -63,13 +63,16 @@ try
 	builder.Services.AddEndpointsApiExplorer();
 	builder.Services.AddSwagger();
 	builder.Services.AddJwtBearerAuthentication(builder.Configuration, builder.Environment);
+	
 	builder.Services.AddInfrastructure(builder.Configuration);
 	builder.Services.AddApplication(builder.Configuration);
+	
 	builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 	builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 	builder.Services.AddScoped<IAppContextService, AppContextService>();
 	builder.Services.AddScoped<IOtpContextService, OtpContextService>();
 	builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
 	var app = builder.Build();
 
 	if (app.Environment.IsDevelopment())

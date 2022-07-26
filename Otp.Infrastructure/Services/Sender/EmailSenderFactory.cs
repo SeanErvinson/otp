@@ -15,8 +15,6 @@ public class EmailSenderFactory : ISenderFactory
 
 	public Channel SupportedChannel => Channel.Email;
 
-	public async Task Send(OtpRequest request, CancellationToken cancellationToken)
-	{
+	public async Task<string> Send(OtpRequest request, CancellationToken cancellationToken) =>
 		await _emailProvider.Send(request, cancellationToken);
-	}
 }

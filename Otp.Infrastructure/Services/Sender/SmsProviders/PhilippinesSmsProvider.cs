@@ -7,9 +7,9 @@ public class PhilippinesSmsProvider : ISmsProvider
 {
 	public IEnumerable<string> SupportedCountryCodes => new[] { "63" };
 
-	public Task Send(OtpRequest request, CancellationToken cancellationToken = default)
+	public Task<string> Send(OtpRequest request, CancellationToken cancellationToken = default)
 	{
 		Console.WriteLine($"Sending SMS from PH provider {request.Recipient}");
-		return Task.CompletedTask;
+		return Task.FromResult("PH-MessageId");
 	}
 }

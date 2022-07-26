@@ -2,25 +2,29 @@
 using Amazon;
 using Amazon.SimpleEmailV2;
 using Amazon.SimpleEmailV2.Model;
+using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Entities;
+using Serilog;
 
 namespace Otp.Infrastructure.Services.Sender.EmailProviders;
 
 public class AwsSesEmailProvider : IEmailProvider
 {
 	private const string SenderAddress = "ervinsonong@gmail.com";
-	private const string ConfigurationSet = "ohtp-dev-configuration-set";
+	private const string ConfigurationSet = "ohtp-configuration-set-9e6ce29";
 	private const string TemplateName = "OTPTemplate";
 
 	private readonly JsonSerializerOptions _jsonSerializerOptions;
+	private readonly ILogger _logger;
 
-	public AwsSesEmailProvider(JsonSerializerOptions jsonSerializerOptions)
+	public AwsSesEmailProvider(JsonSerializerOptions jsonSerializerOptions, ILogger logger)
 	{
 		_jsonSerializerOptions = jsonSerializerOptions;
+		_logger = logger;
 	}
 
-	public async Task Send(OtpRequest request, CancellationToken cancellationToken = default)
+	public async Task<string> Send(OtpRequest request, CancellationToken cancellationToken = default)
 	{
 		using var client = new AmazonSimpleEmailServiceV2Client(RegionEndpoint.APSoutheast1);
 		var sendRequest = new SendEmailRequest
@@ -48,16 +52,15 @@ public class AwsSesEmailProvider : IEmailProvider
 
 		try
 		{
-			Console.WriteLine("Sending email using Amazon SES...");
+			_logger.Information("Sending email using Amazon SES...");
 			var response = await client.SendEmailAsync(sendRequest, cancellationToken);
-			Console.WriteLine("The email was sent successfully.");
+			_logger.Information("The email was sent successfully");
+			return response.MessageId;
 		}
 		catch (Exception ex)
 		{
-			Console.WriteLine("The email was not sent.");
-			Console.WriteLine("Error message: " + ex.Message);
+			throw new ChannelProviderException("Failed to send email", ex);
 		}
-		Console.WriteLine($"Sending Email from SendGridProvider {request.Recipient}");
 	}
 
 	private record TemplateData(string Code, string LogoUrl, string ReceiverAddress);

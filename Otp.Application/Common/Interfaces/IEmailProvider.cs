@@ -4,5 +4,5 @@ namespace Otp.Application.Common.Interfaces;
 
 public interface IEmailProvider
 {
-	Task Send(OtpRequest request, CancellationToken cancellationToken = default);
+	Task<string> Send(OtpRequest request, CancellationToken cancellationToken = default);
 }

@@ -11,5 +11,5 @@ public interface ISenderService
 public interface ISenderFactory
 {
 	Channel SupportedChannel { get; }
-	Task Send(OtpRequest request, CancellationToken cancellationToken = default);
+	Task<string> Send(OtpRequest request, CancellationToken cancellationToken = default);
 }
