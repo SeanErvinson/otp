@@ -21,6 +21,7 @@ public class OtpRequest : TimedEntity
 	public string AuthenticityKey { get; } = default!;
 	public int ResendCount { get; private set; }
 	public int MaxAttempts { get; private set; } = 3;
+	public string CorrelationId { get; private set; } = default!;
 	public OtpRequestAvailability Availability { get; private set; }
 	public ClientInfo? ClientInfo { get; private set; }
 
@@ -65,10 +66,18 @@ public class OtpRequest : TimedEntity
 		Code = OtpUtil.GenerateCode();
 		AddDomainEvent(new OtpRequestedEvent(this));
 	}
+	
+	public void AssignCorrelationId(string correlationId)
+	{
+		if (!string.IsNullOrEmpty(CorrelationId))
+		{
+			throw new OtpRequestException("A correlation id has already been set.");
+		}
+		CorrelationId = correlationId;
+	}
 
 	public void AddEvent(OtpEvent otpEvent)
 	{
-		// TODO Consider adding a state machine to make sure that events are in proper order Request → Sent → Deliver
 		_timeline.Add(otpEvent);
 	}
 
@@ -96,6 +105,7 @@ public class OtpRequest : TimedEntity
 		{
 			case OtpAttemptStatus.Success:
 				ClaimRequest();
+				VerifiedAt = DateTime.UtcNow;
 				App.TriggerSuccessCallback(this);
 				break;
 			case OtpAttemptStatus.Fail:
@@ -108,10 +118,13 @@ public class OtpRequest : TimedEntity
 		}
 	}
 
-	private void ClaimRequest()
+	public void ClaimRequest()
 	{
+		if (Availability is OtpRequestAvailability.Unavailable)
+		{
+			throw new OtpRequestException("OTP is already unavailable");
+		}
 		Availability = OtpRequestAvailability.Unavailable;
-		VerifiedAt = DateTime.UtcNow;
 	}
 }
 
