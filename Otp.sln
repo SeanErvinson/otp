@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otp.Core", "Otp.Core\Otp.Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otp.ConsumerApi", "Otp.ConsumerApi\Otp.ConsumerApi.csproj", "{2DBE9E77-1220-42B2-93FE-C2B23E648950}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otp.Infra.Aws", "infra\Otp.Infra.Aws.csproj", "{5CC47AE3-D7B0-4824-92C1-BBD64C78DA80}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{2DBE9E77-1220-42B2-93FE-C2B23E648950}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DBE9E77-1220-42B2-93FE-C2B23E648950}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DBE9E77-1220-42B2-93FE-C2B23E648950}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CC47AE3-D7B0-4824-92C1-BBD64C78DA80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CC47AE3-D7B0-4824-92C1-BBD64C78DA80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CC47AE3-D7B0-4824-92C1-BBD64C78DA80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CC47AE3-D7B0-4824-92C1-BBD64C78DA80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
