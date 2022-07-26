@@ -7,7 +7,7 @@ using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Entities;
 using Serilog;
 
-namespace Otp.Infrastructure.Services.Sender.EmailProviders;
+namespace Otp.Infrastructure.Services.ChannelProviders.EmailProviders;
 
 public class AwsSesEmailProvider : IEmailProvider
 {

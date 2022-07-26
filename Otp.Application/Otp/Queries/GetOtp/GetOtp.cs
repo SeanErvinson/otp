@@ -46,9 +46,23 @@ public record GetOtp(Guid Id) : IRequest<GetOtpResponse>
 			return new GetOtpResponse
 			{
 				Id = otpRequest.Id,
+				Attempts =
+					otpRequest.OtpAttempts.Select(attempt => new OtpAttemptResponse
+					{
+						AttemptedOn = attempt.AttemptedOn, AttemptStatus = attempt.AttemptStatus
+					}),
 				Channel = otpRequest.Channel,
+				ClientInfo = new ClientInfoResponse
+				{
+					IpAddress = otpRequest.ClientInfo?.IpAddress,
+					Referrer = otpRequest.ClientInfo?.Referrer,
+					UserAgent = otpRequest.ClientInfo?.UserAgent
+				},
+				ExpiresOn = otpRequest.ExpiresOn,
+				MaxAttempts = otpRequest.MaxAttempts,
 				Recipient = otpRequest.Recipient,
 				RequestedAt = otpRequest.CreatedAt,
+				ResendCount = otpRequest.ResendCount,
 				Timeline =
 					otpRequest.Timeline.Select(@event => new OtpEventResponse
 					{
@@ -57,20 +71,6 @@ public record GetOtp(Guid Id) : IRequest<GetOtpResponse>
 						Response = @event.Response,
 						Status = @event.Status
 					}),
-				Attempts =
-					otpRequest.OtpAttempts.Select(attempt => new OtpAttemptResponse
-					{
-						AttemptedOn = attempt.AttemptedOn, AttemptStatus = attempt.AttemptStatus
-					}),
-				ResendCount = otpRequest.ResendCount,
-				MaxAttempts = otpRequest.MaxAttempts,
-				ExpiresOn = otpRequest.ExpiresOn,
-				ClientInfo = new ClientInfoResponse
-				{
-					IpAddress = otpRequest.ClientInfo?.IpAddress,
-					Referrer = otpRequest.ClientInfo?.Referrer,
-					UserAgent = otpRequest.ClientInfo?.UserAgent
-				}
 			};
 		}
 	}

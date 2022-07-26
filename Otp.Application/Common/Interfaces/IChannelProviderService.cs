@@ -3,12 +3,12 @@ using Otp.Core.Domains.Entities;
 
 namespace Otp.Application.Common.Interfaces;
 
-public interface ISenderService
+public interface IChannelProviderService
 {
-	ISenderFactory GetSenderFactory(Channel channel);
+	IChannelProviderFactory GetChannelFactory(Channel channel);
 }
 
-public interface ISenderFactory
+public interface IChannelProviderFactory
 {
 	Channel SupportedChannel { get; }
 	Task<string> Send(OtpRequest request, CancellationToken cancellationToken = default);

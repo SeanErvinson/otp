@@ -3,13 +3,13 @@ using Otp.Application.Common.Utils;
 using Otp.Core.Domains.Common.Enums;
 using Otp.Core.Domains.Entities;
 
-namespace Otp.Infrastructure.Services.Sender;
+namespace Otp.Infrastructure.Services.ChannelProviders;
 
-public class SmsSenderFactory : ISenderFactory
+public class SmsChannelProviderFactory : IChannelProviderFactory
 {
 	private readonly IEnumerable<ISmsProvider> _smsProviders;
 
-	public SmsSenderFactory(IEnumerable<ISmsProvider> smsProviders)
+	public SmsChannelProviderFactory(IEnumerable<ISmsProvider> smsProviders)
 	{
 		_smsProviders = smsProviders;
 	}

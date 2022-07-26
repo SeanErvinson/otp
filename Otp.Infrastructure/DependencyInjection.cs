@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Otp.Application.Common.Interfaces;
 using Otp.Infrastructure.Persistence;
 using Otp.Infrastructure.Services;
-using Otp.Infrastructure.Services.Sender;
-using Otp.Infrastructure.Services.Sender.EmailProviders;
-using Otp.Infrastructure.Services.Sender.SmsProviders;
+using Otp.Infrastructure.Services.ChannelProviders;
+using Otp.Infrastructure.Services.ChannelProviders.EmailProviders;
+using Otp.Infrastructure.Services.ChannelProviders.SmsProviders;
 
 namespace Otp.Infrastructure;
 
@@ -33,15 +33,15 @@ public static class DependencyInjection
 		services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 		services.TryAddEnumerable(new[]
 		{
-			ServiceDescriptor.Transient<ISenderFactory, SmsSenderFactory>(),
-			ServiceDescriptor.Transient<ISenderFactory, EmailSenderFactory>()
+			ServiceDescriptor.Transient<IChannelProviderFactory, SmsChannelProviderFactory>(),
+			ServiceDescriptor.Transient<IChannelProviderFactory, EmailChannelProviderFactory>()
 		});
 		services.TryAddEnumerable(new[]
 		{
 			ServiceDescriptor.Transient<ISmsProvider, PhilippinesSmsProvider>(),
 			ServiceDescriptor.Transient<ISmsProvider, AustraliaSmsProvider>()
 		});
-		services.AddTransient<ISenderService, SenderService>();
+		services.AddTransient<IChannelProviderService, ChannelProviderService>();
 		services.TryAddEnumerable(new[]
 		{
 			// ServiceDescriptor.Transient<IEmailProvider, SendGridEmailProvider>(),

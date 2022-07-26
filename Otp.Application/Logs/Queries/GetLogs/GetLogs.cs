@@ -77,7 +77,7 @@ public record GetLogs(string? Before, string? After) : IRequest<CursorResult<Get
 					Id = otpRequest.Id,
 					App = new GetLogsAppResponse(otpRequest.AppId, otpRequest.App.Name),
 					Channel = otpRequest.Channel,
-					Receiver = otpRequest.Recipient,
+					Recipient = otpRequest.Recipient,
 					EventDate = otpRequest.CreatedAt
 				});
 			var resultQuery = cursorQuery.Invoke(appLogs);
@@ -115,7 +115,7 @@ public record GetLogsResponse
 	public Guid Id { get; init; }
 	public GetLogsAppResponse App { get; init; } = default!;
 	public DateTime EventDate { get; init; }
-	public string Receiver { get; init; } = default!;
+	public string Recipient { get; init; } = default!;
 	public Channel Channel { get; init; }
 }
 

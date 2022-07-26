@@ -1,7 +1,7 @@
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Entities;
 
-namespace Otp.Infrastructure.Services.Sender.SmsProviders;
+namespace Otp.Infrastructure.Services.ChannelProviders.SmsProviders;
 
 public class PhilippinesSmsProvider : ISmsProvider
 {

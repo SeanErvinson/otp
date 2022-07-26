@@ -1,18 +1,18 @@
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Common.Enums;
 
-namespace Otp.Infrastructure.Services.Sender;
+namespace Otp.Infrastructure.Services.ChannelProviders;
 
-public class SenderService : ISenderService
+public class ChannelProviderService : IChannelProviderService
 {
-	private readonly IEnumerable<ISenderFactory> _senderFactories;
+	private readonly IEnumerable<IChannelProviderFactory> _senderFactories;
 
-	public SenderService(IEnumerable<ISenderFactory> senderFactories)
+	public ChannelProviderService(IEnumerable<IChannelProviderFactory> senderFactories)
 	{
 		_senderFactories = senderFactories;
 	}
 
-	public ISenderFactory GetSenderFactory(Channel channel)
+	public IChannelProviderFactory GetChannelFactory(Channel channel)
 	{
 		var senderFactory = _senderFactories.SingleOrDefault(sender => sender.SupportedChannel == channel);
 

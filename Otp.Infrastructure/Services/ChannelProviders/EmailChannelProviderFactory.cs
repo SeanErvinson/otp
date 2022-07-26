@@ -2,13 +2,13 @@
 using Otp.Core.Domains.Common.Enums;
 using Otp.Core.Domains.Entities;
 
-namespace Otp.Infrastructure.Services.Sender;
+namespace Otp.Infrastructure.Services.ChannelProviders;
 
-public class EmailSenderFactory : ISenderFactory
+public class EmailChannelProviderFactory : IChannelProviderFactory
 {
 	private readonly IEmailProvider _emailProvider;
 
-	public EmailSenderFactory(IEmailProvider emailProvider)
+	public EmailChannelProviderFactory(IEmailProvider emailProvider)
 	{
 		_emailProvider = emailProvider;
 	}
