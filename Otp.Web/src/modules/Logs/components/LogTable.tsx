@@ -99,7 +99,7 @@ const LogTable = (props: Props) => {
 				filter: statusFilter,
 			},
 			{
-				Header: 'Receiver',
+				Header: 'Recipient',
 				accessor: row => row.recipient,
 			},
 			{
