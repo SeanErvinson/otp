@@ -61,7 +61,7 @@ try
 		})
 		.AddFluentValidation();
 	builder.Services.AddEndpointsApiExplorer();
-	builder.Services.AddSwagger();
+	builder.Services.AddSwagger(builder.Configuration);
 	builder.Services.AddJwtBearerAuthentication(builder.Configuration, builder.Environment);
 	
 	builder.Services.AddInfrastructure(builder.Configuration);
@@ -77,12 +77,11 @@ try
 
 	if (app.Environment.IsDevelopment())
 	{
-		app.UseSwagger();
-		app.UseSwaggerUI();
+		app.UseSwaggerApi(builder.Configuration);
 		app.UseDeveloperExceptionPage();
 		app.UseMigrationsEndPoint();
 	}
-	DbMigrate(app);
+	// DbMigrate(app);
 	app.UseHttpsRedirection();
 	app.UseCors(config => config.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 	app.UseAuthentication();

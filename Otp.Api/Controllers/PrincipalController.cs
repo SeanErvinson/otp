@@ -9,6 +9,7 @@ namespace Otp.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[ApiExplorerSettings(IgnoreApi = true)]
 [Consumes(MediaTypeNames.Application.Json)]
 public class PrincipalController : ControllerBase
 {

@@ -20,6 +20,7 @@ namespace Otp.Api.Controllers;
 [Authorize]
 [ApiController]
 [ApiVersion("1.0")]
+[ApiExplorerSettings(IgnoreApi = true)]
 [Route("api/[controller]")]
 [Consumes(MediaTypeNames.Application.Json)]
 public class AppsController : ControllerBase

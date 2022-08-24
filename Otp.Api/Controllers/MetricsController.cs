@@ -10,6 +10,7 @@ namespace Otp.Api.Controllers;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/[controller]")]
+[ApiExplorerSettings(IgnoreApi = true)]
 [Consumes(MediaTypeNames.Application.Json)]
 public class MetricsController : ControllerBase
 {

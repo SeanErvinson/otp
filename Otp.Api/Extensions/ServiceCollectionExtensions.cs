@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Reflection;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -39,35 +41,52 @@ public static class ServiceCollectionExtensions
 		});
 	}
 
-	public static void AddSwagger(this IServiceCollection services)
+	public static void AddSwagger(this IServiceCollection services, IConfiguration configuration)
 	{
+		var swaggerOptions = new SwaggerOptions();
+		configuration.GetSection(SwaggerOptions.Section).Bind(swaggerOptions);
+		services.AddFluentValidationRulesToSwagger();
 		services.AddSwaggerGen(c =>
 		{
-			c.SwaggerDoc("v1",
-				new OpenApiInfo { Title = "Otp", Version = "v1" });
-			c.AddSecurityDefinition("Bearer",
+			c.SwaggerDoc(swaggerOptions.Version,
+				new OpenApiInfo
+				{
+					Title = swaggerOptions.Title,
+					Version = swaggerOptions.Version,
+					Description = swaggerOptions.Description,
+					Contact = new OpenApiContact
+					{
+						Name = "Support",
+						Email = $"support@{swaggerOptions.Domain}",
+					},
+					License = new OpenApiLicense
+					{
+						Name = "License",
+						Url = new Uri($"https://{swaggerOptions.Domain}/license")
+					},
+					TermsOfService = new Uri($"https://{swaggerOptions.Domain}/tos")
+				});
+			c.AddSecurityDefinition("api-key",
 				new OpenApiSecurityScheme
 				{
-					Type = SecuritySchemeType.Http,
+					Type = SecuritySchemeType.ApiKey,
 					In = ParameterLocation.Header,
-					Description = "Provide a bearer token to access api endpoints",
-					Name = "Bearer Authorization",
-					BearerFormat = "JWT",
-					Scheme = "bearer"
+					Description = "API key of your application",
+					Name = "api-key",
+					Scheme = "token"
 				});
 			c.AddSecurityRequirement(new OpenApiSecurityRequirement
 			{
 				{
 					new OpenApiSecurityScheme
 					{
-						Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" },
-						Scheme = "oauth2",
-						Name = "Bearer",
-						In = ParameterLocation.Header
+						Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "api-key" },
 					},
-					new List<string>()
+					new[] {"writeAccess"}
 				}
 			});
+			var xmlFiles = Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly).ToList();
+			xmlFiles.ForEach(xmlFile => c.IncludeXmlComments(xmlFile));
 		});
 	}
 

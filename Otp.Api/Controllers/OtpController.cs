@@ -14,7 +14,9 @@ namespace Otp.Api.Controllers;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/[controller]")]
+[ApiExplorerSettings(IgnoreApi = true)]
 [Consumes(MediaTypeNames.Application.Json)]
+[Produces(MediaTypeNames.Application.Json)]
 public class OtpController : ControllerBase
 {
 	private readonly IMediator _mediator;
@@ -24,11 +26,30 @@ public class OtpController : ControllerBase
 		_mediator = mediator;
 	}
 
+	/// <summary>
+	/// Request an email OTP.
+	/// </summary>
+	/// <param name="request"></param>
+	/// <returns>The request id and the uri to the OTP verification page.</returns>
+	/// <remarks>
+	/// Sample request:
+	///
+	///     POST /api/otp/email
+	///     {
+	///        "successUrl": "example.com/success",
+	///        "cancelUrl": "example.com/cancel",
+	///        "emailAddress": hello@example.com
+	///     }
+	/// 
+	/// </remarks>
+	/// <response code="200">Returns an OTP response</response>
+	/// <response code="400">If success or cancel is/are invalid and/or email is invalid.</response>
+	/// <response code="401">If request is not unauthorized</response>
 	[HttpPost("email")]
 	[ApiKeyAuthorize]
+	[ApiExplorerSettings(IgnoreApi = false)]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RequestOtpResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> RequestEmail([FromBody] RequestOtpEmailRequest request)
 	{
@@ -36,11 +57,30 @@ public class OtpController : ControllerBase
 		return Ok(result);
 	}
 
+	/// <summary>
+	/// Request an sms OTP.
+	/// </summary>
+	/// <param name="request"></param>
+	/// <returns>The request id and the uri to the OTP verification page.</returns>
+	/// <remarks>
+	/// Sample request:
+	///
+	///     POST /api/otp/sms
+	///     {
+	///        "successUrl": "example.com/success",
+	///        "cancelUrl": "example.com/cancel",
+	///        "phoneNumber": 639123456789
+	///     }
+	/// 
+	/// </remarks>
+	/// <response code="200">Returns an OTP response</response>
+	/// <response code="400">If success or cancel url is/are invalid and/or phone number is invalid.</response>
+	/// <response code="401">If request is not unauthorized</response>
 	[HttpPost("sms")]
 	[ApiKeyAuthorize]
+	[ApiExplorerSettings(IgnoreApi = false)]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RequestOtpResponse))]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> RequestSms([FromBody] RequestOtpSmsRequest request)
 	{

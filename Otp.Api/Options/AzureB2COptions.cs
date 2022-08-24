@@ -1,16 +1,16 @@
 ﻿namespace Otp.Api.Options;
 
-public class AzureB2COptions
+public record AzureB2COptions
 {
 	public const string Section = "AzureB2C";
-	public string Instance { get; set; } = default!;
-	public string ClientId { get; set; } = default!;
-	public string Domain { get; set; } = default!;
-	public string SignInPolicy { get; set; } = default!;
+	public string Instance { get; init; } = default!;
+	public string ClientId { get; init; } = default!;
+	public string Domain { get; init; } = default!;
+	public string SignInPolicy { get; init; } = default!;
 
 	public string Authority => $"{Instance}/{Domain}/{SignInPolicy}/v2.0".ToString();
 
-	public ApiConnector ApiConnector { get; set; } = default!;
+	public ApiConnector ApiConnector { get; init; } = default!;
 }
 
 public class ApiConnector
