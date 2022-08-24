@@ -4,6 +4,7 @@ using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Common.Enums;
 using Otp.Core.Domains.Entities;
+using PhoneNumbers;
 using Serilog;
 using Serilog.Context;
 
@@ -11,18 +12,23 @@ namespace Otp.Application.Otp.Commands.RequestOtp;
 
 public record RequestOtp : IRequest<RequestOtpResponse>
 {
-	public Channel Channel { get; init; }
-	public string Contact { get; init; } = default!;
-	public string SuccessUrl { get; init; } = default!;
-	public string CancelUrl { get; init; } = default!;
+	private Channel Channel { get; init; }
+	private string Contact { get; init; } = default!;
+	private string SuccessUrl { get; init; } = default!;
+	private string CancelUrl { get; init; } = default!;
 
 	/*
 	 * TODO: Consider adding an additional options for stuff like
 	 * maxRetries, allowResend, and etc
 	*/
 
-	public static RequestOtp Sms(string contact, string successUrl, string cancelUrl) =>
-		new() { Channel = Channel.Sms, Contact = contact, SuccessUrl = successUrl, CancelUrl = cancelUrl };
+	public static RequestOtp Sms(string contact, string successUrl, string cancelUrl)
+	{
+		var phoneNumberUtil = PhoneNumberUtil.GetInstance();
+		var parsedNumber = phoneNumberUtil.Parse(contact, "ZZ");
+		var formattedInternationalNumber = phoneNumberUtil.Format(parsedNumber, PhoneNumberFormat.INTERNATIONAL);
+		return new RequestOtp { Channel = Channel.Sms, Contact = formattedInternationalNumber, SuccessUrl = successUrl, CancelUrl = cancelUrl };
+	}
 
 	public static RequestOtp Email(string contact, string successUrl, string cancelUrl) =>
 		new() { Channel = Channel.Email, Contact = contact, SuccessUrl = successUrl, CancelUrl = cancelUrl };

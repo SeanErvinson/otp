@@ -9,14 +9,19 @@ public class OtpEvent : ValueObject
 	public string? Response { get; private set; }
 	public EventStatus Status { get; private set; }
 
-	public static OtpEvent Success(EventState state, string? response = null) => new(state, response, EventStatus.Success);
+	public static OtpEvent Success(EventState state, DateTime? occuredAt = null, string? response = null) =>
+		new(state, occuredAt ?? DateTime.UtcNow, response, EventStatus.Success);
 
-	public static OtpEvent Fail(EventState state, string? response = null) => new(state, response, EventStatus.Fail);
+	public static OtpEvent Fail(EventState state, DateTime? occuredAt = null, string? response = null) =>
+		new(state, occuredAt ?? DateTime.UtcNow, response, EventStatus.Fail);
 
-	private OtpEvent(EventState state, string? response, EventStatus status)
+	private OtpEvent(EventState state,
+		DateTime occuredAt,
+		string? response,
+		EventStatus status)
 	{
 		State = state;
-		OccuredAt = DateTime.UtcNow;
+		OccuredAt = occuredAt;
 		Response = response;
 		Status = status;
 	}
