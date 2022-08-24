@@ -1,4 +1,4 @@
-import { useGeneratedId } from '@/hooks';
+import useGeneratedId from '@/hooks/useGeneratedId';
 import { ChangeEvent, useEffect, useState } from 'react';
 
 interface Props {

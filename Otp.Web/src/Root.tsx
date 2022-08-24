@@ -4,15 +4,15 @@ import { useEffect } from 'react';
 import { Outlet, Route, Routes } from 'react-router-dom';
 
 import { Sidebar } from '@/components/Sidebar';
-import { Home } from '@/pages/Home';
-import { Billing } from '@/pages/Billing';
-import { Channel } from '@/pages/Channel';
-import { Usage } from '@/pages/Usage';
-import { Apps } from '@/pages/Apps';
-import { NotFound } from '@/pages/NotFound';
-import { App } from '@/pages/Apps/App';
-import { Settings } from '@/pages/Apps/App/Settings';
-import { RecentCallbacks } from '@/pages/Apps/App/RecentCallbacks';
+import Dashboard from '@/modules/Dashboard/views/Dashboard';
+import Billing from '@/modules/Billing/views/Billing';
+import Channel from '@/modules/Channel/views/Channel';
+import Logs from '@/modules/Logs/views/Logs';
+import Apps from '@/modules/Apps/views/Apps';
+import AppDetails from '@/modules/Apps/views/AppDetails';
+import Settings from '@/modules/Apps/views/Settings/Settings';
+import NotFound from '@/modules/common/views/NotFound';
+import { RecentCallbacks } from '@/modules/RecentCallbacks';
 import { loginRequest } from '@/services/auth/authConfig';
 import { Loader } from './components/Loader';
 
@@ -39,14 +39,16 @@ const Root = () => {
 	return (
 		<Routes>
 			<Route path="/" element={<SidebarLayout />}>
-				<Route path="" element={<Home />} />
-				<Route path="apps" element={<Apps />} />
-				<Route path="apps/:appId" element={<App />}>
-					<Route path="" element={<Settings />} />
-					<Route path="recent-callbacks" element={<RecentCallbacks />} />
+				<Route path="" element={<Dashboard />} />
+				<Route path="apps">
+					<Route path="" element={<Apps />} />
+					<Route path=":appId" element={<AppDetails />}>
+						<Route path="" element={<Settings />} />
+						<Route path="recent-callbacks" element={<RecentCallbacks />} />
+					</Route>
 				</Route>
 				<Route path="billing" element={<Billing />} />
-				<Route path="usage" element={<Usage />} />
+				<Route path="logs" element={<Logs />} />
 			</Route>
 			<Route path="/sms/:requestId" element={<Channel />} />
 			<Route path="/email/:requestId" element={<Channel />} />

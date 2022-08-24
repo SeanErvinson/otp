@@ -7,9 +7,9 @@ using Otp.Core.Domains.Entities;
 
 namespace Otp.Application.App.Queries.GetAppRecentCallbacks;
 
-public record GetAppRecentCallbacks(Guid Id) : IRequest<IEnumerable<GetAppRecentCallbacksDto>>
+public record GetAppRecentCallbacks(Guid Id) : IRequest<IEnumerable<GetAppRecentCallbacksResponse>>
 {
-	public class Handler : IRequestHandler<GetAppRecentCallbacks, IEnumerable<GetAppRecentCallbacksDto>>
+	public class Handler : IRequestHandler<GetAppRecentCallbacks, IEnumerable<GetAppRecentCallbacksResponse>>
 	{
 		private const int MaxCallbackEventCount = 30;
 		private readonly IApplicationDbContext _applicationDbContext;
@@ -21,34 +21,37 @@ public record GetAppRecentCallbacks(Guid Id) : IRequest<IEnumerable<GetAppRecent
 			_currentUserService = currentUserService;
 		}
 
-		public async Task<IEnumerable<GetAppRecentCallbacksDto>> Handle(GetAppRecentCallbacks request, CancellationToken cancellationToken)
+		public async Task<IEnumerable<GetAppRecentCallbacksResponse>> Handle(GetAppRecentCallbacks request,
+			CancellationToken cancellationToken)
 		{
 			var app = await _applicationDbContext.Apps.AsNoTracking()
-												.CountAsync(app => app.Id == request.Id
-																	&& app.PrincipalId == _currentUserService.PrincipalId
-																	&& app.Status != AppStatus.Deleted,
-															cancellationToken);
-			if (app == 0) throw new NotFoundException(nameof(app));
+				.CountAsync(app => app.Id == request.Id &&
+						app.PrincipalId == _currentUserService.PrincipalId &&
+						app.Status != AppStatus.Deleted,
+					cancellationToken);
 
+			if (app == 0)
+			{
+				throw new NotFoundException(nameof(app));
+			}
 			var callbackEvents = _applicationDbContext.CallbackEvents.AsNoTracking()
-													.Where(callback => callback.AppId == request.Id)
-													.OrderByDescending(callback => callback.CreatedAt)
-													.Take(MaxCallbackEventCount)
-													.ToList();
-
-			return callbackEvents.Select(c => new GetAppRecentCallbacksDto
+				.Where(callback => callback.AppId == request.Id)
+				.OrderByDescending(callback => callback.CreatedAt)
+				.Take(MaxCallbackEventCount)
+				.ToList();
+			return callbackEvents.Select(c => new GetAppRecentCallbacksResponse
 			{
 				Channel = c.Channel,
 				RequestId = c.RequestId,
 				CreatedAt = c.CreatedAt,
 				ResponseMessage = c.ResponseMessage,
-				StatusCode = c.StatusCode,
+				StatusCode = c.StatusCode
 			});
 		}
 	}
 }
 
-public record GetAppRecentCallbacksDto
+public record GetAppRecentCallbacksResponse
 {
 	public Guid RequestId { get; init; }
 	public DateTime CreatedAt { get; init; }

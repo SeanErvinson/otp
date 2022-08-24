@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Common.Models;
@@ -9,13 +10,15 @@ namespace Otp.Infrastructure.Persistence;
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
 	private readonly ICurrentUserService _currentUserService;
-	private readonly IDomainEventService _publisher;
+	private readonly IMediator _mediator;
 
-	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ICurrentUserService currentUserService, IDomainEventService publisher) :
+	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
+		ICurrentUserService currentUserService,
+		IMediator mediator) :
 		base(options)
 	{
 		_currentUserService = currentUserService;
-		_publisher = publisher;
+		_mediator = mediator;
 	}
 
 	public DbSet<App> Apps { get; set; } = default!;
@@ -28,6 +31,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 	public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{
 		foreach (var entry in ChangeTracker.Entries<TimedEntity>())
+		{
 			switch (entry.State)
 			{
 				case EntityState.Added:
@@ -37,36 +41,39 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 					entry.Entity.UpdatedAt = DateTime.UtcNow;
 					break;
 			}
+		}
 
 		foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
+		{
 			switch (entry.State)
 			{
 				case EntityState.Added:
 					entry.Entity.CreatedBy = _currentUserService.PrincipalId.ToString();
 					break;
 				case EntityState.Modified:
-					entry.Entity.CreatedBy = _currentUserService.PrincipalId.ToString();
+					entry.Entity.UpdatedBy = _currentUserService.PrincipalId.ToString();
 					break;
 			}
-
-		var domainEvents = ChangeTracker.Entries<IHasDomainEvent>()
-										.Select(entry => entry.Entity)
-										.SelectMany(hasDomainEvent => hasDomainEvent.DomainEvents)
-										.ToList();
-
+		}
+		var entities = ChangeTracker.Entries<BaseEntity>()
+			.Select(entry => entry.Entity);
+		await PublishDomainEvents(entities, cancellationToken);
 		var result = await base.SaveChangesAsync(cancellationToken);
-
-		await PublishDomainEvents(domainEvents);
-
 		return result;
 	}
 
-	private async Task PublishDomainEvents(List<DomainEvent> domainEvents)
+	private Task PublishDomainEvents(IEnumerable<BaseEntity> entities, CancellationToken cancellationToken)
 	{
-		foreach (var domainEvent in domainEvents)
+		var domainEventTasks = new List<Task>();
+
+		foreach (var entity in entities)
 		{
-			await _publisher.Publish(domainEvent);
+			var domainEvents = entity.DomainEvents.ToList();
+			entity.ClearDomainEvents();
+			domainEventTasks.AddRange(domainEvents.Select(domainEvent =>
+				_mediator.Publish(domainEvent, cancellationToken)));
 		}
+		return Task.WhenAll(domainEventTasks);
 	}
 
 	protected override void OnModelCreating(ModelBuilder builder)

@@ -15,7 +15,11 @@ public class ChannelPrice : TimedEntity
 	{
 	}
 
-	public ChannelPrice(int? threshold, double price, string source, string destination, Channel channel)
+	public ChannelPrice(int? threshold,
+		double price,
+		string source,
+		string destination,
+		Channel channel)
 	{
 		Threshold = threshold;
 		Price = price;

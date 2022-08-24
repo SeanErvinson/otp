@@ -12,12 +12,14 @@ public class OtpContextService : IOtpContextService
 		_httpContextAccessor = httpContextAccessor;
 	}
 
-	public string? Key
+	public string? AuthenticityKey
 	{
 		get
 		{
 			if (_httpContextAccessor.HttpContext is null)
+			{
 				return string.Empty;
+			}
 			return _httpContextAccessor.HttpContext.Request.Headers.TryGetValue(OtpKeyHeader, out var key) ? key : string.Empty;
 		}
 	}

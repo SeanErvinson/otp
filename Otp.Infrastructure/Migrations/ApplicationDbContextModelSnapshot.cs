@@ -17,7 +17,7 @@ namespace Otp.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -218,6 +218,14 @@ namespace Otp.Infrastructure.Migrations
                     b.Property<Guid>("AppId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AuthenticityKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Availability")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CancelUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -230,36 +238,25 @@ namespace Otp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Contact")
+                    b.Property<string>("CorrelationId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ErrorMessage")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("ExpiresOn")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MaxAttempts")
                         .HasColumnType("int");
 
+                    b.Property<string>("Recipient")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("ResendCount")
                         .HasColumnType("int");
-
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SuccessUrl")
                         .IsRequired()
@@ -277,6 +274,8 @@ namespace Otp.Infrastructure.Migrations
 
                     b.HasIndex("Id")
                         .IsUnique();
+
+                    b.HasIndex("CreatedAt", "Id");
 
                     b.ToTable("OtpRequests");
                 });
@@ -400,6 +399,31 @@ namespace Otp.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("Otp.Core.Domains.ValueObjects.ClientInfo", "ClientInfo", b1 =>
+                        {
+                            b1.Property<Guid>("OtpRequestId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("IpAddress")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Referrer")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("UserAgent")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("OtpRequestId");
+
+                            b1.ToTable("OtpRequests");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OtpRequestId");
+                        });
+
                     b.OwnsMany("Otp.Core.Domains.ValueObjects.OtpAttempt", "OtpAttempts", b1 =>
                         {
                             b1.Property<Guid>("OtpRequestId")
@@ -429,26 +453,34 @@ namespace Otp.Infrastructure.Migrations
                                 .HasForeignKey("OtpRequestId");
                         });
 
-                    b.OwnsOne("Otp.Core.Domains.ValueObjects.RequestInfo", "RequestInfo", b1 =>
+                    b.OwnsMany("Otp.Core.Domains.ValueObjects.OtpEvent", "Timeline", b1 =>
                         {
                             b1.Property<Guid>("OtpRequestId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<string>("IpAddress")
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"), 1L, 1);
+
+                            b1.Property<DateTime>("OccuredAt")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<string>("Response")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("State")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<string>("Referrer")
+                            b1.Property<string>("Status")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<string>("UserAgent")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                            b1.HasKey("OtpRequestId", "Id");
 
-                            b1.HasKey("OtpRequestId");
-
-                            b1.ToTable("OtpRequests");
+                            b1.ToTable("Timeline", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OtpRequestId");
@@ -456,9 +488,11 @@ namespace Otp.Infrastructure.Migrations
 
                     b.Navigation("App");
 
+                    b.Navigation("ClientInfo");
+
                     b.Navigation("OtpAttempts");
 
-                    b.Navigation("RequestInfo");
+                    b.Navigation("Timeline");
                 });
 #pragma warning restore 612, 618
         }

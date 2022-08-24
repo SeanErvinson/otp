@@ -30,13 +30,12 @@ void DbMigrate(IApplicationBuilder applicationBuilder)
 try
 {
 	var builder = WebApplication.CreateBuilder(args);
-
-	builder.Host.UseSerilog(((context, services, configuration) =>
+	builder.Host.UseSerilog((context, services, configuration) =>
 	{
 		configuration.ReadFrom.Configuration(context.Configuration)
 			.ReadFrom.Services(services)
 			.Enrich.FromLogContext();
-	}));
+	});
 	builder.Services.AddHttpClient();
 	builder.Services.AddApiVersioning(options =>
 	{
@@ -45,19 +44,15 @@ try
 		options.ReportApiVersions = true;
 		options.ApiVersionReader = new HeaderApiVersionReader("api-version");
 	});
-
-	builder.Services.AddHealthChecks();
-
+	builder.Services.AddOptions<StorageAccountOptions>().Bind(builder.Configuration.GetSection(StorageAccountOptions.Section));
+	builder.Services.AddHealthChecks(builder.Configuration);
 	builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
 	builder.Services.AddRouting(option =>
 	{
 		option.LowercaseUrls = true;
 		option.LowercaseQueryStrings = true;
 	});
-
 	builder.Services.AddSingleton(new JsonSerializerOptions(JsonSerializerDefaults.Web));
-
 	builder.Services.AddControllers()
 		.AddJsonOptions(option =>
 		{
@@ -65,17 +60,14 @@ try
 			option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 		})
 		.AddFluentValidation();
-
-	builder.Services.AddOptions<StorageAccountOptions>().Bind(builder.Configuration.GetSection(StorageAccountOptions.Section));
 	builder.Services.AddEndpointsApiExplorer();
-	builder.Services.AddSwagger();
+	builder.Services.AddSwagger(builder.Configuration);
 	builder.Services.AddJwtBearerAuthentication(builder.Configuration, builder.Environment);
-
+	
 	builder.Services.AddInfrastructure(builder.Configuration);
 	builder.Services.AddApplication(builder.Configuration);
-
+	
 	builder.Services.AddScoped<IDbInitializer, DbInitializer>();
-
 	builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 	builder.Services.AddScoped<IAppContextService, AppContextService>();
 	builder.Services.AddScoped<IOtpContextService, OtpContextService>();
@@ -85,25 +77,17 @@ try
 
 	if (app.Environment.IsDevelopment())
 	{
-		app.UseSwagger();
-		app.UseSwaggerUI();
+		app.UseSwaggerApi(builder.Configuration);
 		app.UseDeveloperExceptionPage();
 		app.UseMigrationsEndPoint();
 	}
-
-	DbMigrate(app);
-
+	// DbMigrate(app);
 	app.UseHttpsRedirection();
-
 	app.UseCors(config => config.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-
 	app.UseAuthentication();
 	app.UseAuthorization();
-
 	app.UseMiddleware<CustomExceptionMiddleware>();
-
 	app.MapControllers();
-
 	app.Run();
 	return 0;
 }

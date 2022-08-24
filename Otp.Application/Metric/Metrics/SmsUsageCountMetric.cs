@@ -6,12 +6,13 @@ using Otp.Application.Common.Interfaces;
 using Otp.Application.Metric.Queries.GetMetric;
 using Otp.Core.Domains.Common.Enums;
 using Otp.Core.Domains.Entities;
+using Otp.Core.Domains.ValueObjects;
 using Serilog.Context;
 
 namespace Otp.Application.Metric.Metrics;
 
 public record SmsUsageCountMetric(DateTime StartDateTime,
-								DateTime EndDateTime) : IRequest<MetricData>
+	DateTime EndDateTime) : IRequest<MetricData>
 {
 	public static string MetricName => "SmsUsageCount";
 
@@ -22,8 +23,8 @@ public record SmsUsageCountMetric(DateTime StartDateTime,
 		private readonly JsonSerializerOptions _jsonSerializerOptions;
 
 		public Handler(IApplicationDbContext applicationDbContext,
-						ICurrentUserService currentUserService,
-						JsonSerializerOptions jsonSerializerOptions)
+			ICurrentUserService currentUserService,
+			JsonSerializerOptions jsonSerializerOptions)
 		{
 			_applicationDbContext = applicationDbContext;
 			_currentUserService = currentUserService;
@@ -31,34 +32,34 @@ public record SmsUsageCountMetric(DateTime StartDateTime,
 		}
 
 		public async Task<MetricData> Handle(SmsUsageCountMetric request,
-											CancellationToken cancellationToken)
+			CancellationToken cancellationToken)
 		{
 			using (LogContext.PushProperty("MetricName", nameof(SmsUsageCountMetric)))
 			{
 				Expression<Func<OtpRequest, bool>> SmsRequest(DateTime startDateTime,
-															DateTime endDateTime)
+					DateTime endDateTime)
 				{
 					return otpRequest =>
 						otpRequest.Channel == Channel.Sms &&
 						otpRequest.CreatedAt >= startDateTime &&
 						otpRequest.CreatedAt <= endDateTime &&
-						otpRequest.Status == OtpRequestStatus.Success &&
+						otpRequest.Timeline.Any(@event =>
+							@event.State == EventState.Deliver &&
+							@event.Status == EventStatus.Success) &&
 						otpRequest.App.PrincipalId == _currentUserService.PrincipalId;
 				}
 
-				var requests = await _applicationDbContext.OtpRequests.CountAsync(SmsRequest(request.StartDateTime, request.EndDateTime),
-																				cancellationToken);
-
-				var previousMonthRequests = await _applicationDbContext.OtpRequests.CountAsync(
-					SmsRequest(request.StartDateTime.AddMonths(-1), request.EndDateTime.AddMonths(-1)),
-					cancellationToken);
-
+				var requests =
+					await _applicationDbContext.OtpRequests.CountAsync(SmsRequest(request.StartDateTime, request.EndDateTime),
+						cancellationToken);
+				var previousMonthRequests =
+					await _applicationDbContext.OtpRequests.CountAsync(SmsRequest(request.StartDateTime.AddMonths(-1),
+							request.EndDateTime.AddMonths(-1)),
+						cancellationToken);
 				var result = new SmsUsageCountMetricResult
 				{
-					SentRequest = requests,
-					PreviousMonthSentRequest = previousMonthRequests
+					SentRequest = requests, PreviousMonthSentRequest = previousMonthRequests
 				};
-
 				return new MetricData(JsonSerializer.SerializeToElement(result, _jsonSerializerOptions));
 			}
 		}

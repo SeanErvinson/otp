@@ -1,0 +1,136 @@
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>OHTP - OTP Service</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600=,700" rel="stylesheet">
+    <style type="text/css">
+        body {
+            width: 100%;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            font-family: Georgia, Times, serif;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        @media only screen and (max-width: 640px) {
+            .deviceWidth {
+                width: 440px !important;
+                padding: 0;
+            }
+        }
+
+        @media only screen and (max-width: 640px) {
+            .ImageWidth {
+                width: 50px !important;
+                padding: 0;
+                margin: auto;
+            }
+        }
+
+        @media only screen and (max-width: 640px) {
+            .center {
+                text-align: center !important;
+                margin: auto;
+            }
+        }
+
+        @media only screen and (max-width: 479px) {
+            .deviceWidth {
+                width: 280px !important;
+                padding: 0;
+            }
+        }
+
+        @media only screen and (max-width: 479px) {
+            .ImageWidth {
+                width: 50px !important;
+                padding: 0;
+                margin: auto;
+            }
+        }
+
+        @media only screen and (max-width: 479px) {
+            .center {
+                text-align: center !important;
+                margin: auto;
+            }
+        }
+
+        .container {
+            width: 100% !important;
+            min-width: 100% !important;
+            height: auto !important;
+        }
+    </style>
+</head>
+
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"
+      style="width: 100%; background-color: #ffffff; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; font-family: 'Open Sans' , sans-serif;">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="container"
+       style="border-collapse: collapse; width:100%; min-width: 100%; height: auto;">
+    <tr>
+        <td width="100%" valign="top" bgcolor="#ffffff" style="padding-top:20px;">
+            <table width="580" class="deviceWidth" border="0" cellpadding="0" cellspacing="0" align="center"
+                   bgcolor="#ffffff" style="border-collapse: collapse; margin: 0 auto;">
+                <tr>
+                    <td valign="top" align="center" style="padding:0;" bgcolor="#ffffff"><img class="deviceWidth"
+                                                                                              src="{{logoUrl}}" alt
+                                                                                              border="0" width="128"
+                                                                                              style="display: block;">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-size:13px;color:#282828;font-weight:normal;text-align:left;font-family:'Open Sans',sans-serif;line-height:24px;vertical-align:top;padding:15px 8px 10px 8px;"
+                        bgcolor="#ffffff">
+                        <h1 style="font-size:24px;text-align:center;font-weight:700;margin:12px 0;">Your One-Time
+                            Pin </h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom:12px;">
+                        <h1 style="font-size:15px;text-align:center;font-weight:600;"> Verification code </h1> <span
+                            style="padding:10px;width:300px;display:block;letter-spacing: 8px;border:1px solid #2b2b2b;text-align:center;font-weight:bold;font-size:18px;font-family:'Open Sans', sans-serif;color:#ffffff;background:#2b2b2b;border-radius:5px;line-height:17px;margin:0 auto;">
+                                {{code}} </span>
+                        <p style="font-size:13px;text-align:center;">This code is valid for 5 minutes</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<div style="height:8px;margin:0 auto;"></div>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" align="center"
+       style="border-collapse: collapse; margin: 0 auto;">
+    <tbody>
+    <tr>
+        <td bgcolor="#ffffff"
+            style="font-family:'Open Sans',sans-serif;line-height:150%;padding-top:10px;padding-left:10px;padding-right:18px;padding-bottom:30px;text-align:left;border-bottom:0;font-size:10px;border-top:0">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" align="left"
+                   style="border-collapse: collapse;">
+                <tbody>
+                <tr>
+                    <td valign="top"
+                        style="text-align:center;font-size:11px;color:#282828;font-family:'Open Sans',sans-serif;padding:12px 0;padding-left:0px">
+                        This email was sent to <a
+                            style="color:#2b2b2b;text-decoration:none;font-weight:600;"
+                            href-"mailto:{{receiverAddress}}">{{receiverAddress}}</a>. If you didn't request
+                        for an OTP, you can ignore this message. <br> <br> &copy; 2022 OHTP, All Rights
+                        Reserved <br></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+
+</html>

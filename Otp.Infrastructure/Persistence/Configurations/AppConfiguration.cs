@@ -12,16 +12,18 @@ public class AppConfiguration : BaseEntityConfiguration<App>
 		base.Configure(builder);
 		builder.Property(c => c.Description).HasMaxLength(500);
 		builder.Property(c => c.Status)
-				.HasConversion<string>();
+			.HasConversion<string>();
 		builder.OwnsOne(c => c.Branding);
 		builder.Property(c => c.Tags)
-				.HasConversion(
-					v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null!),
-					v => JsonSerializer.Deserialize<IReadOnlyCollection<string>>(v, (JsonSerializerOptions)null!)!,
-					new ValueComparer<IReadOnlyCollection<string>>(
-						(c1, c2) => c1.SequenceEqual(c2),
-						c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-						c => c.ToList()));
+			.HasConversion(v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null!),
+				v => JsonSerializer.Deserialize<IReadOnlyCollection<string>>(v, (JsonSerializerOptions)null!)!,
+				new ValueComparer<IReadOnlyCollection<string>>((c1, c2) => c1!.SequenceEqual(c2!),
+					c =>
+						c.Aggregate(0,
+							(a, v) =>
+								HashCode
+									.Combine(a, v.GetHashCode())),
+					c => c.ToList()));
 		builder.HasIndex(c => new { c.Name, c.PrincipalId }).IsUnique();
 	}
 }

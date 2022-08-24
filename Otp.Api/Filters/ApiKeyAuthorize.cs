@@ -12,6 +12,7 @@ public class ApiKeyAuthorize : Attribute, IAsyncAuthorizationFilter
 	public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
 	{
 		var appContext = context.HttpContext.RequestServices.GetRequiredService<IAppContextService>();
+
 		if (string.IsNullOrEmpty(appContext.HashApiKey))
 		{
 			context.Result = new ContentResult
@@ -22,14 +23,16 @@ public class ApiKeyAuthorize : Attribute, IAsyncAuthorizationFilter
 			};
 			return;
 		}
-
 		var applicationDbContext = context.HttpContext.RequestServices.GetRequiredService<IApplicationDbContext>();
+
 		if (await applicationDbContext.Apps.CountAsync(c => c.HashedApiKey == appContext.HashApiKey) == 0)
+		{
 			context.Result = new ContentResult
 			{
 				StatusCode = StatusCodes.Status401Unauthorized,
 				Content = "Invalid api key",
 				ContentType = MediaTypeNames.Application.Json
 			};
+		}
 	}
 }

@@ -1,5 +1,4 @@
-﻿using Otp.Core.Domains.Common.Enums;
-using Otp.Core.Domains.Common.Models;
+﻿using Otp.Core.Domains.Common.Models;
 
 namespace Otp.Core.Domains.Entities;
 

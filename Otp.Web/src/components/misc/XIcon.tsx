@@ -1,13 +1,8 @@
 import { SVGProps, memo } from 'react';
 
 const SvgComponent = (props: SVGProps<SVGSVGElement>) => (
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		fill="none"
-		viewBox="0 0 24 24"
-		className="inline-block w-4 h-4 stroke-current"
-		{...props}>
-		<path d="M6 18 18 6M6 6l12 12" />
+	<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
+		<path d="m16.192 6.344-4.243 4.242-4.242-4.242-1.414 1.414L10.535 12l-4.242 4.242 1.414 1.414 4.242-4.242 4.243 4.242 1.414-1.414L13.364 12l4.242-4.242z" />
 	</svg>
 );
 

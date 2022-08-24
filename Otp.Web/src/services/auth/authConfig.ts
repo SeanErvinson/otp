@@ -1,18 +1,14 @@
-import { Configuration } from '@azure/msal-browser';
+import { Configuration, RedirectRequest } from '@azure/msal-browser';
 
 export const authConfig: Configuration = {
 	auth: {
-		clientId: 'f918913f-ac52-4550-9f9f-62de19cd6185',
-		authority: 'https://otpdev.b2clogin.com/otpdev.onmicrosoft.com/B2C_1_SignUp_And_SignIn',
-		redirectUri: 'http://localhost:3000/',
-		knownAuthorities: ['otpdev.b2clogin.com'],
-	},
-	cache: {
-		cacheLocation: 'sessionStorage',
-		storeAuthStateInCookie: false,
+		clientId: import.meta.env.VITE_B2C_CONFIG_CLIENT_ID,
+		authority: import.meta.env.VITE_B2C_CONFIG_AUTHORITY,
+		redirectUri: import.meta.env.VITE_B2C_CONFIG_REDIRECT_URI,
+		knownAuthorities: [import.meta.env.VITE_B2C_CONFIG_KNOWN_AUTHORITY],
 	},
 };
 
-export const loginRequest = {
+export const loginRequest: RedirectRequest = {
 	scopes: ['https://otpdev.onmicrosoft.com/api/access_as_user'],
 };

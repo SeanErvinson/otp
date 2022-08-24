@@ -41,9 +41,7 @@ public class DbInitializer : IDbInitializer
 				.CustomInstantiator(f => new App(principal.Id, new Randomizer().Word(), "test", null))
 				.RuleFor(app => app.PrincipalId, _ => principal.Id)
 				.RuleFor(app => app.Description, fake => fake.Lorem.Sentence());
-			
 			var seedApps = fakerApps.Generate(3);
-			
 			dbContext.Apps.AddRange(seedApps);
 			dbContext.SaveChanges();
 		}

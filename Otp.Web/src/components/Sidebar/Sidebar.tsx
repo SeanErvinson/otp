@@ -1,13 +1,18 @@
+import { useIsAuthenticated } from '@azure/msal-react';
 import { ReactChildren, ReactNode } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import MenuIcon from '@/components/misc/MenuIcon';
+
+import LogoutButton from './LogoutButton';
 
 interface Props {
 	children: ReactChildren | ReactNode;
 }
 
 const Sidebar = (props: Props) => {
+	const isAuthenticated = useIsAuthenticated();
+
 	return (
 		<div id="sidebar" className="shadow bg-base-200 h-full drawer drawer-mobile w-full">
 			<input id="drawer" type="checkbox" className="drawer-toggle" />
@@ -23,13 +28,13 @@ const Sidebar = (props: Props) => {
 				<label htmlFor="drawer" className="drawer-overlay"></label>
 				<ul className="menu p-3 text-md overflow-y-auto w-56 bg-base-100 text-base-content">
 					<li>
-						<NavLink to="/">Home</NavLink>
+						<NavLink to="/">Dashboard</NavLink>
 					</li>
 					<li>
 						<NavLink to="/apps">Apps</NavLink>
 					</li>
 					<li>
-						<NavLink to="/usage">Usage</NavLink>
+						<NavLink to="/logs">Logs</NavLink>
 					</li>
 					<li>
 						<NavLink to="/billing">Billing</NavLink>
@@ -53,6 +58,11 @@ const Sidebar = (props: Props) => {
 							Documentation
 						</a>
 					</li>
+					{isAuthenticated && (
+						<li>
+							<LogoutButton />
+						</li>
+					)}
 				</ul>
 			</div>
 		</div>

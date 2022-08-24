@@ -2,7 +2,7 @@
 
 namespace Otp.Application.App.Queries.GetApps;
 
-public class GetAppsQueryValidator : AbstractValidator<GetAppsQuery>
+public class GetAppsQueryValidator : AbstractValidator<GetApps>
 {
 	public GetAppsQueryValidator()
 	{

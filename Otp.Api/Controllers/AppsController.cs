@@ -7,9 +7,12 @@ using Otp.Application.App.Commands.DeleteApp;
 using Otp.Application.App.Commands.RegenerateApiKey;
 using Otp.Application.App.Commands.UpdateBranding;
 using Otp.Application.App.Commands.UpdateCallback;
+using Otp.Application.App.Common.Responses;
 using Otp.Application.App.Queries.GetApp;
 using Otp.Application.App.Queries.GetAppRecentCallbacks;
 using Otp.Application.App.Queries.GetApps;
+using Otp.Application.Common.Models;
+using Otp.Application.Logs.Queries.GetLogs;
 using Otp.Application.Otp.Commands.RequestOtp;
 
 namespace Otp.Api.Controllers;
@@ -17,6 +20,7 @@ namespace Otp.Api.Controllers;
 [Authorize]
 [ApiController]
 [ApiVersion("1.0")]
+[ApiExplorerSettings(IgnoreApi = true)]
 [Route("api/[controller]")]
 [Consumes(MediaTypeNames.Application.Json)]
 public class AppsController : ControllerBase
@@ -29,30 +33,30 @@ public class AppsController : ControllerBase
 	}
 
 	[HttpPost]
-	[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreateAppCommandDto))]
+	[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreateAppResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	public async Task<IActionResult> CreateApp([FromBody] CreateAppCommand request)
+	public async Task<IActionResult> CreateApp([FromBody] CreateApp request)
 	{
 		var result = await _mediator.Send(request);
-		return Created(Url.RouteUrl(nameof(GetApp), new { id = result.Id }), result);
+		return CreatedAtAction(nameof(GetApp), new { id = result.App.Id }, result);
 	}
 
 	[HttpPut("{id:guid}/callback")]
-	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> UpdateCallback(Guid id, [FromBody] UpdateCallbackRequest request)
 	{
-		await _mediator.Send(new UpdateCallbackCommand(id, request.CallbackUrl, request.EndpointSecret));
-		return NoContent();
+		var result = await _mediator.Send(new UpdateCallback(id, request.CallbackUrl, request.EndpointSecret));
+		return Ok(result);
 	}
 
 	[HttpGet("{id:guid}/recent-callbacks")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetAppRecentCallbacksDto>))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetAppRecentCallbacksResponse>))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -62,25 +66,14 @@ public class AppsController : ControllerBase
 		return Ok(result);
 	}
 
-	[HttpPatch("{id:guid}")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RequestOtpDto))]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	[ProducesResponseType(StatusCodes.Status403Forbidden)]
-	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	public async Task<IActionResult> UpdateApp(Guid id, [FromBody] RequestOtpEmailRequest request)
-	{
-		var result = await _mediator.Send(RequestOtpCommand.Email(request.EmailAddress, request.SuccessUrl, request.CancelUrl));
-		return Ok(result);
-	}
-
 	[HttpPost("{id:guid}/regenerate-api-key")]
-	[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(RequestOtpDto))]
+	[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(RequestOtpResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> RegenerateApiKey(Guid id)
 	{
-		var result = await _mediator.Send(new RegenerateApiKeyCommand(id));
+		var result = await _mediator.Send(new RegenerateApiKey(id));
 		return Ok(result);
 	}
 
@@ -91,48 +84,58 @@ public class AppsController : ControllerBase
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> DeleteApp(Guid id)
 	{
-		await _mediator.Send(new DeleteAppCommand(id));
+		await _mediator.Send(new DeleteApp(id));
 		return NoContent();
 	}
 
 	[HttpPut("{id:guid}/branding")]
 	[Consumes(MediaTypeNames.Application.Json, "multipart/form-data")]
-	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppResponse))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	public async Task<IActionResult> UpdateBranding([FromRoute] Guid id, [FromForm] UpdateBrandingCommandRequest request)
+	public async Task<IActionResult> UpdateBranding([FromRoute] Guid id, [FromForm] UpdateBrandingRequest request)
 	{
-		await _mediator.Send(new UpdateBrandingCommand
+		var result = await _mediator.Send(new UpdateBranding
 		{
 			Id = id,
 			BackgroundImage = request.BackgroundImage,
 			LogoImage = request.LogoImage,
 			SmsMessageTemplate = request.SmsMessageTemplate
 		});
-		return NoContent();
+		return Ok(result);
 	}
 
-
 	[HttpGet]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAppsQueryDto))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedResult<GetAppSimpleResponse>))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	public async Task<IActionResult> GetApps([FromQuery] GetAppsQuery request)
+	public async Task<IActionResult> GetApps([FromQuery] GetApps request)
 	{
 		var result = await _mediator.Send(request);
 		return Ok(result);
 	}
 
 	[HttpGet("{id:guid}", Name = nameof(GetApp))]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetAppQueryDto))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> GetApp(Guid id)
 	{
-		var result = await _mediator.Send(new GetAppQuery(id));
+		var result = await _mediator.Send(new GetApp(id));
+		return Ok(result);
+	}
+
+	[HttpGet("logs")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	public async Task<IActionResult> GetLogs(GetLogs request)
+	{
+		var result = await _mediator.Send(request);
 		return Ok(result);
 	}
 }

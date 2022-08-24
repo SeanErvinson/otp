@@ -8,6 +8,7 @@ public static class DateUtils
 	{
 		var period = CalculatePeriod(start, end, PeriodUnits.Days);
 		var next = start;
+
 		for (var i = 0; i < period.Days; i++)
 		{
 			next = next.AddDays(1);
@@ -19,6 +20,7 @@ public static class DateUtils
 	{
 		var period = CalculatePeriod(start, end, PeriodUnits.Months);
 		var next = start;
+
 		for (var i = 0; i < period.Months; i++)
 		{
 			next = next.AddMonths(1);

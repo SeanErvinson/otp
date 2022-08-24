@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Otp.Application.Common.Interfaces;
 using Otp.Infrastructure.Persistence;
 using Otp.Infrastructure.Services;
-using Otp.Infrastructure.Services.Sender;
-using Otp.Infrastructure.Services.Sender.EmailProviders;
-using Otp.Infrastructure.Services.Sender.SmsProviders;
+using Otp.Infrastructure.Services.ChannelProviders;
+using Otp.Infrastructure.Services.ChannelProviders.EmailProviders;
+using Otp.Infrastructure.Services.ChannelProviders.SmsProviders;
 
 namespace Otp.Infrastructure;
 
@@ -16,29 +16,37 @@ public static class DependencyInjection
 	public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
 	{
 		if (configuration.GetValue<bool>("UseInMemoryDatabase"))
+		{
 			services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("ApplicationDb"));
+		}
 		else
-			services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("ApplicationDb"),
-																						b =>
-																							b.MigrationsAssembly(
-																								typeof(ApplicationDbContext).Assembly.FullName)));
+		{
+			services.AddDbContext<ApplicationDbContext>(options =>
+				options.UseSqlServer(configuration
+						.GetConnectionString("ApplicationDb"),
+					b =>
+						b.MigrationsAssembly(typeof(
+								ApplicationDbContext)
+							.Assembly
+							.FullName)));
+		}
 		services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
-
 		services.TryAddEnumerable(new[]
 		{
-			ServiceDescriptor.Transient<ISenderFactory, SmsSenderFactory>(),
-			ServiceDescriptor.Transient<ISenderFactory, EmailSenderFactory>(),
+			ServiceDescriptor.Transient<IChannelProviderFactory, SmsChannelProviderFactory>(),
+			ServiceDescriptor.Transient<IChannelProviderFactory, EmailChannelProviderFactory>()
 		});
-
 		services.TryAddEnumerable(new[]
 		{
 			ServiceDescriptor.Transient<ISmsProvider, PhilippinesSmsProvider>(),
-			ServiceDescriptor.Transient<ISmsProvider, AustraliaSmsProvider>(),
+			ServiceDescriptor.Transient<ISmsProvider, AustraliaSmsProvider>()
 		});
-		services.AddTransient<ISenderService, SenderService>();
-		services.AddTransient<IEmailProvider, SendGridEmailProvider>();
-
+		services.AddTransient<IChannelProviderService, ChannelProviderService>();
+		services.TryAddEnumerable(new[]
+		{
+			// ServiceDescriptor.Transient<IEmailProvider, SendGridEmailProvider>(),
+			ServiceDescriptor.Transient<IEmailProvider, AwsSesEmailProvider>()
+		});
 		services.AddTransient<IBlobStorageService, AzureBlobStorageService>();
-		services.AddTransient<IDomainEventService, DomainEventService>();
 	}
 }

@@ -44,15 +44,15 @@ const TagInput = ({ onUpdate, initialTags }: Props) => {
 	};
 
 	return (
-		<div className="input input-bordered tag-input bg-base-100">
-			<ul className="flex items-center">
+		<div className="input input-bordered tag-input bg-base-100 w-full">
+			<ul className="flex items-center gap-1">
 				{tags.map(tag => (
-					<li key={nanoid()} className="badge badge-lg flex">
+					<li key={nanoid()} className="badge badge-lg flex whitespace-nowrap">
 						{tag}&nbsp;
 						<span
 							className="pl-1 self-center cursor-pointer"
 							onClick={() => removeTag(tag)}>
-							<XIcon fill="white" />
+							<XIcon className="inline-block w-4 h-4 stroke-current" />
 						</span>
 					</li>
 				))}

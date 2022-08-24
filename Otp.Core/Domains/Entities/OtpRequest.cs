@@ -8,45 +8,55 @@ using Otp.Core.Utils;
 
 namespace Otp.Core.Domains.Entities;
 
-[DebuggerDisplay("{Code} - {State} - {Status}")]
+[DebuggerDisplay("{Id} - {Code} - {Availability}")]
 public class OtpRequest : TimedEntity
 {
 	public Guid AppId { get; private set; }
 	public string Code { get; private set; } = default!;
 	public string SuccessUrl { get; } = default!;
 	public string CancelUrl { get; } = default!;
-	public string Contact { get; } = default!;
+	public string Recipient { get; } = default!;
 	public Channel Channel { get; }
 	public DateTime? VerifiedAt { get; private set; }
-	public string Key { get; } = default!;
+	public string AuthenticityKey { get; } = default!;
 	public int ResendCount { get; private set; }
 	public int MaxAttempts { get; private set; } = 3;
-	public OtpRequestState State { get; private set; }
-	public OtpRequestStatus Status { get; private set; }
-	public string? ErrorMessage { get; private set; }
-	public RequestInfo? RequestInfo { get; private set; }
+	public string CorrelationId { get; private set; } = default!;
+	public OtpRequestAvailability Availability { get; private set; }
+	public ClientInfo? ClientInfo { get; private set; }
+
+	private readonly List<OtpEvent> _timeline = new();
+
+	public IReadOnlyCollection<OtpEvent> Timeline => _timeline.AsReadOnly();
+
 	private readonly List<OtpAttempt> _otpAttempts = new();
+
 	public IReadOnlyCollection<OtpAttempt> OtpAttempts => _otpAttempts.AsReadOnly();
+
 	public DateTime ExpiresOn { get; } = DateTime.UtcNow.AddMinutes(5);
 	public App App { get; private set; } = default!;
 
-	public string RequestPath => new($"/{Enum.GetName(Channel)?.ToLower()}/{Id.ToString()}#{Key}/");
+	public string RequestPath => new($"/{Enum.GetName(Channel)?.ToLower()}/{Id.ToString()}#{AuthenticityKey}/");
 
 	private OtpRequest()
 	{
 	}
 
-	public OtpRequest(Guid appId, string contact, Channel channel, string successUrl, string cancelUrl)
+	public OtpRequest(Guid appId,
+		string recipient,
+		Channel channel,
+		string successUrl,
+		string cancelUrl)
 	{
 		AppId = appId;
-		Contact = contact;
+		Recipient = recipient;
 		Channel = channel;
 		SuccessUrl = successUrl;
 		CancelUrl = cancelUrl;
 		Code = OtpUtil.GenerateCode();
-		Key = CryptoUtil.HashKey(CryptoUtil.GenerateKey());
-		State = OtpRequestState.Available;
-
+		AuthenticityKey = CryptoUtil.HashKey(CryptoUtil.GenerateKey());
+		Availability = OtpRequestAvailability.Available;
+		AddEvent(OtpEvent.Success(EventState.Request));
 		AddDomainEvent(new OtpRequestedEvent(this));
 	}
 
@@ -54,73 +64,72 @@ public class OtpRequest : TimedEntity
 	{
 		ResendCount += 1;
 		Code = OtpUtil.GenerateCode();
-
 		AddDomainEvent(new OtpRequestedEvent(this));
 	}
-
-	public void SentSuccessfully()
+	
+	public void AssignCorrelationId(string correlationId)
 	{
-		Status = OtpRequestStatus.Success;
+		if (!string.IsNullOrEmpty(CorrelationId))
+		{
+			throw new OtpRequestException("A correlation id has already been set.");
+		}
+		CorrelationId = correlationId;
 	}
 
-	public void SentFailed(string message)
+	public void AddEvent(OtpEvent otpEvent)
 	{
-		Status = OtpRequestStatus.Failed;
-		ErrorMessage = message;
+		_timeline.Add(otpEvent);
 	}
 
 	// TODO If switched to a microservice, all the trigger, should be replace with an event that sends a message
-	public void AddAttempt(OtpAttempt attempt, RequestInfo requestInfo)
+	public void AddAttempt(OtpAttempt attempt, ClientInfo clientInfo)
 	{
-		RequestInfo ??= requestInfo;
-		
+		ClientInfo ??= clientInfo;
+
+		if (ExpiresOn >= DateTime.UtcNow)
+		{
+			ClaimRequest();
+			throw new OtpRequestException("Request has expired");
+		}
+
 		if (_otpAttempts.Count >= MaxAttempts)
 		{
 			const string message = "OTP has reached max attempt tries. Please request a new OTP";
-			ClaimFailed(message);
+			ClaimRequest();
 			App.TriggerFailedCallback(this, message);
 			throw new OtpRequestException(message);
 		}
-
 		_otpAttempts.Add(attempt);
 
 		switch (attempt.AttemptStatus)
 		{
 			case OtpAttemptStatus.Success:
-				ClaimSuccessfully();
+				ClaimRequest();
+				VerifiedAt = DateTime.UtcNow;
 				App.TriggerSuccessCallback(this);
 				break;
+			case OtpAttemptStatus.Fail:
+				App.TriggerFailedCallback(this, "Code provided by user was incorrect");
+				break;
 			case OtpAttemptStatus.Canceled:
-				ClaimFailed("Request was canceled");
+				ClaimRequest();
 				App.TriggerCanceledCallback(this);
 				break;
 		}
 	}
 
-	private void ClaimSuccessfully()
+	public void ClaimRequest()
 	{
-		State = OtpRequestState.Claimed;
-		Status = OtpRequestStatus.Success;
-		VerifiedAt = DateTime.UtcNow;
-	}
-
-	private void ClaimFailed(string message)
-	{
-		State = OtpRequestState.Claimed;
-		Status = OtpRequestStatus.Success;
-		VerifiedAt = DateTime.UtcNow;
-		ErrorMessage = message;
+		if (Availability is OtpRequestAvailability.Unavailable)
+		{
+			throw new OtpRequestException("OTP is already unavailable");
+		}
+		Availability = OtpRequestAvailability.Unavailable;
 	}
 }
 
-public enum OtpRequestState
+public enum OtpRequestAvailability
 {
 	Available,
-	Claimed,
-}
-
-public enum OtpRequestStatus
-{
-	Success,
-	Failed
+	Unavailable
 }

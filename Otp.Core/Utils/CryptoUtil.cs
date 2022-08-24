@@ -23,8 +23,11 @@ public static class CryptoUtil
 	private static string HashByteToString(byte[] hashedBytes)
 	{
 		var sb = new StringBuilder();
-		foreach (var hashedByte in hashedBytes) sb.Append(hashedByte.ToString("x2"));
 
+		foreach (var hashedByte in hashedBytes)
+		{
+			sb.Append(hashedByte.ToString("x2"));
+		}
 		return sb.ToString();
 	}
 
