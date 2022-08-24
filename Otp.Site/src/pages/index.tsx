@@ -1,20 +1,15 @@
-import React from "react";
-import Layout from "@theme/Layout";
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-import HomepageFeatures from "@site/src/components/HomepageFeatures";
-import HomepageHeader from "../components/HomepageHeader";
+import React from 'react';
+import Layout from '@theme/Layout';
+import HomepageFeatures from '@site/src/components/HomepageFeatures';
+import HomepageHeader from '../components/HomepageHeader';
 
-export default function Home(): JSX.Element {
-  const { siteConfig } = useDocusaurusContext();
-  return (
-    <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />"
-    >
-      <HomepageHeader />
-      <main>
-        <HomepageFeatures />
-      </main>
-    </Layout>
-  );
-}
+const Home = () => {
+	return (
+		<Layout title={`Welcome`} description="Simple OTP integration">
+			<HomepageHeader />
+			<HomepageFeatures />
+		</Layout>
+	);
+};
+
+export default Home;

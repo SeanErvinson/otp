@@ -5,8 +5,8 @@ const lightCodeTheme = require('prism-react-renderer/themes/github');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-	title: 'OhTP',
-	tagline: 'Dinosaurs are cool',
+	title: 'OHTP',
+	tagline: 'OTP made easy',
 	url: 'https://darling-cajeta-d4181d.netlify.app',
 	baseUrl: '/',
 	onBrokenLinks: 'throw',
@@ -21,16 +21,33 @@ const config = {
 			/** @type {import('@docusaurus/preset-classic').Options} */
 			({
 				docs: {
-					sidebarPath: require.resolve('./sidebars.js'),
-					// Please change this to your repo.
-					editUrl:
-						'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+					sidebarPath: false,
 				},
 				blog: false,
 				theme: {
 					customCss: require.resolve('./src/css/custom.css'),
 				},
 			}),
+		],
+		[
+			'redocusaurus',
+			{
+				specs: [
+					{
+						id: 'app-api',
+						spec: 'https://raw.githubusercontent.com/SeanErvinson/earendel-demo/master/swagger.json',
+						route: '/api/',
+						layout: {
+							title: 'Hello WOrld',
+							description: 'Hello WOrld',
+						},
+					},
+				],
+				theme: {
+					// Change with your site colors
+					primaryColor: '#1890ff',
+				},
+			},
 		],
 	],
 	plugins: [
@@ -63,7 +80,7 @@ const config = {
 				items: [
 					{
 						type: 'doc',
-						docId: 'intro',
+						docId: 'api',
 						position: 'right',
 						label: 'Documentation',
 					},
@@ -89,16 +106,8 @@ const config = {
 						title: 'Docs',
 						items: [
 							{
-								label: 'Introduction',
-								to: '/docs/intro',
-							},
-							{
-								label: 'Quickstart',
-								to: '/docs/quick-start',
-							},
-							{
-								label: 'Sample',
-								to: '/docs/sample',
+								label: 'Documentation',
+								to: '/docs/api',
 							},
 						],
 					},
