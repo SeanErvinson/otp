@@ -5,7 +5,7 @@ import EmailSvg from '../../static/img/email.svg';
 const Contact = () => {
 	const handleOnSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		fetch('/', {
+		fetch('/contact', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: new URLSearchParams(new FormData(event.currentTarget) as any).toString(),
@@ -43,7 +43,6 @@ const Contact = () => {
 									name="contact"
 									method="POST"
 									data-netlify="true"
-									data-netlify-recaptcha="true"
 									onSubmit={handleOnSubmit}>
 									<input type="hidden" name="form-name" value="contact" />
 
@@ -82,9 +81,6 @@ const Contact = () => {
 											className="block w-full h-32 px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-md md:h-48 dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
 											placeholder="Hello there"></textarea>
 									</div>
-
-									<div data-netlify-recaptcha="true"></div>
-
 									<button
 										type="submit"
 										className="w-full px-6 py-3 mt-6 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-md hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
