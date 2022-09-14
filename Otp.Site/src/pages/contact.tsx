@@ -5,7 +5,7 @@ import EmailSvg from '../../static/img/email.svg';
 const Contact = () => {
 	const handleOnSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		fetch('/contact', {
+		fetch('/', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: new URLSearchParams(new FormData(event.currentTarget) as any).toString(),
