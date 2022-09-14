@@ -38,12 +38,7 @@ const Contact = () => {
 							<div className="w-full px-8 py-10 mx-auto overflow-hidden bg-white rounded-lg shadow-2xl dark:bg-gray-900 lg:max-w-xl shadow-gray-300/50 dark:shadow-black/50">
 								<h1 className="text-lg font-medium text-gray-700">What do you want to ask</h1>
 
-								<form
-									className="mt-6"
-									name="contact"
-									method="POST"
-									data-netlify="true"
-									onSubmit={handleOnSubmit}>
+								<form className="mt-6" name="contact" data-netlify="true" onSubmit={handleOnSubmit}>
 									<input type="hidden" name="form-name" value="contact" />
 
 									<div className="flex-1">

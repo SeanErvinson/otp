@@ -20,7 +20,9 @@ const NewsletterCTA = () => {
 					name="newsletter"
 					data-netlify="true"
 					onSubmit={handleOnSubmit}>
+					<input type="hidden" name="form-name" value="newsletter" />
 					<input
+						name="email"
 						type="email"
 						required
 						placeholder="Enter your email address"
