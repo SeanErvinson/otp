@@ -7,13 +7,13 @@ const lightCodeTheme = require('prism-react-renderer/themes/github');
 const config = {
 	title: 'OHTP',
 	tagline: 'OTP made easy',
-	url: 'https://darling-cajeta-d4181d.netlify.app',
+	url: 'https://ohtp.dev',
 	baseUrl: '/',
 	onBrokenLinks: 'throw',
 	onBrokenMarkdownLinks: 'warn',
 	favicon: 'img/favicon.ico',
-	organizationName: 'facebook', // Usually your GitHub org/user name.
-	projectName: 'docusaurus', // Usually your repo name.
+	organizationName: 'OHTP',
+	projectName: 'OHTP.Site',
 
 	presets: [
 		[
@@ -51,11 +51,10 @@ const config = {
 		],
 	],
 	plugins: [
-		async function myPlugin(context, options) {
+		async function plugins() {
 			return {
 				name: 'docusaurus-tailwindcss',
 				configurePostCss(postcssOptions) {
-					// Appends TailwindCSS and AutoPrefixer.
 					postcssOptions.plugins.push(require('tailwindcss'));
 					postcssOptions.plugins.push(require('autoprefixer'));
 					return postcssOptions;
@@ -70,6 +69,12 @@ const config = {
 				defaultMode: 'light',
 				disableSwitch: true,
 			},
+			metadata: [
+				{ name: 'keywords', content: 'otp, otp service, otp api, api' },
+				{ property: 'og:type', content: 'website' },
+				{ property: 'og:site_name', content: 'OHTP' },
+				{ property: 'og:image', content: 'img/favicon.ico' },
+			],
 			navbar: {
 				logo: {
 					alt: 'OHTP logo',
@@ -86,16 +91,15 @@ const config = {
 					},
 					{ to: '/pricing', label: 'Pricing', position: 'right' },
 					{
-						href: 'https://github.com/facebook/docusaurus',
-						label: 'Sign Up',
+						to: 'https://app.ohtp.dev',
 						position: 'right',
-						className: 'button button--lg',
+						label: 'Sign Up',
 					},
 					{
-						href: 'https://github.com/facebook/docusaurus',
-						label: 'Login',
+						to: 'https://app.ohtp.dev',
 						position: 'right',
-						className: 'button button--secondary button--lg',
+						label: 'Log In',
+						className: 'text-lg',
 					},
 				],
 			},
@@ -120,8 +124,8 @@ const config = {
 							},
 							{
 								html: `
-                    <a href="mailto:support@ohtp.xyz" >
-                      <p>support@ohtp.xyz</p>
+                    <a href="mailto:support@ohtp.dev" >
+                      <p>support@ohtp.dev</p>
                     </a>
                   `,
 							},
