@@ -38,7 +38,13 @@ const Contact = () => {
 							<div className="w-full px-8 py-10 mx-auto overflow-hidden bg-white rounded-lg shadow-2xl dark:bg-gray-900 lg:max-w-xl shadow-gray-300/50 dark:shadow-black/50">
 								<h1 className="text-lg font-medium text-gray-700">What do you want to ask</h1>
 
-								<form className="mt-6" name="contact" method="POST" data-netlify="true">
+								<form
+									className="mt-6"
+									name="contact"
+									method="POST"
+									data-netlify="true"
+									data-netlify-recaptcha="true"
+									onSubmit={handleOnSubmit}>
 									<input type="hidden" name="form-name" value="contact" />
 
 									<div className="flex-1">
@@ -76,6 +82,8 @@ const Contact = () => {
 											className="block w-full h-32 px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-md md:h-48 dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
 											placeholder="Hello there"></textarea>
 									</div>
+
+									<div data-netlify-recaptcha="true"></div>
 
 									<button
 										type="submit"
