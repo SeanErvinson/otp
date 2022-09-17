@@ -23,7 +23,7 @@ const config = {
 				docs: {
 					sidebarPath: false,
 				},
-				googleAnalytics: {
+				gtag: {
 					trackingID: 'G-42TQF2SEPP',
 				},
 				blog: false,
