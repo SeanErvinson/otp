@@ -23,6 +23,9 @@ const config = {
 				docs: {
 					sidebarPath: false,
 				},
+				googleAnalytics: {
+					trackingID: 'G-42TQF2SEPP',
+				},
 				blog: false,
 				theme: {
 					customCss: require.resolve('./src/css/custom.css'),
