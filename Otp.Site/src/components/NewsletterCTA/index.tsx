@@ -57,7 +57,7 @@ const NewsletterCTA = () => {
 					/>
 					<div
 						className="g-recaptcha"
-						data-callback={onSubmit}
+						data-callback="onSubmit"
 						data-sitekey="6LdI3f8hAAAAAO_5fv1tetK__ZnCL0X2j-kDsCu-"
 						data-size="invisible"></div>
 					<button
