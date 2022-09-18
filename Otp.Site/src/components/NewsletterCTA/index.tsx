@@ -12,13 +12,13 @@ const NewsletterCTA = () => {
 
 	const handleOnChangeRecaptcha = (token: string) => {
 		if (token) {
-			console.log('Sending form');
+			const formData = new FormData(formRef.current);
+			formData.append('g-recaptcha-response', token);
+
 			fetch('/', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				body: new URLSearchParams(
-					new FormData({ ...formRef.current, 'g-recaptcha-response': token }) as any,
-				).toString(),
+				body: new URLSearchParams(formData as any).toString(),
 			})
 				.then(() => console.log('Form successfully submitted'))
 				.catch(error => alert(error));
