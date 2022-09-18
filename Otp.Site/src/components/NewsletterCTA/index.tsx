@@ -1,3 +1,4 @@
+import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, { FormEvent, useState } from 'react';
 
 declare var grecaptcha: any;
@@ -7,14 +8,6 @@ declare global {
 		onRecaptchaResponse: any;
 	}
 }
-
-window.onRecaptchaResponse = (token: string) => {
-	console.log('Executing callback');
-	console.log(token);
-
-	const x = grecaptcha.getResponse();
-	console.log(x);
-};
 
 const NewsletterCTA = () => {
 	const handleOnSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -51,6 +44,30 @@ const NewsletterCTA = () => {
 
 	return (
 		<>
+			<BrowserOnly>
+				{() => {
+					window.onRecaptchaResponse = (token: string) => {
+						console.log('Executing callback');
+						console.log(token);
+
+						const x = grecaptcha.getResponse();
+						console.log(x);
+
+						if (formData) {
+							fetch('/', {
+								method: 'POST',
+								headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+								body: new URLSearchParams(
+									new FormData({ ...formData, 'g-recaptcha-response': token }) as any,
+								).toString(),
+							})
+								.then(() => console.log('Form successfully submitted'))
+								.catch(error => alert(error));
+						}
+					};
+					return <></>;
+				}}
+			</BrowserOnly>
 			<div className="w-full mt-8 bg-transparent border rounded-md lg:max-w-sm dark:border-gray-700 focus-within:border-blue-400 focus-within:ring focus-within:ring-blue-300 dark:focus-within:border-blue-400 focus-within:ring-opacity-40">
 				<form
 					className="flex flex-col lg:flex-row"
