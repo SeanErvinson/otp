@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 
 declare var grecaptcha: any;
 
@@ -14,6 +14,10 @@ const NewsletterCTA = () => {
 
 		setFormData(event.currentTarget);
 	};
+
+	useEffect(() => {
+		window.onSubmit = onSubmit;
+	}, []);
 
 	const onSubmit = (token: string) => {
 		console.log('Executing callback');
