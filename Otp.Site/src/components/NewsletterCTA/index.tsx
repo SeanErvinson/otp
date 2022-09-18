@@ -2,6 +2,12 @@ import React, { FormEvent, useEffect, useState } from 'react';
 
 declare var grecaptcha: any;
 
+declare global {
+	interface Window {
+		onSubmit: any;
+	}
+}
+
 const NewsletterCTA = () => {
 	const handleOnSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -15,11 +21,7 @@ const NewsletterCTA = () => {
 		setFormData(event.currentTarget);
 	};
 
-	useEffect(() => {
-		window.onSubmit = onSubmit;
-	}, []);
-
-	const onSubmit = (token: string) => {
+	window.onSubmit = (token: string) => {
 		console.log('Executing callback');
 		console.log(token);
 
