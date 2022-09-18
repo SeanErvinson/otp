@@ -72,11 +72,12 @@ const config = {
 				defaultMode: 'light',
 				disableSwitch: true,
 			},
+			image: 'img/logo.png',
+
 			metadata: [
 				{ name: 'keywords', content: 'otp, otp service, otp api, api' },
 				{ property: 'og:type', content: 'website' },
 				{ property: 'og:site_name', content: 'OHTP' },
-				{ property: 'og:image', content: 'img/favicon.ico' },
 			],
 			navbar: {
 				logo: {
