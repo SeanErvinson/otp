@@ -4,9 +4,17 @@ declare var grecaptcha: any;
 
 declare global {
 	interface Window {
-		onSubmit: any;
+		onRecaptchaResponse: any;
 	}
 }
+
+window.onRecaptchaResponse = (token: string) => {
+	console.log('Executing callback');
+	console.log(token);
+
+	const x = grecaptcha.getResponse();
+	console.log(x);
+};
 
 const NewsletterCTA = () => {
 	const handleOnSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -21,22 +29,22 @@ const NewsletterCTA = () => {
 		setFormData(event.currentTarget);
 	};
 
-	window.onSubmit = (token: string) => {
-		console.log('Executing callback');
-		console.log(token);
+	// window.onSubmit = (token: string) => {
+	// 	console.log('Executing callback');
+	// 	console.log(token);
 
-		if (formData) {
-			fetch('/', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				body: new URLSearchParams(
-					new FormData({ ...formData, 'g-recaptcha-response': token }) as any,
-				).toString(),
-			})
-				.then(() => console.log('Form successfully submitted'))
-				.catch(error => alert(error));
-		}
-	};
+	// 	if (formData) {
+	// 		fetch('/', {
+	// 			method: 'POST',
+	// 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+	// 			body: new URLSearchParams(
+	// 				new FormData({ ...formData, 'g-recaptcha-response': token }) as any,
+	// 			).toString(),
+	// 		})
+	// 			.then(() => console.log('Form successfully submitted'))
+	// 			.catch(error => alert(error));
+	// 	}
+	// };
 
 	const [formData, setFormData] = useState<HTMLFormElement | null>();
 
@@ -59,7 +67,7 @@ const NewsletterCTA = () => {
 					/>
 					<div
 						className="g-recaptcha"
-						data-callback="onSubmit"
+						data-callback="onRecaptchaResponse"
 						data-sitekey="6LdI3f8hAAAAAO_5fv1tetK__ZnCL0X2j-kDsCu-"
 						data-size="invisible"></div>
 					<button
