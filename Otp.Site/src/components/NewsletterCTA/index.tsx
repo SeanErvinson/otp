@@ -1,25 +1,24 @@
-import React, { FormEvent, useRef, useState } from 'react';
+import React, { FormEvent, useRef } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 const NewsletterCTA = () => {
 	const captchaRef = useRef(null);
-	const [formData, setFormData] = useState<FormData>();
+	const formRef = useRef(null);
 
-	const handleOnRecaptcha = (event: FormEvent<HTMLFormElement>) => {
+	const handleOnSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		captchaRef.current.execute();
-		setFormData(new FormData({ ...event.currentTarget }));
 	};
 
-	const handleOnSubmit = (token: string) => {
+	const handleOnChangeRecaptcha = (token: string) => {
 		if (token) {
 			console.log('Sending form');
-			formData.append('g-recaptcha-response', token);
-			console.log(formData);
 			fetch('/', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				body: new URLSearchParams(formData as any).toString(),
+				body: new URLSearchParams(
+					new FormData({ ...formRef.current, 'g-recaptcha-response': token }) as any,
+				).toString(),
 			})
 				.then(() => console.log('Form successfully submitted'))
 				.catch(error => alert(error));
@@ -32,10 +31,11 @@ const NewsletterCTA = () => {
 			<div className="w-full mt-8 bg-transparent border rounded-md lg:max-w-sm dark:border-gray-700 focus-within:border-blue-400 focus-within:ring focus-within:ring-blue-300 dark:focus-within:border-blue-400 focus-within:ring-opacity-40">
 				<form
 					className="flex flex-col lg:flex-row"
+					ref={formRef}
 					name="newsletter"
 					data-netlify="true"
 					data-netlify-recaptcha="true"
-					onSubmit={handleOnRecaptcha}>
+					onSubmit={handleOnSubmit}>
 					<input type="hidden" name="form-name" value="newsletter" />
 					<input
 						name="email"
@@ -48,7 +48,7 @@ const NewsletterCTA = () => {
 						ref={captchaRef}
 						sitekey="6LdI3f8hAAAAAO_5fv1tetK__ZnCL0X2j-kDsCu-"
 						size="invisible"
-						onChange={handleOnSubmit}
+						onChange={handleOnChangeRecaptcha}
 					/>
 					<button
 						type="submit"
