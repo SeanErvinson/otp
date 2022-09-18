@@ -1,14 +1,24 @@
 import React, { FormEvent } from 'react';
 
+declare var grecaptcha: any;
+
 const handleOnSubmit = (event: FormEvent<HTMLFormElement>) => {
 	event.preventDefault();
-	fetch('/', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-		body: new URLSearchParams(new FormData(event.currentTarget) as any).toString(),
-	})
-		.then(() => console.log('Form successfully submitted'))
-		.catch(error => alert(error));
+	var response = grecaptcha.getResponse();
+
+	if (response.length == 0) {
+		fetch('/', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: new URLSearchParams(
+				new FormData({ ...event.currentTarget, 'g-recaptcha-response': response }) as any,
+			).toString(),
+		})
+			.then(() => console.log('Form successfully submitted'))
+			.catch(error => alert(error));
+	} else {
+		alert('Failed to validate recaptcha');
+	}
 };
 
 const NewsletterCTA = () => {
@@ -19,6 +29,7 @@ const NewsletterCTA = () => {
 					className="flex flex-col lg:flex-row"
 					name="newsletter"
 					data-netlify="true"
+					data-netlify-recaptcha="true"
 					onSubmit={handleOnSubmit}>
 					<input type="hidden" name="form-name" value="newsletter" />
 					<input
@@ -30,7 +41,8 @@ const NewsletterCTA = () => {
 					/>
 					<button
 						type="submit"
-						className="h-10 px-4 py-2 m-1 text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-400 focus:outline-none focus:bg-blue-400">
+						data-sitekey="6LdI3f8hAAAAAO_5fv1tetK__ZnCL0X2j-kDsCu-"
+						className="g-recaptcha h-10 px-4 py-2 m-1 text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-400 focus:outline-none focus:bg-blue-400">
 						Get Notified
 					</button>
 				</form>

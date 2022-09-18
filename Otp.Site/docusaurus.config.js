@@ -73,7 +73,6 @@ const config = {
 				disableSwitch: true,
 			},
 			image: 'img/logo.png',
-
 			metadata: [
 				{ name: 'keywords', content: 'otp, otp service, otp api, api' },
 				{ property: 'og:type', content: 'website' },
