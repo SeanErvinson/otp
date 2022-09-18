@@ -3,21 +3,19 @@ import ReCAPTCHA from 'react-google-recaptcha';
 
 const NewsletterCTA = () => {
 	const captchaRef = useRef(null);
-	const [formElement, setFormElement] = useState<HTMLFormElement | null>();
+	const [formData, setFormData] = useState<FormData>();
 
 	const handleOnRecaptcha = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		captchaRef.current.execute();
-		setFormElement(event.currentTarget);
+		setFormData(new FormData({ ...event.currentTarget }));
 	};
 
 	const handleOnSubmit = (token: string) => {
 		if (token) {
 			console.log('Sending form');
-			const formData = new FormData({ ...formElement, 'g-recaptcha-response': token });
-
+			formData.append('g-recaptcha-response', token);
 			console.log(formData);
-
 			fetch('/', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
