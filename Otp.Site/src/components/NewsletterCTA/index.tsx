@@ -21,6 +21,7 @@ const NewsletterCTA = () => {
 		event.preventDefault();
 		setFormData(null);
 		console.log('Executing grecaptcha');
+		console.log('Heeloo');
 
 		grecaptcha.execute();
 
