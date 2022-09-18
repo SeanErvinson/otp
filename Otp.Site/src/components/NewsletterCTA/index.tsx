@@ -12,16 +12,16 @@ const NewsletterCTA = () => {
 	};
 
 	const handleOnSubmit = (token: string) => {
-		console.log('Executing grecaptcha');
-		console.log(token);
-
 		if (token) {
+			console.log('Sending form');
+			const formData = new FormData({ ...formElement, 'g-recaptcha-response': token });
+
+			console.log(formData);
+
 			fetch('/', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				body: new URLSearchParams(
-					new FormData({ ...formElement, 'g-recaptcha-response': token }) as any,
-				).toString(),
+				body: new URLSearchParams(formData as any).toString(),
 			})
 				.then(() => console.log('Form successfully submitted'))
 				.catch(error => alert(error));
