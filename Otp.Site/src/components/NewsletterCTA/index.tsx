@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 
 declare var grecaptcha: any;
 
@@ -65,14 +65,11 @@ const NewsletterCTA = () => {
 						placeholder="Enter your email address"
 						className="flex-1 h-10 px-4 py-2 m-1 text-gray-700 placeholder-gray-400 bg-transparent border-none appearance-none dark:text-gray-200 focus:outline-none focus:placeholder-transparent focus:ring-0"
 					/>
-					<div
-						className="g-recaptcha"
-						data-callback="onRecaptchaResponse"
-						data-sitekey="6LdI3f8hAAAAAO_5fv1tetK__ZnCL0X2j-kDsCu-"
-						data-size="invisible"></div>
 					<button
 						type="submit"
-						className="h-10 px-4 py-2 m-1 text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-400 focus:outline-none focus:bg-blue-400">
+						data-callback="onRecaptchaResponse"
+						data-sitekey="6LdI3f8hAAAAAO_5fv1tetK__ZnCL0X2j-kDsCu-"
+						className="g-recaptcha h-10 px-4 py-2 m-1 text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-400 focus:outline-none focus:bg-blue-400">
 						Get Notified
 					</button>
 				</form>
