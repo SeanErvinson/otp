@@ -61,6 +61,7 @@ const Contact = () => {
 
 								<form
 									className="mt-6"
+									ref={formRef}
 									name="contact"
 									data-netlify="true"
 									data-netlify-recaptcha="true"
