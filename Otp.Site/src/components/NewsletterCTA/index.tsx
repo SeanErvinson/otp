@@ -14,8 +14,6 @@ const NewsletterCTA = () => {
 		captchaRef.current.execute();
 	};
 
-	console.log(customFields.recaptchaSiteKey);
-
 	const handleOnChangeRecaptcha = (token: string) => {
 		if (token) {
 			const formData = new FormData(formRef.current);
@@ -55,7 +53,7 @@ const NewsletterCTA = () => {
 					/>
 					<ReCAPTCHA
 						ref={captchaRef}
-						sitekey={customFields.recaptchaSiteKey as string}
+						sitekey={customFields.recaptchaSiteKey}
 						size="invisible"
 						onChange={handleOnChangeRecaptcha}
 					/>

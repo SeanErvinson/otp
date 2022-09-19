@@ -3,5 +3,9 @@
   "extends": "@tsconfig/docusaurus/tsconfig.json",
   "compilerOptions": {
     "baseUrl": "."
-  }
+  },
+  "include": [
+    "./src",
+    "src/useDocusaurusContext.d.ts"
+, "useDocusaurusContext.d.ts"  ]
 }

@@ -1,17 +1,38 @@
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import React, { FormEvent } from 'react';
+import React, { FormEvent, useRef } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 import EmailSvg from '../../static/img/email.svg';
 
 const Contact = () => {
+	const {
+		siteConfig: { customFields },
+	} = useDocusaurusContext();
+	const captchaRef = useRef(null);
+	const formRef = useRef(null);
+
 	const handleOnSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		fetch('/contact', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: new URLSearchParams(new FormData(event.currentTarget) as any).toString(),
-		})
-			.then(() => console.log('Form successfully submitted'))
-			.catch(error => alert(error));
+		captchaRef.current.execute();
+	};
+
+	const handleOnChangeRecaptcha = (token: string) => {
+		if (token) {
+			const formData = new FormData(formRef.current);
+			formData.append('g-recaptcha-response', token);
+
+			fetch('/contact', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: new URLSearchParams(formData as any).toString(),
+			})
+				.then(() => {
+					console.log('Form successfully submitted');
+					formRef.current.reset();
+					captchaRef.current.reset();
+				})
+				.catch(error => alert(error));
+		}
 	};
 
 	return (
@@ -38,7 +59,12 @@ const Contact = () => {
 							<div className="w-full px-8 py-10 mx-auto overflow-hidden bg-white rounded-lg shadow-2xl dark:bg-gray-900 lg:max-w-xl shadow-gray-300/50 dark:shadow-black/50">
 								<h1 className="text-lg font-medium text-gray-700">What do you want to ask</h1>
 
-								<form className="mt-6" name="contact" data-netlify="true" onSubmit={handleOnSubmit}>
+								<form
+									className="mt-6"
+									name="contact"
+									data-netlify="true"
+									data-netlify-recaptcha="true"
+									onSubmit={handleOnSubmit}>
 									<input type="hidden" name="form-name" value="contact" />
 
 									<div className="flex-1">
@@ -76,6 +102,12 @@ const Contact = () => {
 											className="block w-full h-32 px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-md md:h-48 dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
 											placeholder="Hello there"></textarea>
 									</div>
+									<ReCAPTCHA
+										ref={captchaRef}
+										sitekey={customFields.recaptchaSiteKey}
+										size="invisible"
+										onChange={handleOnChangeRecaptcha}
+									/>
 									<button
 										type="submit"
 										className="w-full px-6 py-3 mt-6 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-md hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
