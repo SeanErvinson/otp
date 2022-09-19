@@ -1,7 +1,11 @@
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import React, { FormEvent, useRef } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 const NewsletterCTA = () => {
+	const {
+		siteConfig: { customFields },
+	} = useDocusaurusContext();
 	const captchaRef = useRef(null);
 	const formRef = useRef(null);
 
@@ -9,6 +13,8 @@ const NewsletterCTA = () => {
 		event.preventDefault();
 		captchaRef.current.execute();
 	};
+
+	console.log(customFields.recaptchaSiteKey);
 
 	const handleOnChangeRecaptcha = (token: string) => {
 		if (token) {
@@ -49,7 +55,7 @@ const NewsletterCTA = () => {
 					/>
 					<ReCAPTCHA
 						ref={captchaRef}
-						sitekey="6LdI3f8hAAAAAO_5fv1tetK__ZnCL0X2j-kDsCu-"
+						sitekey={customFields.recaptchaSiteKey as string}
 						size="invisible"
 						onChange={handleOnChangeRecaptcha}
 					/>

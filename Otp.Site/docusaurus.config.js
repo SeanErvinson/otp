@@ -14,6 +14,9 @@ const config = {
 	favicon: 'img/favicon.ico',
 	organizationName: 'OHTP',
 	projectName: 'OHTP.Site',
+	customFields: {
+		recaptchaSiteKey: process.env.SITE_RECAPTCHA_KEY,
+	},
 
 	presets: [
 		[
