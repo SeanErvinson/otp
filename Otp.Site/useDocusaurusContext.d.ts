@@ -10,6 +10,7 @@ declare module '@docusaurus/useDocusaurusContext' {
 	export type DocusaurusConfig = {
 		customFields: {
 			recaptchaSiteKey: string;
+			supportUrl: string;
 		};
 	};
 }

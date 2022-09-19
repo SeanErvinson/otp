@@ -1,6 +1,7 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
+require('dotenv').config();
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 
 /** @type {import('@docusaurus/types').Config} */
@@ -16,8 +17,8 @@ const config = {
 	projectName: 'OHTP.Site',
 	customFields: {
 		recaptchaSiteKey: process.env.SITE_RECAPTCHA_KEY,
+		supportUrl: 'support@ohtp.dev',
 	},
-
 	presets: [
 		[
 			'classic',

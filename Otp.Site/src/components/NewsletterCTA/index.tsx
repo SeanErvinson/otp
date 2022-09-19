@@ -1,6 +1,8 @@
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import React, { FormEvent, useRef } from 'react';
+import useModal from '@site/src/hooks/useModal';
+import React, { FormEvent, useRef, useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
+import ToastAlert from '../ToastAlert';
 
 const NewsletterCTA = () => {
 	const {
@@ -8,6 +10,11 @@ const NewsletterCTA = () => {
 	} = useDocusaurusContext();
 	const captchaRef = useRef(null);
 	const formRef = useRef(null);
+
+	const { toggle, visible } = useModal();
+
+	const [message, setMessage] = useState('');
+	const [isError, setIsError] = useState(false);
 
 	const handleOnSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -25,11 +32,17 @@ const NewsletterCTA = () => {
 				body: new URLSearchParams(formData as any).toString(),
 			})
 				.then(() => {
-					console.log('Form successfully submitted');
+					setMessage(`Success! Can't wait to work with you.`);
 					formRef.current.reset();
 					captchaRef.current.reset();
 				})
-				.catch(error => alert(error));
+				.catch(_ => {
+					setMessage('Uh oh something happened! Please try again.');
+					setIsError(true);
+				})
+				.finally(() => {
+					toggle();
+				});
 		}
 	};
 
@@ -67,6 +80,8 @@ const NewsletterCTA = () => {
 			<p className="mt-3 text-sm text-gray-500 dark:text-gray-300">
 				Be the first to get notified once we release the product.
 			</p>
+
+			{visible && <ToastAlert message={message} onClose={toggle} isError={isError} />}
 		</>
 	);
 };
