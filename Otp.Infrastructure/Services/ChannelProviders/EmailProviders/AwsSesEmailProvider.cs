@@ -5,6 +5,8 @@ using Amazon.SimpleEmailV2.Model;
 using Otp.Application.Common.Exceptions;
 using Otp.Application.Common.Interfaces;
 using Otp.Core.Domains.Entities;
+using Polly;
+using Polly.Contrib.WaitAndRetry;
 using Serilog;
 
 namespace Otp.Infrastructure.Services.ChannelProviders.EmailProviders;
@@ -17,6 +19,11 @@ public class AwsSesEmailProvider : IEmailProvider
 
 	private readonly JsonSerializerOptions _jsonSerializerOptions;
 	private readonly ILogger _logger;
+
+	private readonly IAsyncPolicy _retryPolicy = 
+		Policy.Handle<TooManyRequestsException>()
+			.Or<LimitExceededException>()
+			.WaitAndRetryAsync(Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(1), 3));
 
 	public AwsSesEmailProvider(JsonSerializerOptions jsonSerializerOptions, ILogger logger)
 	{
@@ -53,7 +60,9 @@ public class AwsSesEmailProvider : IEmailProvider
 		try
 		{
 			_logger.Information("Sending email using Amazon SES...");
-			var response = await client.SendEmailAsync(sendRequest, cancellationToken);
+			
+			var response = await _retryPolicy.ExecuteAsync(() => client.SendEmailAsync(sendRequest, cancellationToken));
+			
 			_logger.Information("The email was sent successfully");
 			return response.MessageId;
 		}
