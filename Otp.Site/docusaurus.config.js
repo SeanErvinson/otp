@@ -100,13 +100,7 @@ const config = {
 					{
 						to: 'https://app.ohtp.dev',
 						position: 'right',
-						label: 'Sign Up',
-					},
-					{
-						to: 'https://app.ohtp.dev',
-						position: 'right',
-						label: 'Log In',
-						className: 'text-lg',
+						label: 'Go to App',
 					},
 				],
 			},
