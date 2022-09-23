@@ -14,6 +14,10 @@ const config = {
 	onBrokenLinks: 'throw',
 	onBrokenMarkdownLinks: 'warn',
 	favicon: 'img/favicon.ico',
+	i18n: {
+		defaultLocale: 'en',
+		locales: ['en'],
+	},
 	organizationName: 'OHTP',
 	projectName: 'OHTP.Site',
 	customFields: {
@@ -76,7 +80,7 @@ const config = {
 				defaultMode: 'light',
 				disableSwitch: true,
 			},
-			image: 'img/logo.png',
+			image: 'img/logo-light.png',
 			metadata: [
 				{ name: 'keywords', content: 'otp, otp service, otp api, api' },
 				{ property: 'og:type', content: 'website' },
@@ -87,7 +91,7 @@ const config = {
 					alt: 'OHTP logo',
 					width: 80,
 					height: 80,
-					src: 'img/logo.svg',
+					src: 'img/logo-light.svg',
 				},
 				items: [
 					{
@@ -151,7 +155,7 @@ const config = {
 						],
 					},
 				],
-				copyright: `Copyright © ${new Date().getFullYear()} OhTP, LLC.`,
+				copyright: `Copyright © ${new Date().getFullYear()} OHTP, LLC.`,
 			},
 			prism: {
 				theme: lightCodeTheme,
