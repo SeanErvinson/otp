@@ -3,6 +3,7 @@
 
 require('dotenv').config();
 const lightCodeTheme = require('prism-react-renderer/themes/github');
+const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -97,9 +98,14 @@ const config = {
 					},
 					{ to: '/pricing', label: 'Pricing', position: 'right' },
 					{
-						to: 'https://app.ohtp.dev',
+						type: 'html',
 						position: 'right',
-						label: 'Go to App',
+						value: `
+						<a
+							class="flex items-center px-4 py-2 font-medium tracking-wide text-rose-500 capitalize transition-colors duration-300 transform border rounded-md hover:bg-rose-200 bg-rose-50 focus:outline-none focus:ring focus:ring-rose-300 focus:ring-opacity-80"
+							href="https://app.ohtp.dev">
+							Go to App
+						</a>`,
 					},
 				],
 			},
@@ -149,6 +155,7 @@ const config = {
 			},
 			prism: {
 				theme: lightCodeTheme,
+				darkTheme: darkCodeTheme,
 			},
 		}),
 };

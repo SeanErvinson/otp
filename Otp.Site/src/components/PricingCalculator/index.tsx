@@ -51,16 +51,16 @@ const PricingCalculator = () => {
 	return (
 		<div
 			id="pricing-calculator"
-			className="max-w-xs mx-auto overflow-hidden bg-white border rounded-lg shadow-lg dark:bg-gray-800">
+			className="max-w-xs mx-auto overflow-hidden border rounded-lg md:mx-4 dark:border-gray-700 text-gray-700 dark:text-white">
 			<div className="p-6">
 				<h2 className="text-xl mb-4 font-semibold text-gray-800 dark:text-white">Pricing Calculator</h2>
 				<div>
 					<div className="mb-3">
-						<label htmlFor="smsCount" className="font-bold text-gray-600">
+						<label htmlFor="smsCount" className="font-bold">
 							Excess SMS
 						</label>
 						<div className="flex flex-col">
-							<div className="flex flex-row justify-between">
+							<div className="flex flex-row justify-between mb-1">
 								<span>0</span>
 								<input
 									type="number"
@@ -69,7 +69,7 @@ const PricingCalculator = () => {
 									max={maxSmsCount}
 									value={excessSmsCount}
 									onChange={e => handleOnChangeExcess(e, setExcessSmsCount, maxSmsCount)}
-									className="appearance-none cursor-pointer text-right"
+									className="appearance-none cursor-pointer text-right dark:text-gray-700"
 								/>
 							</div>
 							<input
@@ -79,17 +79,17 @@ const PricingCalculator = () => {
 								max={maxSmsCount}
 								value={excessSmsCount}
 								onChange={e => handleOnChangeExcess(e, setExcessSmsCount, maxSmsCount)}
-								className="w-full h-2 bg-rose-100 appearance-none"
+								className="w-full h-2 bg-rose-100 appearance-none dark:text-gray-700"
 							/>
 						</div>
 					</div>
 
 					<div>
-						<label htmlFor="emailCount" className="font-bold text-gray-600">
+						<label htmlFor="emailCount" className="font-bold">
 							Excess Emails
 						</label>
 						<div className="flex flex-col">
-							<div className="flex flex-row justify-between">
+							<div className="flex flex-row justify-between mb-1">
 								<span>0</span>
 								<input
 									type="number"
@@ -98,7 +98,7 @@ const PricingCalculator = () => {
 									max={maxEmailCount}
 									value={excessEmailCount}
 									onChange={e => handleOnChangeExcess(e, setExcessEmailCount, maxEmailCount)}
-									className="appearance-none cursor-pointer text-right"
+									className="appearance-none cursor-pointer text-right dark:text-gray-700"
 								/>
 							</div>
 
@@ -109,23 +109,21 @@ const PricingCalculator = () => {
 								max={maxEmailCount}
 								value={excessEmailCount}
 								onChange={e => handleOnChangeExcess(e, setExcessEmailCount, maxEmailCount)}
-								className="w-full h-2 bg-rose-100 appearance-none"
+								className="w-full h-2 bg-rose-100 appearance-none dark:text-gray-700"
 							/>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<div className="bg-gray-100">
-				<h3 className="text-md font-semibold text-gray-800 dark:text-white text-center py-2">
-					Transaction breakdown
-				</h3>
+			<div className="text-gray-700 dark:text-white">
+				<h3 className="text-md font-semibold text-center py-2">Transaction breakdown</h3>
 
 				<div className="flex items-center justify-between max-w-2xl px-6 py-2 mx-auto">
 					<div className="flex items-center">
 						<div className="flex flex-col items-start space-y-1">
-							<h2 className="text-md font-medium text-gray-700 dark:text-gray-200">Base</h2>
-							<p className="text-xs text-gray-500 dark:text-gray-300">(Includes 50 SMS and 100 Email)</p>
+							<h2 className="text-md font-medium">Base</h2>
+							<p className="text-xs">(Includes 50 SMS and 100 Email)</p>
 						</div>
 					</div>
 
@@ -137,7 +135,7 @@ const PricingCalculator = () => {
 				<div className="flex items-center justify-between max-w-2xl px-6 py-2 mx-auto">
 					<div className="flex items-center">
 						<div className="flex flex-col items-center space-y-1">
-							<h2 className="text-md font-medium text-gray-700 dark:text-gray-200">Excess SMS</h2>
+							<h2 className="text-md font-medium">Excess SMS</h2>
 						</div>
 					</div>
 
@@ -152,7 +150,7 @@ const PricingCalculator = () => {
 				<div className="flex items-center justify-between max-w-2xl px-6 py-2 mx-auto">
 					<div className="flex items-center">
 						<div className="flex flex-col items-center space-y-1">
-							<h2 className="text-md font-medium text-gray-700 dark:text-gray-200">Excess Email</h2>
+							<h2 className="text-md font-medium">Excess Email</h2>
 						</div>
 					</div>
 
@@ -163,10 +161,10 @@ const PricingCalculator = () => {
 					</div>
 				</div>
 
-				<div className="px-4 py-2 bg-gray-900">
+				<div className="px-4 py-2 bg-rose-600 dark:bg-gray-900 text-white">
 					<div className="flex items-center justify-between">
-						<h4 className="text-lg font-bold text-white">Total Cost</h4>
-						<h4 className="text-lg font-bold text-white">
+						<h4 className="text-lg font-bold">Total Cost</h4>
+						<h4 className="text-lg font-bold">
 							<span className="tracking-wider">
 								<>&#8369;{calculateTotalPrice().toLocaleString()}</>
 							</span>
@@ -174,9 +172,7 @@ const PricingCalculator = () => {
 						</h4>
 					</div>
 
-					<p className="mt-1 text-xs text-gray-300">
-						Customer pays via credit or debit cards. All fees are VAT-inclusive.
-					</p>
+					<p className="mt-1 text-xs">Customer pays via credit or debit cards. All fees are VAT-inclusive.</p>
 				</div>
 			</div>
 		</div>
