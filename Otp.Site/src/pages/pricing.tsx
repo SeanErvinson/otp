@@ -50,12 +50,7 @@ const PricingTable = (props: Props) => {
 };
 
 const IncludedList = () => {
-	const features = [
-		'Reporting and Analytics',
-		'Own company branding',
-		'Downloadable logs',
-		'And much more!',
-	];
+	const features = ['Reporting and Analytics', 'Own company branding', 'Downloadable logs', 'And much more!'];
 
 	return (
 		<div className="p-6">
@@ -65,7 +60,7 @@ const IncludedList = () => {
 			<div className="mt-8 space-y-4">
 				{features.map((feature, index) => (
 					<div className="flex items-center" key={index}>
-						<CheckMarkIcon className="h-6 stroke-blue-600" />
+						<CheckMarkIcon className="h-6 stroke-rose-600" />
 
 						<span className="mx-4 text-gray-700 dark:text-gray-300">{feature} </span>
 					</div>
@@ -90,9 +85,9 @@ const Pricing = () => {
 							</h1>
 
 							<div className="mt-4">
-								<span className="inline-block w-40 h-1 bg-blue-500 rounded-full"></span>
-								<span className="inline-block w-3 h-1 mx-1 bg-blue-500 rounded-full"></span>
-								<span className="inline-block w-1 h-1 bg-blue-500 rounded-full"></span>
+								<span className="inline-block w-40 h-1 bg-rose-500 rounded-full"></span>
+								<span className="inline-block w-3 h-1 mx-1 bg-rose-500 rounded-full"></span>
+								<span className="inline-block w-1 h-1 bg-rose-500 rounded-full"></span>
 							</div>
 
 							<p className="mt-4 font-medium text-gray-500 dark:text-gray-300">
@@ -113,11 +108,10 @@ const Pricing = () => {
 										</h1>
 
 										<p className="mt-4 text-gray-500 dark:text-gray-300">
-											You're only billed what you use. Estimate your expected
-											monthly costs —{' '}
+											You're only billed what you use. Estimate your expected monthly costs —{' '}
 											<a
 												href={`#pricing-calculator`}
-												className="text-sm font-bold text-blue-500 dark:text-blue-400 hover:underline">
+												className="text-sm font-bold text-rose-500 dark:text-rose-400 hover:underline">
 												pricing calculator
 											</a>
 										</p>
@@ -137,19 +131,14 @@ const Pricing = () => {
 											</h2>
 
 											<button
-												onClick={() =>
-													setShowSmsPriceTable(!showSmsPriceTable)
-												}
-												className="flex flex-row p-2 text-gray-700 bg-white border border-transparent rounded-md dark:text-white focus:border-blue-500 focus:ring-opacity-40 dark:focus:ring-opacity-40 focus:ring-blue-300 dark:focus:ring-blue-400 focus:ring dark:bg-gray-800 focus:outline-none">
+												onClick={() => setShowSmsPriceTable(!showSmsPriceTable)}
+												className="flex flex-row p-2 text-gray-700 bg-white border border-transparent rounded-md dark:text-white focus:border-rose-500 focus:ring-opacity-40 dark:focus:ring-opacity-40 focus:ring-rose-300 dark:focus:ring-rose-400 focus:ring dark:bg-gray-800 focus:outline-none">
 												show price table
 												<DropDownIcon className="w-5 h-5 text-gray-800 dark:text-white" />
 											</button>
 										</div>
 										{showSmsPriceTable && (
-											<PricingTable
-												channel="SMS"
-												pricingTable={smsPricingTable}
-											/>
+											<PricingTable channel="SMS" pricingTable={smsPricingTable} />
 										)}
 
 										<div className="mt-4 flex flex-row justify-between items-center">
@@ -159,25 +148,18 @@ const Pricing = () => {
 											</h2>
 
 											<button
-												onClick={() =>
-													setShowEmailPriceTable(!showEmailPriceTable)
-												}
-												className="flex flex-row p-2 text-gray-700 bg-white border border-transparent rounded-md dark:text-white focus:border-blue-500 focus:ring-opacity-40 dark:focus:ring-opacity-40 focus:ring-blue-300 dark:focus:ring-blue-400 focus:ring dark:bg-gray-800 focus:outline-none">
+												onClick={() => setShowEmailPriceTable(!showEmailPriceTable)}
+												className="flex flex-row p-2 text-gray-700 bg-white border border-transparent rounded-md dark:text-white focus:border-rose-500 focus:ring-opacity-40 dark:focus:ring-opacity-40 focus:ring-rose-300 dark:focus:ring-rose-400 focus:ring dark:bg-gray-800 focus:outline-none">
 												show price table
 												<DropDownIcon className="w-5 h-5 text-gray-800 dark:text-white" />
 											</button>
 										</div>
 										{showEmailPriceTable && (
-											<PricingTable
-												channel="Email"
-												pricingTable={emailPricingTable}
-											/>
+											<PricingTable channel="Email" pricingTable={emailPricingTable} />
 										)}
-										<p className="mt-1 text-gray-500 dark:text-gray-300">
-											Billed monthly
-										</p>
+										<p className="mt-1 text-gray-500 dark:text-gray-300">Billed monthly</p>
 
-										<button className="w-full px-4 py-2 mt-6 tracking-wide text-white capitalize transition-colors duration-200 transform bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:bg-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-80">
+										<button className="w-full px-4 py-2 mt-6 tracking-wide text-white capitalize transition-colors duration-200 transform bg-rose-600 rounded-md hover:bg-rose-500 focus:outline-none focus:bg-rose-500 focus:ring focus:ring-rose-300 focus:ring-opacity-80">
 											Start Now
 										</button>
 									</div>

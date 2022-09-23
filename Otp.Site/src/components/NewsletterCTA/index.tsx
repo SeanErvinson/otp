@@ -48,7 +48,7 @@ const NewsletterCTA = () => {
 
 	return (
 		<>
-			<div className="w-full mt-8 bg-transparent border rounded-md lg:max-w-sm dark:border-gray-700 focus-within:border-blue-400 focus-within:ring focus-within:ring-blue-300 dark:focus-within:border-blue-400 focus-within:ring-opacity-40">
+			<div className="mx-auto mt-8 bg-transparent border rounded-md lg:max-w-sm dark:border-gray-700 focus-within:border-blue-400 focus-within:ring focus-within:ring-blue-300 dark:focus-within:border-blue-400 focus-within:ring-opacity-40">
 				<form
 					className="flex flex-col lg:flex-row"
 					ref={formRef}
@@ -72,12 +72,12 @@ const NewsletterCTA = () => {
 					/>
 					<button
 						type="submit"
-						className="h-10 px-4 py-2 m-1 text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-400 focus:outline-none focus:bg-blue-400">
+						className="px-5 py-3 mt-4 text-white transition rounded-md bg-rose-600 sm:mt-0 sm:w-auto group focus:outline-none focus:ring focus:ring-yellow-400">
 						Get Notified
 					</button>
 				</form>
 			</div>
-			<p className="mt-3 text-sm text-gray-500 dark:text-gray-300">
+			<p className="text-center mt-3 text-sm text-gray-500 dark:text-gray-300">
 				Be the first to get notified once we release the product.
 			</p>
 

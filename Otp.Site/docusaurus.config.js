@@ -45,14 +45,13 @@ const config = {
 						spec: 'https://raw.githubusercontent.com/SeanErvinson/earendel-demo/master/swagger.json',
 						route: '/api/',
 						layout: {
-							title: 'Hello WOrld',
-							description: 'Hello WOrld',
+							title: 'Hello World',
+							description: 'Hello World',
 						},
 					},
 				],
 				theme: {
-					// Change with your site colors
-					primaryColor: '#1890ff',
+					primaryColor: '#ef6060',
 				},
 			},
 		],

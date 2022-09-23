@@ -3,24 +3,21 @@ import NewsletterCTA from '../NewsletterCTA';
 
 const HomepageHeader = () => {
 	return (
-		<div className="container flex flex-col px-6 py-4 mx-auto space-y-6 items-center lg:py-10">
-			<h1 className="text-4xl font-bold tracking-wider text-gray-900 dark:text-white lg:text-6xl">
-				OHTP
-			</h1>
-			<p className="pb-6 text-gray-800 text-center dark:text-gray-300 text-xl">
-				Why waste your developers time? Let us the do heavy lifting while you focus on your
-				idea.
-			</p>
+		<header className="bg-gray-50">
+			<div className="p-8 md:p-12 lg:px-16 lg:py-24">
+				<div className="max-w-lg mx-auto text-center">
+					<h1 className="text-2xl font-bold text-gray-900 md:text-5xl">No fuss simple OTP integration.</h1>
+					<p className="hidden text-gray-500 sm:mt-4 sm:block">
+						Why waste your developers time? Let us the do heavy lifting while you focus on your idea. Send a
+						request, we'll do the rest.
+					</p>
+				</div>
 
-			<NewsletterCTA />
-
-			<h2 className="pt-6 text-2xl font-bold tracking-wider text-center text-gray-900 dark:text-white lg:text-4xl">
-				No fuss simple OTP integration.
-			</h2>
-			<p className="text-gray-800 text-center dark:text-gray-300 text-xl">
-				Send a request, we'll do the rest.
-			</p>
-		</div>
+				<div className="max-w-xl mx-auto mt-8">
+					<NewsletterCTA />
+				</div>
+			</div>
+		</header>
 	);
 };
 
