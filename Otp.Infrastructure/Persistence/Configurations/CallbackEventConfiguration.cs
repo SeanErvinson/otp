@@ -3,7 +3,7 @@ using Otp.Core.Domains.Entities;
 
 namespace Otp.Infrastructure.Persistence.Configurations;
 
-public class CallbackEventConfiguration : BaseEntityConfiguration<CallbackEvent>
+public class CallbackEventConfiguration : BaseEntityConfiguration<CallbackEvent, Guid>
 {
 	public override void Configure(EntityTypeBuilder<CallbackEvent> builder)
 	{

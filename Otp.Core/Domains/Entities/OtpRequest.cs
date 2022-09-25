@@ -9,7 +9,7 @@ using Otp.Core.Utils;
 namespace Otp.Core.Domains.Entities;
 
 [DebuggerDisplay("{Id} - {Code} - {Availability}")]
-public class OtpRequest : TimedEntity
+public class OtpRequest : TimedEntity<Guid>
 {
 	public Guid AppId { get; private set; }
 	public string Code { get; private set; } = default!;
@@ -46,7 +46,7 @@ public class OtpRequest : TimedEntity
 		string recipient,
 		Channel channel,
 		string successUrl,
-		string cancelUrl)
+		string cancelUrl) : base(Guid.NewGuid())
 	{
 		AppId = appId;
 		Recipient = recipient;

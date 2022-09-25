@@ -2,13 +2,13 @@
 
 namespace Otp.Core.Domains.Entities;
 
-public class Principal : AuditableEntity
+public class Principal : AuditableEntity<Guid>
 {
 	private Principal()
 	{
 	}
 
-	public Principal(string name, string userId)
+	public Principal(string name, string userId) : base(Guid.NewGuid())
 	{
 		Name = name;
 		UserId = userId;

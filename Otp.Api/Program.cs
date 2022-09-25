@@ -1,12 +1,9 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using FluentValidation.AspNetCore;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Otp.Api.Extensions;
 using Otp.Api.Middlewares;
-using Otp.Api.PipelineBehaviors;
 using Otp.Api.Services;
 using Otp.Api.Startup;
 using Otp.Application;
@@ -36,6 +33,7 @@ try
 			.ReadFrom.Services(services)
 			.Enrich.FromLogContext();
 	});
+	builder.Services.AddHttpContextAccessor();
 	builder.Services.AddHttpClient();
 	builder.Services.AddApiVersioning(options =>
 	{
@@ -58,8 +56,8 @@ try
 		{
 			option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 			option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-		})
-		.AddFluentValidation();
+		});
+
 	builder.Services.AddEndpointsApiExplorer();
 	builder.Services.AddSwagger(builder.Configuration);
 	builder.Services.AddJwtBearerAuthentication(builder.Configuration, builder.Environment);
@@ -71,7 +69,7 @@ try
 	builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 	builder.Services.AddScoped<IAppContextService, AppContextService>();
 	builder.Services.AddScoped<IOtpContextService, OtpContextService>();
-	builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+	builder.Services.AddScoped<IRequestMetadataContext, RequestMetadataContext>();
 
 	var app = builder.Build();
 

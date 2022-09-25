@@ -4,7 +4,7 @@ using Otp.Core.Domains.Entities;
 
 namespace Otp.Infrastructure.Persistence.Configurations;
 
-public class OtpRequestConfiguration : BaseEntityConfiguration<OtpRequest>
+public class OtpRequestConfiguration : BaseEntityConfiguration<OtpRequest, Guid>
 {
 	public override void Configure(EntityTypeBuilder<OtpRequest> builder)
 	{

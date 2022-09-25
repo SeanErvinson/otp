@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+﻿using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;

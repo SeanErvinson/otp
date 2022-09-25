@@ -4,7 +4,7 @@ using Otp.Core.Domains.Entities;
 
 namespace Otp.Infrastructure.Persistence.Configurations;
 
-public class PrincipalConfiguration : BaseEntityConfiguration<Principal>
+public class PrincipalConfiguration : BaseEntityConfiguration<Principal, Guid>
 {
 	public override void Configure(EntityTypeBuilder<Principal> builder)
 	{

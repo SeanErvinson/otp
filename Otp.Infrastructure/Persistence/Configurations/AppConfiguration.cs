@@ -5,7 +5,7 @@ using Otp.Core.Domains.Entities;
 
 namespace Otp.Infrastructure.Persistence.Configurations;
 
-public class AppConfiguration : BaseEntityConfiguration<App>
+public class AppConfiguration : BaseEntityConfiguration<App, Guid>
 {
 	public override void Configure(EntityTypeBuilder<App> builder)
 	{
