@@ -8,6 +8,7 @@ const ContactForm = () => {
 	const {
 		siteConfig: { customFields },
 	} = useDocusaurusContext();
+
 	const captchaRef = useRef(null);
 	const formRef = useRef(null);
 

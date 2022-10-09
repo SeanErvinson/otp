@@ -6,6 +6,6 @@
   },
   "include": [
     "./src",
-    "src/useDocusaurusContext.d.ts"
-, "useDocusaurusContext.d.ts", "static/img/pricing.tsx"  ]
+    "useDocusaurusContext.d.ts"
+  ]
 }
