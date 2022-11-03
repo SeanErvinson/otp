@@ -2,26 +2,28 @@ import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Modal from './Modal';
 
-interface Props {
+export interface ConfirmationProps {
 	title: string;
 	body?: string;
 	confirmActionLabel?: string;
 	confirmLoadingActionLabel?: string;
 	cancelActionLabel?: string;
 	showModal: boolean;
-	onConfirm: () => Promise<void>;
+	onConfirm: () => void;
 	onClose: () => void;
 }
 
-const ConfirmationModal = (props: Props) => {
+const ConfirmationModal = (props: ConfirmationProps) => {
 	const [isLoading, setIsLoading] = useState(false);
 
-	const handleOnConfirm = () => {
+	const handleOnConfirm = async () => {
 		setIsLoading(true);
-		props
-			.onConfirm()
-			.then(() => props.onClose())
-			.finally(() => setIsLoading(false));
+		try {
+			props.onConfirm();
+			props.onClose();
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	const handleOnEscClick = (event: KeyboardEvent) => {

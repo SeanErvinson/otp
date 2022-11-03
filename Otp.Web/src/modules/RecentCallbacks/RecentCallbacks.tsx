@@ -7,6 +7,7 @@ import { OtpApi } from '@/api/otpApi';
 import LoadingIndicator from '@/components/LoadingIndicator/LoadingIndicator';
 import RoundCheckIcon from '@/components/misc/RoundCheckIcon';
 import { AppDetail } from '@/types/types';
+import { appsRoute } from '@/consts/endpoints';
 
 const RecentCallbacks = () => {
 	const app = useOutletContext<AppDetail | null>();
@@ -18,7 +19,7 @@ const RecentCallbacks = () => {
 
 	useEffect(() => {
 		if (!app?.callbackUrl) {
-			navigate(`/apps/${app?.id}`);
+			navigate(`${appsRoute}/${app?.id}`);
 		}
 	}, []);
 

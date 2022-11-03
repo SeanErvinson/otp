@@ -7,6 +7,7 @@ import ApiKeySection from './ApiKeySection';
 import BrandingSection from './BrandingSection';
 import CallbackSection from './CallbackSection';
 import SettingsSection from './SettingsSection';
+import DangerSection from './DangerSection';
 
 const Settings = () => {
 	const app = useOutletContext<AppDetail | null>();
@@ -19,19 +20,24 @@ const Settings = () => {
 					<SettingsSection
 						title="API Key"
 						description="Regenerate your API Key in case the key has been compromised or leaked.">
-						<ApiKeySection />
+						<ApiKeySection appId={app.id} />
 					</SettingsSection>
 					<SettingsSection
 						title="Callback"
 						description="Callback URL functions like a notification for your application. Every
 						time a user submits an OTP authentication we use this callback URL to
 						send relevant information to you.">
-						<CallbackSection />
+						<CallbackSection appId={app.id} />
 					</SettingsSection>
 					<SettingsSection
 						title="Branding"
 						description="Let your customer feel special with a custom background and logo.">
 						<BrandingSection />
+					</SettingsSection>
+					<SettingsSection
+						title="Caution"
+						description="Irreversible and destructive actions. Careful now">
+						<DangerSection appId={app.id} />
 					</SettingsSection>
 				</>
 			)}

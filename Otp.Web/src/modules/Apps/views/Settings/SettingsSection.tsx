@@ -8,11 +8,13 @@ interface Props {
 
 const SettingsSection = (props: Props) => {
 	return (
-		<section className="my-6">
-			<h2 className="text-lg font-semibold mb-2">{props.title}</h2>
-			<p className="text-xs mb-2">{props.description}</p>
-			<hr className="mx-4 my-3" />
-			{props.children}
+		<section className="my-12">
+			<h2 className="text-2xl font-bold mb-2">{props.title}</h2>
+			<p className="text-sm mb-2">{props.description}</p>
+
+			<div className="card bg-base-100 shadow-md">
+				<div className="card-body">{props.children}</div>
+			</div>
 		</section>
 	);
 };

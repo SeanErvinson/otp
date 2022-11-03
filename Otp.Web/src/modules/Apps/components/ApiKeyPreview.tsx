@@ -1,6 +1,5 @@
 import RoundCheckIcon from '@/components/misc/RoundCheckIcon';
 import { useState } from 'react';
-import useClippy from 'use-clippy';
 
 interface Props {
 	apiKey: string;
@@ -8,12 +7,11 @@ interface Props {
 }
 
 const ApiKeyPreview = (props: Props) => {
-	const [, setClipboard] = useClippy();
 	const [isTimeout, setIsTimeout] = useState(false);
 
 	const handleOnCopy = () => {
 		setIsTimeout(true);
-		setClipboard(props.apiKey);
+		navigator.clipboard.writeText(props.apiKey);
 		setTimeout(() => {
 			setIsTimeout(false);
 		}, 500);

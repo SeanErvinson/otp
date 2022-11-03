@@ -1,10 +1,8 @@
-import { useMutation } from 'react-query';
-
-import { OtpApi } from '@/api/otpApi';
 import Modal from '@/components/Modal/Modal';
 import useModal from '@/hooks/useModal';
 
 import ApiKeyPreview from './ApiKeyPreview';
+import useRegenerateAppApiKey from '../mutations/useRegenerateAppApiKey';
 
 interface Props {
 	appId: string;
@@ -12,17 +10,20 @@ interface Props {
 
 const RegenerateApiButton = ({ appId }: Props) => {
 	const { toggle, visible } = useModal();
-	const { mutateAsync, isLoading, isSuccess, data, reset } = useMutation(
-		OtpApi.regenerateAppApiKey,
-		{},
-	);
+	const mutation = useRegenerateAppApiKey();
 
 	const handleOnClose = () => {
-		reset();
+		mutation.reset();
 		toggle();
 	};
 
-	let defaultComponent = !data ? (
+	const handleOnClick = () => {
+		mutation.mutate(appId);
+	};
+
+	let defaultComponent = mutation.data ? (
+		<ApiKeyPreview apiKey={mutation.data.apiKey} onClose={handleOnClose} />
+	) : (
 		<>
 			<h3 className="text-xl font-semibold">Are you sure you want to regenerate this key?</h3>
 			<br />
@@ -34,17 +35,15 @@ const RegenerateApiButton = ({ appId }: Props) => {
 				<button
 					className="btn btn-error"
 					type="button"
-					disabled={isLoading ? true : false}
-					onClick={() => mutateAsync(appId)}>
-					{!isLoading ? 'I understand' : 'Regenerating'}
+					disabled={mutation.isLoading ? true : false}
+					onClick={handleOnClick}>
+					{!mutation.isLoading ? 'I understand' : 'Regenerating'}
 				</button>
 				<button className="btn btn-ghost" type="button" onClick={handleOnClose}>
 					Cancel
 				</button>
 			</div>
 		</>
-	) : (
-		<>{data && <ApiKeyPreview apiKey={data.apiKey} onClose={handleOnClose} />}</>
 	);
 
 	return (
@@ -56,7 +55,7 @@ const RegenerateApiButton = ({ appId }: Props) => {
 				<Modal showModal={visible} onClose={handleOnClose}>
 					<div
 						className={`modal-box flex flex-col gap-4 ${
-							isSuccess && 'animate__animated animate__flipInY'
+							mutation.isSuccess && 'animate__animated animate__flipInY'
 						}`}>
 						{defaultComponent}
 					</div>

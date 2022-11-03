@@ -8,6 +8,7 @@ import CreateAppButton from '@/modules/Apps/components/CreateAppButton';
 
 import AppsTable from '../components/AppsTable';
 import TableContainer from '@/components/TableContainer/TableContainer';
+import MainContainer from '@/components/MainContainer/MainContainer';
 
 const Apps = () => {
 	const [page, setPage] = useState(1);
@@ -20,7 +21,7 @@ const Apps = () => {
 	);
 
 	return (
-		<main id="apps">
+		<MainContainer id="apps">
 			<PageHeader
 				title="Apps"
 				rightElement={data && data.items.length > 0 && <CreateAppButton />}
@@ -59,7 +60,7 @@ const Apps = () => {
 					</>
 				)}
 			</TableContainer>
-		</main>
+		</MainContainer>
 	);
 };
 
