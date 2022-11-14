@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import Chart from 'react-apexcharts';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { OtpApi } from '@/api/otpApi';
 import { MetricInterval } from '@/types/types';

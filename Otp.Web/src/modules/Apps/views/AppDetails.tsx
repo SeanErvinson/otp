@@ -8,7 +8,7 @@ import { ProblemDetails } from '@/types/types';
 
 import AppDetailForm from '../components/AppDetailForm/AppDetailForm';
 import useAppDetails from '../queries/useAppDetails';
-import MainContainer from '@/components/MainContainer/MainContainer';
+import MainContainer from '@/components/Layouts/MainContainer';
 
 const AppDetails = () => {
 	const { appId } = useParams();

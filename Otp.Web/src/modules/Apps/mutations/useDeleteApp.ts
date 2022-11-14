@@ -1,5 +1,5 @@
 import { oauthInstance, request } from '@/api/https';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import appKeys from '../queries/appKeys';
 
 const deleteApp = ({ appId }: { appId: string }): Promise<void> => {

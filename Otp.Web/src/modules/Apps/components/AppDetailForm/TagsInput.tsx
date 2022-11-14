@@ -57,7 +57,7 @@ const TagsInput = ({
 				</div>
 			) : (
 				<div className="flex flex-row gap-2 items-center lg:w-full">
-					<TagInput onUpdate={handleOnTagInput} initialTags={tags} />
+					<TagInput onUpdate={handleOnTagInput} initialTags={tags} autoFocus />
 					<button
 						className="btn btn-outline btn-xs border-dashed"
 						onClick={handleOnTagCancel}>

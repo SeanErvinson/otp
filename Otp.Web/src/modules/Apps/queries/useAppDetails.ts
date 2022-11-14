@@ -1,6 +1,6 @@
 import { oauthInstance, request } from '@/api/https';
 import { AppDetail } from '@/types/types';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import appKeys from './appKeys';
 
 const fetchApp = (id: string | undefined): Promise<AppDetail> => {

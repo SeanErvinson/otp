@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 import { Fragment, useEffect } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 
 import { OtpApi } from '@/api/otpApi';

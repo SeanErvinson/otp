@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import React, { FormEvent, useEffect, useState } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { OtpApi, VerifyOtpResponse } from '@/api/otpApi';
