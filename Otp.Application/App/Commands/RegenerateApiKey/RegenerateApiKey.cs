@@ -5,35 +5,34 @@ using Otp.Application.Common.Interfaces;
 
 namespace Otp.Application.App.Commands.RegenerateApiKey;
 
-public record RegenerateApiKey(Guid Id) : IRequest<RegenerateApiKeyResponse>
+public sealed record RegenerateApiKey(Guid Id) : IRequest<RegenerateApiKeyResponse>;
+
+public class RegenerateApiKeyHandler : IRequestHandler<RegenerateApiKey, RegenerateApiKeyResponse>
 {
-	public class Handler : IRequestHandler<RegenerateApiKey, RegenerateApiKeyResponse>
+	private readonly IApplicationDbContext _applicationDbContext;
+	private readonly ICurrentUserService _currentUserService;
+
+	public RegenerateApiKeyHandler(IApplicationDbContext applicationDbContext, ICurrentUserService currentUserService)
 	{
-		private readonly IApplicationDbContext _applicationDbContext;
-		private readonly ICurrentUserService _currentUserService;
+		_applicationDbContext = applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
+		_currentUserService = currentUserService ?? throw new ArgumentNullException(nameof(currentUserService));
+	}
 
-		public Handler(IApplicationDbContext applicationDbContext, ICurrentUserService currentUserService)
+	public async Task<RegenerateApiKeyResponse> Handle(RegenerateApiKey request, CancellationToken cancellationToken)
+	{
+		var app = await _applicationDbContext.Apps.SingleOrDefaultAsync(app => app.Id == request.Id &&
+				app.PrincipalId ==
+				_currentUserService.PrincipalId,
+			cancellationToken);
+
+		if (app is null)
 		{
-			_applicationDbContext = applicationDbContext;
-			_currentUserService = currentUserService;
+			throw new NotFoundException(nameof(app));
 		}
-
-		public async Task<RegenerateApiKeyResponse> Handle(RegenerateApiKey request, CancellationToken cancellationToken)
-		{
-			var app = await _applicationDbContext.Apps.SingleOrDefaultAsync(app => app.Id == request.Id &&
-					app.PrincipalId ==
-					_currentUserService.PrincipalId,
-				cancellationToken);
-
-			if (app is null)
-			{
-				throw new NotFoundException(nameof(app));
-			}
-			var apiKey = app.RegenerateApiKey();
-			await _applicationDbContext.SaveChangesAsync(cancellationToken);
-			return new RegenerateApiKeyResponse(apiKey);
-		}
+		var apiKey = app.RegenerateApiKey();
+		await _applicationDbContext.SaveChangesAsync(cancellationToken);
+		return new RegenerateApiKeyResponse(apiKey);
 	}
 }
 
-public record RegenerateApiKeyResponse(string ApiKey);
+public sealed record RegenerateApiKeyResponse(string ApiKey);

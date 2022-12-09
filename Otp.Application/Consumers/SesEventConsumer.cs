@@ -72,7 +72,7 @@ public class SesEventConsumer : IConsumer<SesEvent>
 	}
 }
 
-public record SesEvent
+public sealed record SesEvent
 {
 	public string EventType { get; init; } = default!;
 	public Mail Mail { get; init; } = default!;
@@ -82,12 +82,12 @@ public record SesEvent
 	public Bounce Bounce { get; init; } = default!;
 }
 
-public record Delivery(DateTime Timestamp);
-public record Failure(string ErrorMessage, string TemplateName);
-public record DeliveryDelay(string DelayType, DateTime Timestamp);
-public record Bounce(string BounceType, DateTime Timestamp);
+public sealed record Delivery(DateTime Timestamp);
+public sealed record Failure(string ErrorMessage, string TemplateName);
+public sealed record DeliveryDelay(string DelayType, DateTime Timestamp);
+public sealed record Bounce(string BounceType, DateTime Timestamp);
 
-public record Mail
+public sealed record Mail
 {
 	public DateTime Timestamp { get; init; }
 	public string MessageId { get; init; } = default!;

@@ -7,7 +7,7 @@ using Otp.Application.Site.Common.Models;
 
 namespace Otp.Application.Site.Queries.GetEmailPricingTable;
 
-public record GetEmailPricingTable : IRequest<GetEmailPricingResponse>;
+public sealed record GetEmailPricingTable : IRequest<GetEmailPricingResponse>;
 
 public class GetEmailPricingHandler : IRequestHandler<GetEmailPricingTable, GetEmailPricingResponse>
 {
@@ -16,8 +16,8 @@ public class GetEmailPricingHandler : IRequestHandler<GetEmailPricingTable, GetE
 
 	public GetEmailPricingHandler(IRequestMetadataContext requestMetadataContext, IApplicationDbContext applicationDbContext)
 	{
-		_requestMetadataContext = requestMetadataContext;
-		_applicationDbContext = applicationDbContext;
+		_requestMetadataContext = requestMetadataContext ?? throw new ArgumentNullException(nameof(requestMetadataContext));
+		_applicationDbContext = applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
 	}
 
 	public async Task<GetEmailPricingResponse> Handle(GetEmailPricingTable request, CancellationToken cancellationToken)
@@ -50,5 +50,5 @@ public class GetEmailPricingHandler : IRequestHandler<GetEmailPricingTable, GetE
 	}
 }
 
-public record GetEmailPricingResponse(Currency Currency, EmailPrice EmailPrice);
-public record EmailPrice(string RawPrice, string FormattedPrice);
+public sealed record GetEmailPricingResponse(Currency Currency, EmailPrice EmailPrice);
+public sealed record EmailPrice(string RawPrice, string FormattedPrice);

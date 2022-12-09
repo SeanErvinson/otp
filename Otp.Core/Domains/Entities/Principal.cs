@@ -8,15 +8,18 @@ public class Principal : AuditableEntity<Guid>
 	{
 	}
 
-	public Principal(string name, string userId) : base(Guid.NewGuid())
+	public Principal(string name, string userId, string customerId) : base(Guid.NewGuid())
 	{
 		Name = name;
 		UserId = userId;
+		CustomerId = customerId;
 		Status = PrincipalStatus.Active;
 	}
 
 	public string Name { get; private set; }
 	public string UserId { get; private set; }
+	
+	public string CustomerId { get; private set; }
 	public PrincipalStatus Status { get; }
 }
 

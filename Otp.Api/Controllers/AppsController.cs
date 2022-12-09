@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Otp.Api.Policies;
 using Otp.Application.App.Commands.CreateApp;
 using Otp.Application.App.Commands.DeleteApp;
 using Otp.Application.App.Commands.RegenerateApiKey;
@@ -18,6 +19,7 @@ using Otp.Application.Otp.Commands.RequestOtp;
 namespace Otp.Api.Controllers;
 
 [Authorize]
+[Authorize(Policy = nameof(IsActiveUser))]
 [ApiController]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(IgnoreApi = true)]

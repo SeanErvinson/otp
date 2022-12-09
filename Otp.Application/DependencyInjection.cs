@@ -13,11 +13,11 @@ namespace Otp.Application;
 public static class DependencyInjection
 {
 	public static void AddApplication(this IServiceCollection services, IConfiguration configuration)
-	{ 
+	{
 		services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 		services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 		services.AddMediatR(Assembly.GetExecutingAssembly());
-		
+
 		services.AddMassTransit(configurator =>
 		{
 			configurator.SetKebabCaseEndpointNameFormatter();
@@ -25,12 +25,11 @@ public static class DependencyInjection
 			configurator.AddDelayedMessageScheduler();
 			configurator.UsingAmazonSqs((context, config) =>
 			{
+				config.Host(RegionEndpoint.APSoutheast1.SystemName, (h) => { });
+
 				config.UseDelayedMessageScheduler();
 				config.ReceiveEndpoint("ohtp-ses-events",
-					c =>
-					{
-						c.ConfigureConsumer<SesEventConsumer>(context);
-					});
+					c => { c.ConfigureConsumer<SesEventConsumer>(context); });
 				config.ConfigureEndpoints(context);
 			});
 		});

@@ -11,10 +11,12 @@ public sealed record RequestEmailOtp : IRequest<RequestOtpResponse>
 {
 	/// <summary>The user's email address</summary>
 	public string EmailAddress { get; init; } = default!;
+
 	/// <summary>
 	/// Where to redirect a user after OTP success
 	/// </summary>
 	public string SuccessUrl { get; init; } = default!;
+
 	/// <summary>
 	/// Where to redirect a user after OTP failed
 	/// </summary>
@@ -32,18 +34,18 @@ public sealed class RequestEmailOtpHandler : IRequestHandler<RequestEmailOtp, Re
 
 	public RequestEmailOtpHandler(IMediator mediator)
 	{
-		_mediator = mediator;
+		_mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
 	}
 
 	public async Task<RequestOtpResponse> Handle(RequestEmailOtp request, CancellationToken cancellationToken)
 	{
 		var response = await _mediator.Send(new RequestOtp.RequestOtp
-		{
-			Channel = Channel.Email,
-			Contact = request.EmailAddress,
-			SuccessUrl = request.SuccessUrl,
-			CancelUrl = request.CancelUrl
-		},
+			{
+				Channel = Channel.Email,
+				Contact = request.EmailAddress,
+				SuccessUrl = request.SuccessUrl,
+				CancelUrl = request.CancelUrl
+			},
 			cancellationToken);
 		return response;
 	}

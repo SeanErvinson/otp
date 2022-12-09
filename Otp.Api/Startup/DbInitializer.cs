@@ -29,7 +29,7 @@ public class DbInitializer : IDbInitializer
 
 		if (!dbContext.Principals.Any())
 		{
-			var adminPrincipal = new Principal("Bob", "a07f580c-026a-4669-8f8d-c3684bc65646");
+			var adminPrincipal = new Principal("Bob", "a07f580c-026a-4669-8f8d-c3684bc65646", Guid.NewGuid().ToString());
 			dbContext.Principals.Add(adminPrincipal);
 			dbContext.SaveChanges();
 		}

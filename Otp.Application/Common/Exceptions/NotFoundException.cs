@@ -1,17 +1,21 @@
 ﻿namespace Otp.Application.Common.Exceptions;
 
-public class NotFoundException : Exception
+public sealed class NotFoundException : BusinessException
 {
-	public NotFoundException(string message) : base(message)
+	public NotFoundException(string title, string detail) : base(title, detail)
 	{
 	}
 
-	public NotFoundException(string name, object key) : base($"Entity {name} with key: {key} was not found: {name} ")
+	public NotFoundException(string detail) : base("EntityNotFound", detail)
 	{
 	}
 
-	public NotFoundException(string message, Exception inner)
-		: base(message, inner)
+	public NotFoundException(string name, object key) : this($"Entity {name} with key: {key} was not found: {name} ")
+	{
+	}
+
+	public NotFoundException(string title, string detail, Exception inner)
+		: base(title, detail, inner)
 	{
 	}
 }

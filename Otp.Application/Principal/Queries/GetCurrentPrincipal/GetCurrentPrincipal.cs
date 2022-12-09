@@ -6,33 +6,32 @@ using Otp.Core.Domains.Entities;
 
 namespace Otp.Application.Principal.Queries.GetCurrentPrincipal;
 
-public record GetCurrentPrincipal : IRequest<GetCurrentPrincipalResponse>
+public sealed record GetCurrentPrincipal : IRequest<GetCurrentPrincipalResponse>;
+
+public class GetCurrentPrincipalHandler : IRequestHandler<GetCurrentPrincipal, GetCurrentPrincipalResponse>
 {
-	public class Handler : IRequestHandler<GetCurrentPrincipal, GetCurrentPrincipalResponse>
+	private readonly ICurrentUserService _currentUserService;
+	private readonly IApplicationDbContext _applicationDbContext;
+
+	public GetCurrentPrincipalHandler(ICurrentUserService currentUserService, IApplicationDbContext applicationDbContext)
 	{
-		private readonly ICurrentUserService _currentUserService;
-		private readonly IApplicationDbContext _applicationDbContext;
+		_currentUserService = currentUserService ?? throw new ArgumentNullException(nameof(currentUserService));
+		_applicationDbContext = applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
+	}
 
-		public Handler(ICurrentUserService currentUserService, IApplicationDbContext applicationDbContext)
+	public async Task<GetCurrentPrincipalResponse> Handle(GetCurrentPrincipal request, CancellationToken cancellationToken)
+	{
+		var principal = await _applicationDbContext.Principals.AsNoTracking()
+			.FirstOrDefaultAsync(principal => principal.UserId == _currentUserService.UserId &&
+					principal.Status != PrincipalStatus.Deleted,
+				cancellationToken);
+
+		if (principal is null)
 		{
-			_currentUserService = currentUserService;
-			_applicationDbContext = applicationDbContext;
+			throw new NotFoundException("Principal does not exists");
 		}
-
-		public async Task<GetCurrentPrincipalResponse> Handle(GetCurrentPrincipal request, CancellationToken cancellationToken)
-		{
-			var principal = await _applicationDbContext.Principals.AsNoTracking()
-				.FirstOrDefaultAsync(principal => principal.UserId == _currentUserService.UserId &&
-						principal.Status != PrincipalStatus.Deleted,
-					cancellationToken);
-
-			if (principal is null)
-			{
-				throw new NotFoundException("Principal does not exists");
-			}
-			return new GetCurrentPrincipalResponse();
-		}
+		return new GetCurrentPrincipalResponse();
 	}
 }
 
-public record GetCurrentPrincipalResponse();
+public sealed record GetCurrentPrincipalResponse;

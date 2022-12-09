@@ -24,8 +24,8 @@ public sealed class RequestOtpHandler : IRequestHandler<RequestOtp, RequestOtpRe
 
 	public RequestOtpHandler(IAppContextService appContextService, IApplicationDbContext dbContext)
 	{
-		_appContextService = appContextService;
-		_dbContext = dbContext;
+		_appContextService = appContextService ?? throw new ArgumentNullException(nameof(appContextService));
+		_dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 	}
 
 	public async Task<RequestOtpResponse> Handle(RequestOtp request, CancellationToken cancellationToken)

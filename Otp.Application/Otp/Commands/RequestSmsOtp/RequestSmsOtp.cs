@@ -33,7 +33,7 @@ public sealed class RequestSmsOtpHandler : IRequestHandler<RequestSmsOtp, Reques
 
 	public RequestSmsOtpHandler(IMediator mediator)
 	{
-		_mediator = mediator;
+		_mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
 	}
 
 	public async Task<RequestOtpResponse> Handle(RequestSmsOtp request, CancellationToken cancellationToken)

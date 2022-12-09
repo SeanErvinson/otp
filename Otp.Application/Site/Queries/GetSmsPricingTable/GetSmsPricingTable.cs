@@ -7,7 +7,7 @@ using Otp.Application.Site.Common.Models;
 
 namespace Otp.Application.Site.Queries.GetSmsPricingTable;
 
-public record GetSmsPricingTable : IRequest<GetSmsPricingResponse>;
+public sealed record GetSmsPricingTable : IRequest<GetSmsPricingResponse>;
 
 public class GetSmsPricingHandler : IRequestHandler<GetSmsPricingTable, GetSmsPricingResponse>
 {
@@ -16,8 +16,8 @@ public class GetSmsPricingHandler : IRequestHandler<GetSmsPricingTable, GetSmsPr
 
 	public GetSmsPricingHandler(IRequestMetadataContext requestMetadataContext, IApplicationDbContext applicationDbContext)
 	{
-		_requestMetadataContext = requestMetadataContext;
-		_applicationDbContext = applicationDbContext;
+		_requestMetadataContext = requestMetadataContext ?? throw new ArgumentNullException(nameof(requestMetadataContext));
+		_applicationDbContext = applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
 	}
 
 	public async Task<GetSmsPricingResponse> Handle(GetSmsPricingTable request, CancellationToken cancellationToken)
@@ -55,5 +55,5 @@ public class GetSmsPricingHandler : IRequestHandler<GetSmsPricingTable, GetSmsPr
 	}
 }
 
-public record GetSmsPricingResponse(Currency Currency, IEnumerable<SmsPrice> SmsPrices);
-public record SmsPrice(string To, string RawPrice, string FormattedPrice);
+public sealed record GetSmsPricingResponse(Currency Currency, IEnumerable<SmsPrice> SmsPrices);
+public sealed record SmsPrice(string To, string RawPrice, string FormattedPrice);

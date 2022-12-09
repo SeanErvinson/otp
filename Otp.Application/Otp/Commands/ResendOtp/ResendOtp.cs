@@ -7,45 +7,43 @@ using Serilog.Context;
 
 namespace Otp.Application.Otp.Commands.ResendOtp;
 
-public record ResendOtp(Guid Id) : IRequest
+public sealed record ResendOtp(Guid Id) : IRequest;
+
+public class ResendOtpHandler : IRequestHandler<ResendOtp>
 {
-	public class Handler : IRequestHandler<ResendOtp>
+	private readonly IApplicationDbContext _dbContext;
+	private readonly IOtpContextService _otpContextService;
+
+	public ResendOtpHandler(IApplicationDbContext dbContext, IOtpContextService otpContextService)
 	{
-		private readonly IApplicationDbContext _dbContext;
-		private readonly IOtpContextService _otpContextService;
+		_dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+		_otpContextService = otpContextService ?? throw new ArgumentNullException(nameof(otpContextService));
+	}
 
-		public Handler(IApplicationDbContext dbContext, IOtpContextService otpContextService)
+	public async Task<Unit> Handle(ResendOtp request, CancellationToken cancellationToken)
+	{
+		using (LogContext.PushProperty("OtpRequestId", request.Id))
 		{
-			_dbContext = dbContext;
-			_otpContextService = otpContextService;
-		}
+			var otpRequest =
+				await _dbContext.OtpRequests.FirstOrDefaultAsync(req =>
+						req.Id == request.Id &&
+						req.AuthenticityKey == _otpContextService.AuthenticityKey &&
+						req.ExpiresOn > DateTime.UtcNow &&
+						req.Timeline.Any(@event =>
+							@event.State == EventState.Deliver &&
+							@event.Status == EventStatus.Success),
+					cancellationToken);
 
-		public async Task<Unit> Handle(ResendOtp request, CancellationToken cancellationToken)
-		{
-			using (LogContext.PushProperty("OtpRequestId", request.Id))
+			if (otpRequest is null)
 			{
-				var otpRequest =
-					await _dbContext.OtpRequests.FirstOrDefaultAsync(req =>
-							req.Id == request.Id &&
-							req.AuthenticityKey ==
-							_otpContextService.AuthenticityKey &&
-							req.ExpiresOn > DateTime.UtcNow &&
-							req.Timeline.Any(@event =>
-								@event.State == EventState.Deliver &&
-								@event.Status == EventStatus.Success),
-						cancellationToken);
+				throw new NotFoundException("Unable to resend existing request was not found");
+			}
 
-				if (otpRequest is null)
-				{
-					throw new NotFoundException("Unable to resend existing request was not found");
-				}
-
-				using (LogContext.PushProperty("NumberOfResend", otpRequest.ResendCount))
-				{
-					otpRequest.Resend();
-					await _dbContext.SaveChangesAsync(cancellationToken);
-					return Unit.Value;
-				}
+			using (LogContext.PushProperty("NumberOfResend", otpRequest.ResendCount))
+			{
+				otpRequest.Resend();
+				await _dbContext.SaveChangesAsync(cancellationToken);
+				return Unit.Value;
 			}
 		}
 	}
