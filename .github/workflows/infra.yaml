@@ -1,0 +1,82 @@
+name: infra
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/infra.yaml'
+      - '!.github/workflows/**'
+      - 'infra/**'
+  pull_request:
+    types:
+      - synchronize
+      - auto_merge_enabled
+      - opened
+    paths:
+      - '.github/workflows/infra.yaml'
+      - '!.github/workflows/**'
+      - 'infra/**'
+
+env:
+  PROJECT_NAME: Otp.Api
+  ARTIFACT_NAME: drop
+  DOTNET_VERSION: 6.0.x
+  PUBLISH_PATH: ${{ github.workspace }}/artifact
+
+jobs:
+  preview:
+    name: preview
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - uses: pulumi/actions@v3
+        with:
+          command: preview
+          work-dir: ./infra
+          comment-on-pr: true
+          stack-name: aws-dev
+          cloud-url: azblob://pulumi?storage_account=stodeploymentdata
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
+  update:
+    name: update
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+      - name: Configure Azure Credentials
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - uses: pulumi/actions@v3
+        with:
+          command: up
+          work-dir: ./infra
+          comment-on-pr: true
+          stack-name: aws-dev
+          cloud-url: azblob://pulumi?storage_account=stodeploymentdata
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
