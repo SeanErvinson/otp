@@ -1,4 +1,5 @@
 import 'animate.css';
+import { useState } from 'react';
 
 import Modal from '@/components/Modal/Modal';
 
@@ -11,21 +12,26 @@ interface Props {
 }
 
 const CreateAppModal = (props: Props) => {
+	const [apiKey, setApiKey] = useState<string | undefined>();
 	const handleOnClose = () => {
 		props.onClose();
 	};
 
-	let defaultComponent = mutation.data ? (
-		<ApiKeyPreview apiKey={mutation.data.apiKey} onClose={handleOnClose} />
+	const handleOnSubmit = (value: string) => {
+		setApiKey(value);
+	};
+
+	let defaultComponent = apiKey ? (
+		<ApiKeyPreview apiKey={apiKey} onClose={handleOnClose} />
 	) : (
-		<CreateAppForm onClose={handleOnClose} />
+		<CreateAppForm onClose={handleOnClose} onSubmit={handleOnSubmit} />
 	);
 
 	return (
 		<Modal showModal={props.showModal} onClose={props.onClose}>
 			<div
 				className={`modal-box flex flex-col justify-between ${
-					mutation.isSuccess && 'animate__animated animate__flipInY min-h-[21rem]'
+					apiKey && 'animate__animated animate__flipInY min-h-[21rem]'
 				}`}>
 				{defaultComponent}
 			</div>

@@ -131,82 +131,33 @@ namespace Otp.Infrastructure.Migrations
                     b.ToTable("CallbackEvents");
                 });
 
-            modelBuilder.Entity("Otp.Core.Domains.Entities.ChannelPrice", b =>
+            modelBuilder.Entity("Otp.Core.Domains.Entities.EmailPrice", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Channel")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Destination")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Source")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Threshold")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.ToTable("ChannelPrices");
-                });
-
-            modelBuilder.Entity("Otp.Core.Domains.Entities.Discount", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ChannelPriceId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreatedBy")
+                    b.Property<string>("OriginCountry")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PrincipalId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Rate")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ChannelPriceId");
 
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex("PrincipalId");
-
-                    b.ToTable("Discounts");
+                    b.ToTable("EmailPricingTable", (string)null);
                 });
 
             modelBuilder.Entity("Otp.Core.Domains.Entities.OtpRequest", b =>
@@ -325,6 +276,39 @@ namespace Otp.Infrastructure.Migrations
                     b.ToTable("Principals");
                 });
 
+            modelBuilder.Entity("Otp.Core.Domains.Entities.SmsPrice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OriginCountry")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
+                    b.Property<string>("RecipientCountry")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("SmsPricingTable", (string)null);
+                });
+
             modelBuilder.Entity("Otp.Core.Domains.Entities.App", b =>
                 {
                     b.HasOne("Otp.Core.Domains.Entities.Principal", "Principal")
@@ -370,25 +354,6 @@ namespace Otp.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("App");
-                });
-
-            modelBuilder.Entity("Otp.Core.Domains.Entities.Discount", b =>
-                {
-                    b.HasOne("Otp.Core.Domains.Entities.ChannelPrice", "ChannelPrice")
-                        .WithMany()
-                        .HasForeignKey("ChannelPriceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Otp.Core.Domains.Entities.Principal", "Principal")
-                        .WithMany()
-                        .HasForeignKey("PrincipalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ChannelPrice");
-
-                    b.Navigation("Principal");
                 });
 
             modelBuilder.Entity("Otp.Core.Domains.Entities.OtpRequest", b =>

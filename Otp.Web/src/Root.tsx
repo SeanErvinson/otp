@@ -13,11 +13,14 @@ import AppDetails from '@/modules/Apps/views/AppDetails';
 import Settings from '@/modules/Apps/views/Settings/Settings';
 import NotFound from '@/modules/common/views/NotFound';
 import { RecentCallbacks } from '@/modules/RecentCallbacks';
-import { loginRequest } from '@/services/auth/authConfig';
+
 import { Loader } from './components/Loader';
+import useUserConfig from './hooks/useUserConfig';
+import { loginRequest } from './libs/azureB2C/authConfig';
 
 const SidebarLayout = () => {
 	const isAuthenticated = useIsAuthenticated();
+	const { userConfigQuery } = useUserConfig();
 	const { login, error } = useMsalAuthentication(InteractionType.Redirect, loginRequest);
 
 	useEffect(() => {
@@ -26,7 +29,7 @@ const SidebarLayout = () => {
 		}
 	}, []);
 
-	return isAuthenticated ? (
+	return isAuthenticated && userConfigQuery.isSuccess ? (
 		<Sidebar>
 			<Outlet />
 		</Sidebar>

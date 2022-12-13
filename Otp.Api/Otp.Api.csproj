@@ -25,6 +25,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="6.0.6" />
         <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+        <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     </ItemGroup>
 
@@ -32,5 +33,5 @@
         <ProjectReference Include="..\Otp.Application\Otp.Application.csproj" />
         <ProjectReference Include="..\Otp.Infrastructure\Otp.Infrastructure.csproj" />
     </ItemGroup>
-    
+
 </Project>

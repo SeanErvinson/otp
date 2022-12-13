@@ -2,9 +2,7 @@ import { useAtom } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { useQuery } from 'react-query';
 
-import { OtpApi } from '@/api/otpApi';
 import LoadingIndicator from '@/components/LoadingIndicator/LoadingIndicator';
 import RefetchIcon from '@/components/misc/RefetchIcon';
 import XIcon from '@/components/misc/XIcon';
@@ -13,6 +11,7 @@ import { toLocalTime } from '@/utils/dayjsUtils';
 
 import { logAtom } from '../states/LogAtom';
 import { EventStatus } from '@/types/types';
+import useOtpDetails from '../queries/useOtpDetails';
 
 interface Props {
 	showModal: boolean;
@@ -53,20 +52,11 @@ const TimeEntryItem = ({
 	);
 };
 
-const refreshInterval = 5000;
-
 const TimelineModal = (props: Props) => {
 	const [log] = useAtom(logAtom);
 	const resetLog = useResetAtom(logAtom);
 
-	const { isLoading, data, isFetching } = useQuery(
-		['getTimeline', log.id],
-		() => OtpApi.getOtpRequest(log.id),
-		{
-			refetchIntervalInBackground: false,
-			refetchInterval: refreshInterval,
-		},
-	);
+	const otpDetailQuery = useOtpDetails(log.id);
 
 	const handleOnEscClick = (event: KeyboardEvent) => {
 		if (event.key === 'Escape') {
@@ -85,8 +75,8 @@ const TimelineModal = (props: Props) => {
 	}, []);
 
 	const getEventInfo = (title: string, status: EventStatus, expand = false) => {
-		if (!data) return;
-		const eventInfo = data.timeline.find(event => event.state == status);
+		if (!otpDetailQuery.data) return;
+		const eventInfo = otpDetailQuery.data.timeline.find(event => event.state == status);
 		console.log(eventInfo);
 
 		return (
@@ -110,21 +100,27 @@ const TimelineModal = (props: Props) => {
 				</label>
 				<div className="flex flex-row justify-between mb-2">
 					<h2 className="text-base-content font-bold text-xl">Log details</h2>
-					{!isLoading && isFetching && (
+					{!otpDetailQuery.isLoading && otpDetailQuery.isFetching && (
 						<RefetchIcon className="stroke-current h-6 mr-4" />
 					)}
 				</div>
-				{isLoading && <LoadingIndicator />}
-				{data && (
+				{otpDetailQuery.isLoading && <LoadingIndicator />}
+				{otpDetailQuery.data && (
 					<div className="sm:grid sm:grid-cols-3">
 						<div className="flex-1 flex flex-col col-span-2 sm:order-2">
 							<h3 className="text-base-primary font-semibold">Summary</h3>
 							<div className="rounded-lg p-4 bg-base-200 text-base-content/70 sm:grid sm:grid-cols-2 flex-1">
-								<SummaryInfo title="RequestId" value={data.id} />
-								<SummaryInfo title="Recipient" value={data.recipient} />
+								<SummaryInfo title="RequestId" value={otpDetailQuery.data.id} />
+								<SummaryInfo
+									title="Recipient"
+									value={otpDetailQuery.data.recipient}
+								/>
 								<SummaryInfo
 									title="Requested"
-									value={toLocalTime(data.requestedAt, dateTimeFormat)}
+									value={toLocalTime(
+										otpDetailQuery.data.requestedAt,
+										dateTimeFormat,
+									)}
 								/>
 								{getEventInfo('Sent', EventStatus.send)}
 								{getEventInfo('Delivered', EventStatus.deliver, true)}
@@ -132,13 +128,16 @@ const TimelineModal = (props: Props) => {
 								<SummaryInfo title="Retry" />
 								<SummaryInfo
 									title="User Ip Address"
-									value={data.clientInfo.ipAddress}
+									value={otpDetailQuery.data.clientInfo.ipAddress}
 								/>
-								<SummaryInfo title="Referrer" value={data.clientInfo.referrer} />
+								<SummaryInfo
+									title="Referrer"
+									value={otpDetailQuery.data.clientInfo.referrer}
+								/>
 								<SummaryInfo
 									className="col-span-2"
 									title="User Agent"
-									value={data.clientInfo.userAgent}
+									value={otpDetailQuery.data.clientInfo.userAgent}
 								/>
 							</div>
 						</div>
@@ -149,7 +148,7 @@ const TimelineModal = (props: Props) => {
 									{toLocalTime(new Date(), dateFormat)}
 								</h2>
 								<ul id="timeline-entries">
-									{data.timeline.map(event => (
+									{otpDetailQuery.data.timeline.map(event => (
 										<TimeEntryItem date={event.occuredAt} title={event.state} />
 									))}
 								</ul>
@@ -160,7 +159,7 @@ const TimelineModal = (props: Props) => {
 									{toLocalTime(new Date(), dateFormat)}
 								</h2>
 								<ul id="attempt-entries">
-									{data.attempts.map(attempt => (
+									{otpDetailQuery.data.attempts.map(attempt => (
 										<TimeEntryItem
 											date={attempt.attemptedOn}
 											title={attempt.attemptStatus.toLocaleString()}

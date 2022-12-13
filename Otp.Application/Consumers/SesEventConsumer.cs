@@ -28,7 +28,7 @@ public class SesEventConsumer : IConsumer<SesEvent>
 
 		if (!Enum.TryParse<EventType>(message.EventType, out var eventType))
 		{
-			_logger.Error("An unexpected event type {EventType} occured", message.EventType);
+			_logger.Warning("An unexpected event type {EventType} occured", message.EventType);
 			return;
 		}
 

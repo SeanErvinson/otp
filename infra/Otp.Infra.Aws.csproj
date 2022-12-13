@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Pulumi" Version="3.49.0" />
     <PackageReference Include="Pulumi.Aws" Version="5.23.0" />
+    <PackageReference Include="Pulumi.AwsNative" Version="0.44.0"/>
   </ItemGroup>
 
   <ItemGroup>

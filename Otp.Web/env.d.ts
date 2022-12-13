@@ -3,6 +3,8 @@ interface ImportMetaEnv {
 	readonly VITE_OTP_SITE_BASE_URL: string;
 	readonly VITE_ENABLE_MOCK_SERVER: boolean;
 
+	readonly VITE_RECAPTCHA_KEY: string;
+
 	//Azure B2C
 	readonly VITE_B2C_CONFIG_CLIENT_ID: string;
 	readonly VITE_B2C_CONFIG_AUTHORITY: string;

@@ -1,6 +1,5 @@
-import { ProblemDetails } from './../types/types';
+import { UserConfig } from '@/hooks/useUserConfig';
 import { createServer, Response } from 'miragejs';
-import { AxiosError, AxiosResponse } from 'axios';
 
 export const makeServer = () => {
 	const otpApiBaseUrl = import.meta.env.VITE_OTP_API_BASE_URL;
@@ -94,6 +93,14 @@ export const makeServer = () => {
 						},
 					],
 				};
+			});
+
+			this.get(`${otpApiBaseUrl}/me`, () => {
+				return {
+					subscription: 'Consumption',
+					email: 'sample@ohtp.dev',
+					name: 'John Doe',
+				} as UserConfig;
 			});
 
 			this.get(

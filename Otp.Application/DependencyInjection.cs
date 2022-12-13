@@ -28,7 +28,7 @@ public static class DependencyInjection
 				config.Host(RegionEndpoint.APSoutheast1.SystemName, (h) => { });
 
 				config.UseDelayedMessageScheduler();
-				config.ReceiveEndpoint("ohtp-ses-events",
+				config.ReceiveEndpoint("ohtp-dev-ses-events",
 					c => { c.ConfigureConsumer<SesEventConsumer>(context); });
 				config.ConfigureEndpoints(context);
 			});

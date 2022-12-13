@@ -1,29 +1,10 @@
 import { oauthInstance, otpInstance, request } from '@/api/https';
-import { App, AppDetail, Channel, OtpRequestConfig, PagedResult } from '@/types/types';
+import { Channel, OtpRequestConfig } from '@/types/types';
 
-import { CursorResult, OtpRequest } from './../types/types';
+import { CursorResult } from './../types/types';
 import { MetricStrategy, MetricInterval, Log } from '../types/types';
 
 export class OtpApi {
-	static getApps = (pageIndex: number): Promise<PagedResult<App>> => {
-		const pageSize = 7;
-		return request(oauthInstance, {
-			method: 'GET',
-			url: '/apps',
-			params: {
-				pageIndex: pageIndex,
-				pageSize: pageSize,
-			},
-		});
-	};
-
-	static getApp = (id: string): Promise<AppDetail> => {
-		return request(oauthInstance, {
-			method: 'GET',
-			url: `/apps/${id}`,
-		});
-	};
-
 	static getAppRecentCallbacks = (id: string): Promise<GetAppRecentCallbacksResponse[]> => {
 		return request(oauthInstance, {
 			method: 'GET',
@@ -42,13 +23,6 @@ export class OtpApi {
 				before,
 				after,
 			},
-		});
-	};
-
-	static getOtpRequest = (id: string): Promise<OtpRequest> => {
-		return request(oauthInstance, {
-			method: 'GET',
-			url: `/otp/${id}`,
 		});
 	};
 

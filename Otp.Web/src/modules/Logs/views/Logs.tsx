@@ -1,9 +1,12 @@
 import { useResetAtom } from 'jotai/utils';
 import { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { OtpApi } from '@/api/otpApi';
 import PageHeader from '@/components/PageHeader/PageHeader';
+import TableContainer from '@/components/Layouts/TableContainer';
+import MainContainer from '@/components/Layouts/MainContainer';
+import EmptyIcon from '@/components/misc/EmptyIcon';
 import { CursorResult, Log } from '@/types/types';
 
 import ChannelColumnFilter from '../components/ChannelColumnFilter';
@@ -58,7 +61,7 @@ const Logs = () => {
 	const resetStatusFilter = useResetAtom(statusFilterAtom);
 
 	const { data, isLoading, isError, isSuccess } = useQuery(
-		'initialLogs',
+		['initialLogs'],
 		() => OtpApi.getLogs(),
 		{
 			staleTime: Infinity,

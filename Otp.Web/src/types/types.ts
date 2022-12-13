@@ -1,26 +1,9 @@
 /**
- * Misc
+ * User
  */
 
-export type PagedResult<T> = {
-	items: T[];
-	pageNumber: number;
-	totalPages: number;
-	totalCount: number;
-	hasPreviousPage: boolean;
-	hasNextPage: boolean;
-};
-
-export type CursorResult<T> = {
-	before?: string;
-	after?: string;
-	items: T[];
-};
-
-export type CursorRequest = {
-	before?: string;
-	after?: string;
-};
+export const SubscriptionType = ['Free', 'Consumption'] as const;
+export type SubscriptionType = typeof SubscriptionType[keyof typeof SubscriptionType];
 
 /**
  * Otp
@@ -153,4 +136,24 @@ export type ProblemDetails = {
 	detail?: string;
 	instance?: string;
 	additionalProperties?: Record<string, any>;
+};
+
+export type PagedResult<T> = {
+	items: T[];
+	pageNumber: number;
+	totalPages: number;
+	totalCount: number;
+	hasPreviousPage: boolean;
+	hasNextPage: boolean;
+};
+
+export type CursorResult<T> = {
+	before?: string;
+	after?: string;
+	items: T[];
+};
+
+export type CursorRequest = {
+	before?: string;
+	after?: string;
 };

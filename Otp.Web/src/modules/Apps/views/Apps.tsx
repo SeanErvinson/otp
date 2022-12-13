@@ -1,47 +1,45 @@
 import { useState } from 'react';
-import { useQuery } from 'react-query';
 
-import { OtpApi } from '@/api/otpApi';
 import EmptyIcon from '@/components/misc/EmptyIcon';
+import MainContainer from '@/components/Layouts/MainContainer';
 import PageHeader from '@/components/PageHeader/PageHeader';
+import TableContainer from '@/components/Layouts/TableContainer';
 import CreateAppButton from '@/modules/Apps/components/CreateAppButton';
 
 import AppsTable from '../components/AppsTable';
-import TableContainer from '@/components/TableContainer/TableContainer';
-import MainContainer from '@/components/MainContainer/MainContainer';
+import useApps from '../queries/useApps';
 
 const Apps = () => {
 	const [page, setPage] = useState(1);
-	const { isSuccess, data, isLoading, isError } = useQuery(
-		['getApps', page],
-		() => OtpApi.getApps(page),
-		{
-			keepPreviousData: true,
-		},
-	);
+	const appsQuery = useApps(page);
 
 	return (
 		<MainContainer id="apps">
 			<PageHeader
 				title="Apps"
-				rightElement={data && data.items.length > 0 && <CreateAppButton />}
+				rightElement={
+					appsQuery.data && appsQuery.data.items.length > 0 && <CreateAppButton />
+				}
 			/>
 
-			<TableContainer isError={isError} isLoading={isLoading} isSuccess={isSuccess}>
-				{data ? (
+			<TableContainer
+				isError={appsQuery.isError}
+				isLoading={appsQuery.isLoading}
+				isSuccess={appsQuery.isSuccess}>
+				{appsQuery.data ? (
 					<article className="flex flex-col gap-6">
 						<div className="overflow-x-auto">
-							<AppsTable apps={data.items} />
+							<AppsTable apps={appsQuery.data.items} />
 						</div>
 						<div className="btn-group justify-center">
-							{data.hasPreviousPage && (
+							{appsQuery.data.hasPreviousPage && (
 								<button
 									className="btn btn-outline btn-wide"
 									onClick={() => setPage(prev => prev - 1)}>
 									Previous Page
 								</button>
 							)}
-							{data.hasNextPage && (
+							{appsQuery.data.hasNextPage && (
 								<button
 									className="btn btn-outline btn-wide"
 									onClick={() => setPage(prev => prev + 1)}>

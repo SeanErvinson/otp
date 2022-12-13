@@ -1,5 +1,5 @@
 import RoundCheckIcon from '@/components/misc/RoundCheckIcon';
-import { useState } from 'react';
+import useClipboard from '@/hooks/useClipboard';
 
 interface Props {
 	apiKey: string;
@@ -7,14 +7,10 @@ interface Props {
 }
 
 const ApiKeyPreview = (props: Props) => {
-	const [isTimeout, setIsTimeout] = useState(false);
+	const { copy, isCopying } = useClipboard();
 
 	const handleOnCopy = () => {
-		setIsTimeout(true);
-		navigator.clipboard.writeText(props.apiKey);
-		setTimeout(() => {
-			setIsTimeout(false);
-		}, 500);
+		copy(props.apiKey);
 	};
 
 	return (
@@ -36,12 +32,12 @@ const ApiKeyPreview = (props: Props) => {
 				/>
 				<button
 					className={`absolute top-0 right-0 rounded-l-none btn btn-primary  ${
-						isTimeout && 'tooltip tooltip-open'
+						isCopying && 'tooltip tooltip-open'
 					}`}
-					data-tip={isTimeout && 'Copied'}
+					data-tip={isCopying && 'Copied'}
 					onClick={handleOnCopy}>
 					<label className="swap swap-rotate">
-						<input type="checkbox" checked={isTimeout} />
+						<input type="checkbox" checked={isCopying} />
 						<div className="swap-off self-center">Copy</div>
 						<div className="swap-on items-center">
 							<RoundCheckIcon className="fill-success" />
