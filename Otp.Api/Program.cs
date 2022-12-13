@@ -27,10 +27,13 @@ void DbMigrate(IApplicationBuilder applicationBuilder)
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-
-    builder.Services.AddHttpContextAccessor();
+    builder.Host.UseSerilog((context, services, configuration) =>
+    {
+        configuration.ReadFrom.Configuration(context.Configuration)
+            .ReadFrom.Services(services)
+            .Enrich.FromLogContext();
+    });
     builder.Services.AddHttpClient();
-    builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddApiVersioning(options =>
     {
         options.DefaultApiVersion = new ApiVersion(1, 0);
@@ -38,6 +41,8 @@ try
         options.ReportApiVersions = true;
         options.ApiVersionReader = new HeaderApiVersionReader("api-version");
     });
+    builder.Services.AddOptions<StorageAccountOptions>().Bind(builder.Configuration.GetSection(StorageAccountOptions.Section));
+    builder.Services.AddHealthChecks(builder.Configuration);
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
     builder.Services.AddRouting(option =>
     {
@@ -63,8 +68,10 @@ try
         {
             option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        });
-
+        })
+        .AddFluentValidation();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwagger(builder.Configuration);
     builder.Services.AddJwtBearerAuthentication(builder.Configuration, builder.Environment);
 
     builder.Services.AddInfrastructure(builder.Configuration);
@@ -74,13 +81,25 @@ try
     builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
     builder.Services.AddScoped<IAppContextService, AppContextService>();
     builder.Services.AddScoped<IOtpContextService, OtpContextService>();
-    builder.Services.AddScoped<IRequestMetadataContext, RequestMetadataContext>();
+    builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-    // Authorization
-    builder.Services.AddAuthorizationPolicies();
-    builder.Services.AddAuthorization(options => { options.AddPolicies(); });
-
-    var app = builder.Build();
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddHttpClient();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.ReportApiVersions = true;
+        options.ApiVersionReader = new HeaderApiVersionReader("api-version");
+    });
+    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+    builder.Services.AddRouting(option =>
+    {
+        option.LowercaseUrls = true;
+        option.LowercaseQueryStrings = true;
+    });
+    builder.Services.AddSingleton(new JsonSerializerOptions(JsonSerializerDefaults.Web));
 
     if (app.Environment.IsDevelopment())
     {

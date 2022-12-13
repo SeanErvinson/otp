@@ -157,3 +157,23 @@ export type CursorRequest = {
 	before?: string;
 	after?: string;
 };
+
+export type PagedResult<T> = {
+	items: T[];
+	pageNumber: number;
+	totalPages: number;
+	totalCount: number;
+	hasPreviousPage: boolean;
+	hasNextPage: boolean;
+};
+
+export type CursorResult<T> = {
+	before?: string;
+	after?: string;
+	items: T[];
+};
+
+export type CursorRequest = {
+	before?: string;
+	after?: string;
+};
