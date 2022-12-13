@@ -17,8 +17,8 @@ public class OtpRequestedEventHandler : INotificationHandler<OtpRequestedEvent>
 
 	public OtpRequestedEventHandler(IChannelProviderService channelProviderService, IMessageScheduler messageScheduler)
 	{
-		_channelProviderService = channelProviderService;
-		_messageScheduler = messageScheduler;
+		_channelProviderService = channelProviderService ?? throw new ArgumentNullException(nameof(channelProviderService));
+		_messageScheduler = messageScheduler ?? throw new ArgumentNullException(nameof(messageScheduler));
 	}
 
 	public async Task Handle(OtpRequestedEvent notification, CancellationToken cancellationToken)

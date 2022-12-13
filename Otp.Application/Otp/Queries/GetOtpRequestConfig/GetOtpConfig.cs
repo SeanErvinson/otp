@@ -7,59 +7,58 @@ using Otp.Core.Domains.ValueObjects;
 
 namespace Otp.Application.Otp.Queries.GetOtpRequestConfig;
 
-public record GetOtpRequestConfigQueryRequest(string Key);
+public sealed record GetOtpRequestConfigQueryRequest(string Key);
 
-public record GetOtpConfig(Guid Id, string Key) : IRequest<GetOtpConfigResponse>
+public sealed record GetOtpConfig(Guid Id, string Key) : IRequest<GetOtpConfigResponse>;
+
+public class GetOtpConfigHandler : IRequestHandler<GetOtpConfig, GetOtpConfigResponse>
 {
-	public class Handler : IRequestHandler<GetOtpConfig, GetOtpConfigResponse>
+	private readonly IApplicationDbContext _dbContext;
+
+	public GetOtpConfigHandler(IApplicationDbContext dbContext)
 	{
-		private readonly IApplicationDbContext _dbContext;
+		_dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+	}
 
-		public Handler(IApplicationDbContext dbContext)
+	public async Task<GetOtpConfigResponse> Handle(GetOtpConfig config,
+		CancellationToken cancellationToken)
+	{
+		var otpRequest =
+			await _dbContext.OtpRequests.AsNoTracking()
+				.Include(otpRequest => otpRequest.App)
+				.FirstOrDefaultAsync(req =>
+						req.Id == config.Id &&
+						req.AuthenticityKey == config.Key &&
+						req.Availability == OtpRequestAvailability.Available &&
+						req.Timeline.Any(@event =>
+							@event.State == EventState.Deliver &&
+							@event.Status == EventStatus.Success),
+					cancellationToken);
+
+		if (otpRequest is null)
 		{
-			_dbContext = dbContext;
+			throw new NotFoundException($"Otp request {config.Id} does not exist");
 		}
 
-		public async Task<GetOtpConfigResponse> Handle(GetOtpConfig config,
-			CancellationToken cancellationToken)
+		if (otpRequest.ExpiresOn < DateTime.UtcNow)
 		{
-			var otpRequest =
-				await _dbContext.OtpRequests.AsNoTracking()
-					.Include(otpRequest => otpRequest.App)
-					.FirstOrDefaultAsync(req =>
-							req.Id == config.Id &&
-							req.AuthenticityKey == config.Key &&
-							req.Availability == OtpRequestAvailability.Available &&
-							req.Timeline.Any(@event =>
-								@event.State == EventState.Deliver &&
-								@event.Status == EventStatus.Success),
-						cancellationToken);
-
-			if (otpRequest is null)
-			{
-				throw new NotFoundException($"Otp request {config.Id} does not exist");
-			}
-
-			if (otpRequest.ExpiresOn < DateTime.UtcNow)
-			{
-				throw new ExpiredResourceException("Otp request has expired");
-			}
-
-			if (otpRequest.App.IsDeleted)
-			{
-				throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
-			}
-			return new GetOtpConfigResponse
-			{
-				BackgroundUrl = otpRequest.App.Branding.BackgroundUrl,
-				LogoUrl = otpRequest.App.Branding.LogoUrl,
-				Contact = otpRequest.Recipient
-			};
+			throw new ExpiredResourceException("Otp request has expired");
 		}
+
+		if (otpRequest.App.IsDeleted)
+		{
+			throw new NotFoundException($"App {otpRequest.AppId} does not exist or has already been deleted");
+		}
+		return new GetOtpConfigResponse
+		{
+			BackgroundUrl = otpRequest.App.Branding.BackgroundUrl,
+			LogoUrl = otpRequest.App.Branding.LogoUrl,
+			Contact = otpRequest.Recipient
+		};
 	}
 }
 
-public record GetOtpConfigResponse
+public sealed record GetOtpConfigResponse
 {
 	public string? BackgroundUrl { get; init; }
 	public string? LogoUrl { get; init; }

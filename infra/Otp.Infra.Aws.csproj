@@ -8,13 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Pulumi" Version="3.36.0" />
-    <PackageReference Include="Pulumi.Aws" Version="5.10.0" />
+    <PackageReference Include="Pulumi" Version="3.49.0" />
+    <PackageReference Include="Pulumi.Aws" Version="5.23.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="System"/>
-    <Using Include="Pulumi"/>
-    <Using Include="Pulumi.Aws"/>
+    <Using Include="System" />
+    <Using Include="Pulumi" />
+    <Using Include="Pulumi.Aws" />
   </ItemGroup>
 </Project>

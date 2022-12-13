@@ -1,4 +1,6 @@
-import { createServer } from 'miragejs';
+import { ProblemDetails } from './../types/types';
+import { createServer, Response } from 'miragejs';
+import { AxiosError, AxiosResponse } from 'axios';
 
 export const makeServer = () => {
 	const otpApiBaseUrl = import.meta.env.VITE_OTP_API_BASE_URL;
@@ -13,7 +15,7 @@ export const makeServer = () => {
 					totalPages: 1,
 					items: [
 						{
-							id: '90c0d1dd-c757-4d94-b77e-54d4b542c3ff',
+							id: '00000000-0000-0000-0000-000000000000',
 							createdAt: new Date(),
 							tags: ['startup'],
 							name: 'Willow',
@@ -46,9 +48,20 @@ export const makeServer = () => {
 				};
 			});
 
+			this.get(`${otpApiBaseUrl}/apps/00000000-0000-0000-0000-000000000000`, () => {
+				return new Response(
+					404,
+					{},
+					{
+						status: 404,
+						title: 'Not found',
+					},
+				);
+			});
+
 			this.get(`${otpApiBaseUrl}/apps/:id`, () => {
 				return {
-					id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cbf3',
+					id: 'f90b5605-fe2e-43e9-9fa0-8d53b481cba6',
 					name: 'Google',
 					description: 'Hello world',
 					tags: [
@@ -64,6 +77,25 @@ export const makeServer = () => {
 					updatedAt: new Date(),
 				};
 			});
+
+			this.get(`${otpApiBaseUrl}/logs`, () => {
+				return {
+					items: [
+						{
+							id: '',
+							status: '',
+							eventDate: '',
+							recipient: '',
+							channel: '',
+							app: {
+								appId: '',
+								appName: '',
+							},
+						},
+					],
+				};
+			});
+
 			this.get(
 				`${otpApiBaseUrl}/otp/:id`,
 				() => {

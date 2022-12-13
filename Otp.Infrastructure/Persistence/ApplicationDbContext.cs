@@ -25,12 +25,14 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 	public DbSet<Principal> Principals { get; set; } = default!;
 	public DbSet<OtpRequest> OtpRequests { get; set; } = default!;
 	public DbSet<CallbackEvent> CallbackEvents { get; set; } = default!;
-	public DbSet<ChannelPrice> ChannelPrices { get; set; } = default!;
-	public DbSet<Discount> Discounts { get; set; } = default!;
+	public DbSet<SmsPrice> SmsPrices { get; set; } = default!;
+	public DbSet<EmailPrice> EmailPrices { get; set; } = default!;
+	// public DbSet<ChannelPrice> ChannelPrices { get; set; } = default!;
+	// public DbSet<Discount> Discounts { get; set; } = default!;
 
 	public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{
-		foreach (var entry in ChangeTracker.Entries<TimedEntity>())
+		foreach (var entry in ChangeTracker.Entries<ITimedEntity>())
 		{
 			switch (entry.State)
 			{
@@ -43,7 +45,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 			}
 		}
 
-		foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
+		foreach (var entry in ChangeTracker.Entries<IAuditableEntity>())
 		{
 			switch (entry.State)
 			{
@@ -55,14 +57,14 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 					break;
 			}
 		}
-		var entities = ChangeTracker.Entries<BaseEntity>()
+		var entities = ChangeTracker.Entries<IHasDomainEvent>()
 			.Select(entry => entry.Entity);
 		await PublishDomainEvents(entities, cancellationToken);
 		var result = await base.SaveChangesAsync(cancellationToken);
 		return result;
 	}
 
-	private Task PublishDomainEvents(IEnumerable<BaseEntity> entities, CancellationToken cancellationToken)
+	private Task PublishDomainEvents(IEnumerable<IHasDomainEvent> entities, CancellationToken cancellationToken)
 	{
 		var domainEventTasks = new List<Task>();
 

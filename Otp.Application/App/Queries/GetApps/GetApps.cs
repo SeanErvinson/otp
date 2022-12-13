@@ -6,32 +6,31 @@ using Otp.Core.Domains.Entities;
 
 namespace Otp.Application.App.Queries.GetApps;
 
-public record GetApps(int PageIndex, int PageSize) : IRequest<PaginatedResult<GetAppSimpleResponse>>
+public sealed record GetApps(int PageIndex, int PageSize) : IRequest<PaginatedResult<GetAppSimpleResponse>>;
+
+public class GetAppsHandler : IRequestHandler<GetApps, PaginatedResult<GetAppSimpleResponse>>
 {
-	public class Handler : IRequestHandler<GetApps, PaginatedResult<GetAppSimpleResponse>>
+	private readonly IApplicationDbContext _applicationDbContext;
+	private readonly ICurrentUserService _currentUserService;
+
+	public GetAppsHandler(IApplicationDbContext applicationDbContext, ICurrentUserService currentUserService)
 	{
-		private readonly IApplicationDbContext _applicationDbContext;
-		private readonly ICurrentUserService _currentUserService;
+		_applicationDbContext = applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
+		_currentUserService = currentUserService ?? throw new ArgumentNullException(nameof(currentUserService));
+	}
 
-		public Handler(IApplicationDbContext applicationDbContext, ICurrentUserService currentUserService)
-		{
-			_applicationDbContext = applicationDbContext;
-			_currentUserService = currentUserService;
-		}
-
-		public async Task<PaginatedResult<GetAppSimpleResponse>> Handle(GetApps request, CancellationToken cancellationToken)
-		{
-			var apps = await _applicationDbContext.Apps
-				.Where(app => app.PrincipalId == _currentUserService.PrincipalId && app.Status != AppStatus.Deleted)
-				.OrderByDescending(app => app.CreatedAt)
-				.Select(app => new GetAppSimpleResponse(app.Id, app.Name, app.Description, app.CreatedAt, app.Tags))
-				.PaginatedResultAsync(request.PageIndex, request.PageSize);
-			return apps;
-		}
+	public async Task<PaginatedResult<GetAppSimpleResponse>> Handle(GetApps request, CancellationToken cancellationToken)
+	{
+		var apps = await _applicationDbContext.Apps
+			.Where(app => app.PrincipalId == _currentUserService.PrincipalId && app.Status != AppStatus.Deleted)
+			.OrderByDescending(app => app.CreatedAt)
+			.Select(app => new GetAppSimpleResponse(app.Id, app.Name, app.Description, app.CreatedAt, app.Tags))
+			.PaginatedResultAsync(request.PageIndex, request.PageSize);
+		return apps;
 	}
 }
 
-public record GetAppSimpleResponse(Guid Id,
+public sealed record GetAppSimpleResponse(Guid Id,
 	string Name,
 	string? Description,
 	DateTime CreatedAt,

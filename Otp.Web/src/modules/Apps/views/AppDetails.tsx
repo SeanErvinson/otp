@@ -1,51 +1,50 @@
-import { AxiosError } from 'axios';
-import { useAtom } from 'jotai';
+import axios from 'axios';
 import { useEffect } from 'react';
-import { useQuery } from 'react-query';
 import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
 
-import { OtpApi } from '@/api/otpApi';
+import { notFoundRoute } from '@/consts/endpoints';
 import LoadingIndicator from '@/components/LoadingIndicator/LoadingIndicator';
-import { CustomError } from '@/types/types';
+import { ProblemDetails } from '@/types/types';
 
-import AppDetailForm from '../components/AppDetailForm';
-import { selectedAppAtom } from '../states/SelectedAppAtom';
+import AppDetailForm from '../components/AppDetailForm/AppDetailForm';
+import useAppDetails from '../queries/useAppDetails';
+import MainContainer from '@/components/Layouts/MainContainer';
 
 const AppDetails = () => {
 	const { appId } = useParams();
 	const navigate = useNavigate();
-	const [, setSelectedApp] = useAtom(selectedAppAtom);
+	const appQuery = useAppDetails(appId);
 
-	const query = useQuery(['getApp', appId], () => OtpApi.getApp(appId!), {
-		enabled: !!appId,
-		onError: (error: AxiosError<CustomError>) => {
+	useEffect(() => {
+		if (!appQuery.error) return;
+		if (axios.isAxiosError<ProblemDetails>(appQuery.error)) {
 			if (
-				error.response &&
-				(error.response.status === 404 || error.response.status === 410)
+				appQuery.error.response &&
+				(appQuery.error.response.status === 404 || appQuery.error.response.status === 410)
 			) {
-				navigate('/404');
+				navigate(notFoundRoute);
 				return;
 			}
-		},
-		onSuccess: data => {
-			setSelectedApp(data);
-		},
-	});
+		} else {
+			navigate(notFoundRoute);
+			return;
+		}
+	}, [appQuery.error]);
 
 	useEffect(() => {
 		if (!appId) {
-			navigate('/404');
+			navigate(notFoundRoute);
 			return;
 		}
 	}, []);
 
 	return (
-		<main id="app" className="h-full mx-auto">
-			{query.isLoading && <LoadingIndicator />}
-			{query.data && (
+		<MainContainer id="app">
+			{appQuery.isLoading && <LoadingIndicator />}
+			{appQuery.data && (
 				<>
 					<div className="flex flex-row justify-between mb-4">
-						<AppDetailForm />
+						<AppDetailForm id={appQuery.data.id} />
 					</div>
 
 					<div>
@@ -58,7 +57,7 @@ const AppDetails = () => {
 								}>
 								Settings
 							</NavLink>
-							{query.data?.callbackUrl && (
+							{appQuery.data?.callbackUrl && (
 								<NavLink
 									to="recent-callbacks"
 									end
@@ -70,11 +69,11 @@ const AppDetails = () => {
 							)}
 						</div>
 
-						<Outlet context={query.data} />
+						<Outlet context={appQuery.data} />
 					</div>
 				</>
 			)}
-		</main>
+		</MainContainer>
 	);
 };
 

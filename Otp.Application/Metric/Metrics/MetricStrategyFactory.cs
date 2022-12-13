@@ -25,7 +25,7 @@ public static class MetricStrategyFactory
 	}
 }
 
-public record MetricQuery(string MetricName,
+public sealed record MetricQuery(string MetricName,
 	DateTime StartDateTime,
 	DateTime EndDateTime,
 	MetricInterval? MetricInterval,

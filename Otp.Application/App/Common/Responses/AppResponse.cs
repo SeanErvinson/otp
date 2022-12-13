@@ -1,6 +1,6 @@
 namespace Otp.Application.App.Common.Responses;
 
-public record AppResponse
+public sealed record AppResponse
 {
 	public Guid Id { get; set; }
 	public string Name { get; init; } = default!;

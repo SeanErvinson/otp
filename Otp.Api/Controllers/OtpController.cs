@@ -3,7 +3,9 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Otp.Api.Filters;
 using Otp.Application.Otp.Commands.CancelOtp;
+using Otp.Application.Otp.Commands.RequestEmailOtp;
 using Otp.Application.Otp.Commands.RequestOtp;
+using Otp.Application.Otp.Commands.RequestSmsOtp;
 using Otp.Application.Otp.Commands.ResendOtp;
 using Otp.Application.Otp.Commands.VerifyCode;
 using Otp.Application.Otp.Queries.GetOtp;
@@ -51,9 +53,9 @@ public class OtpController : ControllerBase
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RequestOtpResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	public async Task<IActionResult> RequestEmail([FromBody] RequestOtpEmailRequest request)
+	public async Task<IActionResult> RequestEmail([FromBody] RequestEmailOtp request)
 	{
-		var result = await _mediator.Send(RequestOtp.Email(request.EmailAddress, request.SuccessUrl, request.CancelUrl));
+		var result = await _mediator.Send(request);
 		return Ok(result);
 	}
 
@@ -82,9 +84,9 @@ public class OtpController : ControllerBase
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RequestOtpResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	public async Task<IActionResult> RequestSms([FromBody] RequestOtpSmsRequest request)
+	public async Task<IActionResult> RequestSms([FromBody] RequestSmsOtp request)
 	{
-		var result = await _mediator.Send(RequestOtp.Sms(request.PhoneNumber, request.SuccessUrl, request.CancelUrl));
+		var result = await _mediator.Send(request);
 		return Ok(result);
 	}
 

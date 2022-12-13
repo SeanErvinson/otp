@@ -5,7 +5,7 @@ using Serilog;
 
 namespace Otp.Application.Consumers;
 
-public record ElapsedOtp(Guid Id);
+public sealed record ElapsedOtp(Guid Id);
 
 public class ElapsedOtpConsumer : IConsumer<ElapsedOtp>
 {

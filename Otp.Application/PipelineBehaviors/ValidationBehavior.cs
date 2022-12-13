@@ -1,7 +1,8 @@
 ﻿using FluentValidation;
 using MediatR;
+using Otp.Application.Common.Exceptions;
 
-namespace Otp.Api.PipelineBehaviors;
+namespace Otp.Application.PipelineBehaviors;
 
 public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
 	where TRequest : IRequest<TResponse>
@@ -10,12 +11,12 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
 
 	public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
 	{
-		_validators = validators;
+		_validators = validators ?? throw new ArgumentNullException(nameof(validators));
 	}
 
 	public async Task<TResponse> Handle(TRequest request,
-		CancellationToken cancellationToken,
-		RequestHandlerDelegate<TResponse> next)
+		RequestHandlerDelegate<TResponse> next,
+		CancellationToken cancellationToken)
 	{
 		if (_validators.Any())
 		{
@@ -29,7 +30,12 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
 
 			if (failures.Any())
 			{
-				throw new ValidationException(failures);
+				var validation = failures.GroupBy(error => error.PropertyName)
+					.ToDictionary(e => e.Key, failures => failures.Select(c => c.ErrorMessage));
+
+				throw new InvalidRequestException(ExceptionConstants.InvalidInput,
+					"One or more validation errors occurred.",
+					validation);
 			}
 		}
 		return await next();

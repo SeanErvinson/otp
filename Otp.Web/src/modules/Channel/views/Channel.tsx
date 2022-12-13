@@ -1,15 +1,16 @@
 import { AxiosError } from 'axios';
 import React, { FormEvent, useEffect, useState } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { OtpApi, VerifyOtpResponse } from '@/api/otpApi';
 import LoadingIndicator from '@/components/LoadingIndicator/LoadingIndicator';
 import { Loader } from '@/components/Loader';
-import { CustomError } from '@/types/types';
+import { ProblemDetails } from '@/types/types';
 import { isValidGuid } from '@/utils/stringUtils';
 
 import OtpInputGroup from '../components/OtpInputGroup';
+import { notFoundRoute } from '@/consts/endpoints';
 
 const otpInputLength = 6;
 
@@ -38,7 +39,7 @@ const Channel = () => {
 					error.response &&
 					(error.response.status === 404 || error.response.status === 410)
 				) {
-					navigate('/404', {
+					navigate(notFoundRoute, {
 						replace: true,
 					});
 					return;
@@ -47,8 +48,7 @@ const Channel = () => {
 		},
 	);
 
-	const verifyMutation = useMutation<VerifyOtpResponse, CustomError>(
-		['verifyApp', requestId, key, code],
+	const verifyMutation = useMutation<VerifyOtpResponse, ProblemDetails>(
 		() => OtpApi.verifyOtp(requestId!, key, code),
 		{
 			onSuccess: response => {
@@ -92,7 +92,7 @@ const Channel = () => {
 
 	useEffect(() => {
 		if (!requestId || !isValidGuid(requestId) || !hash) {
-			navigate('/404', {
+			navigate(notFoundRoute, {
 				replace: true,
 			});
 			return;

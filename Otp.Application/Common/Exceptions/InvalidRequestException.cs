@@ -2,13 +2,23 @@
 
 namespace Otp.Application.Common.Exceptions;
 
-public class InvalidRequestException : Exception
+[Serializable]
+public sealed class InvalidRequestException : BusinessException
 {
-	public InvalidRequestException(string message) : base(message)
+	public InvalidRequestException(string detail) : base(ExceptionConstants.InvalidInput, detail)
 	{
 	}
 
-	public InvalidRequestException(object entity) : base($"Entity {entity} has bad or invalid data")
+	public InvalidRequestException(string title, string detail, object? additionalProperties = null) : base(title,
+		detail,
+		additionalProperties)
+	{
+	}
+
+	public InvalidRequestException(string title,
+		string detail,
+		Exception? innerException,
+		object? additionalProperties = null) : base(title, detail, innerException, additionalProperties)
 	{
 	}
 

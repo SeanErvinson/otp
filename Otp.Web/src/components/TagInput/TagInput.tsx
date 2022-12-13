@@ -7,10 +7,11 @@ import './tagInput.less';
 
 interface Props {
 	initialTags?: string[];
+	autoFocus?: boolean;
 	onUpdate: (tags: string[]) => void;
 }
 
-const TagInput = ({ onUpdate, initialTags }: Props) => {
+const TagInput = ({ onUpdate, initialTags, autoFocus = false }: Props) => {
 	const [value, setValue] = useState('');
 	const [tags, setTags] = useState<string[]>(initialTags ?? []);
 	const [keyUp, setKeyUp] = useState(false);
@@ -59,7 +60,7 @@ const TagInput = ({ onUpdate, initialTags }: Props) => {
 			</ul>
 			<input
 				type="text"
-				autoFocus
+				autoFocus={autoFocus}
 				value={value}
 				onChange={e => setValue(e.target.value)}
 				onKeyUp={() => setKeyUp(true)}

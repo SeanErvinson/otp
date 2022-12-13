@@ -1,6 +1,6 @@
 namespace Otp.Api.Options;
 
-public record SwaggerOptions
+public sealed record SwaggerOptions
 {
 	public const string Section = "Swagger";
 	public string Title { get; init; } = default!;

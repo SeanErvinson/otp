@@ -61,7 +61,7 @@ public class CallbackTriggeredEventHandler : INotificationHandler<CallbackTrigge
 		}
 	}
 
-	public record CallbackEventResponse
+	public sealed record CallbackEventResponse
 	{
 		public Guid RequestId { get; init; }
 		public Channel Channel { get; init; }
@@ -69,5 +69,5 @@ public class CallbackTriggeredEventHandler : INotificationHandler<CallbackTrigge
 		public CallbackEventType Type { get; init; }
 	};
 
-	public record SignatureResponse(long Timestamp, string Value);
+	public sealed record SignatureResponse(long Timestamp, string Value);
 }

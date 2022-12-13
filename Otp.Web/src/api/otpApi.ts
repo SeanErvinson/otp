@@ -68,44 +68,6 @@ export class OtpApi {
 		});
 	};
 
-	static createApp = (req: CreateAppRequest): Promise<CreateAppResponse> => {
-		return request(oauthInstance, {
-			method: 'POST',
-			url: '/apps',
-			data: req,
-		});
-	};
-
-	static saveAppDescriptors = (req: SaveDescriptorRequest): Promise<AppDetail> => {
-		return request(oauthInstance, {
-			method: 'PUT',
-			url: `/apps/${req.appId}/descriptor`,
-			data: req,
-		});
-	};
-
-	static saveAppCallback = (req: SaveCallbackRequest): Promise<AppDetail> => {
-		return request(oauthInstance, {
-			method: 'PUT',
-			url: `/apps/${req.appId}/callback`,
-			data: req,
-		});
-	};
-
-	static regenerateAppApiKey = (appId: string | undefined): Promise<RegenerateApiKeyResponse> => {
-		return request(oauthInstance, {
-			method: 'POST',
-			url: `/apps/${appId}/regenerate-api-key`,
-		});
-	};
-
-	static deleteApp = (appId: string): Promise<void> => {
-		return request(oauthInstance, {
-			method: 'DELETE',
-			url: `/apps/${appId}`,
-		});
-	};
-
 	/**
 	 * Otp-Related
 	 */
@@ -158,34 +120,6 @@ export type VerifyOtpResponse = {
 
 export type CancelOtpResponse = {
 	cancelUrl: string;
-};
-
-type CreateAppRequest = {
-	name: string;
-	tags: string[];
-	description: string;
-};
-
-export type CreateAppResponse = {
-	id: string;
-	apiKey: string;
-};
-
-type SaveDescriptorRequest = {
-	appId: string;
-	name: string;
-	description?: string;
-	tags: string[];
-};
-
-type SaveCallbackRequest = {
-	appId: string;
-	callbackUrl: string;
-	endpointSecret: string;
-};
-
-export type RegenerateApiKeyResponse = {
-	apiKey: string;
 };
 
 export type GetAppRecentCallbacksResponse = {

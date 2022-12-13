@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { OtpApi } from '@/api/otpApi';
 import SingleStat from '@/components/SIngleStat/SingleStat';
@@ -7,6 +7,8 @@ import { CountMetric } from '@/types/types';
 import DateUtils from '@/utils/dateUtils';
 
 import ChannelUsageChart from '../components/ChannelUsageChart';
+import MainContainer from '@/components/Layouts/MainContainer';
+import useSubscription from '@/hooks/useSubscription';
 
 const refreshInterval = 10000;
 
@@ -14,6 +16,7 @@ const Dashboard = () => {
 	const currentDate = new Date();
 	const startMonthDate = DateUtils.startOfMonth(currentDate);
 	const endMonthDate = DateUtils.endOfMonth(currentDate);
+	const consumptionOnly = useSubscription('Consumption');
 
 	const smsCountMetricQuery = useQuery(
 		['getSmsCountMetric'],
@@ -48,19 +51,23 @@ const Dashboard = () => {
 	const totalPrevEmailRequest = emailCountMetricQuery.data?.data.previousMonthSentRequest;
 
 	return (
-		<main id="home" className="h-full mx-auto">
+		<MainContainer id="home">
 			<PageHeader title="Dashboard" />
 			<article className="flex flex-col gap-4">
 				<div className="flex flex-col md:flex-row gap-6">
-					<SingleStat
-						title="SMS sent this month"
-						value={totalSmsRequest?.toString() ?? '0'}
-						description={
-							totalPrevSmsRequest && totalSmsRequest
-								? `${totalPrevSmsRequest / totalSmsRequest}% more than last month`
-								: null
-						}
-					/>
+					{consumptionOnly && (
+						<SingleStat
+							title="SMS sent this month"
+							value={totalSmsRequest?.toString() ?? '0'}
+							description={
+								totalPrevSmsRequest && totalSmsRequest
+									? `${
+											totalPrevSmsRequest / totalSmsRequest
+									  }% more than last month`
+									: null
+							}
+						/>
+					)}
 
 					<SingleStat
 						title="Email sent this month"
@@ -76,7 +83,7 @@ const Dashboard = () => {
 				</div>
 				<ChannelUsageChart />
 			</article>
-		</main>
+		</MainContainer>
 	);
 };
 

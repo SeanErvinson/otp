@@ -7,7 +7,7 @@ using Otp.Core.Utils;
 namespace Otp.Core.Domains.Entities;
 
 [DebuggerDisplay("{Name} - {Status}")]
-public class App : AuditableEntity
+public class App : AuditableEntity<Guid>
 {
 	public Guid PrincipalId { get; }
 	public string Name { get; }
@@ -34,7 +34,7 @@ public class App : AuditableEntity
 		string name,
 		string apiKey,
 		ICollection<string>? tags,
-		string? description = null)
+		string? description = null) : base(Guid.NewGuid())
 	{
 		PrincipalId = principalId;
 		Name = name;

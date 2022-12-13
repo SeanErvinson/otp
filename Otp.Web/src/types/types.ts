@@ -146,8 +146,11 @@ export type Status = typeof Status[keyof typeof Status];
  * Misc
  */
 
-export type CustomError = {
-	type: string;
-	title: string;
-	detail: string;
+export type ProblemDetails = {
+	type?: string;
+	title?: string;
+	status?: number;
+	detail?: string;
+	instance?: string;
+	additionalProperties?: Record<string, any>;
 };

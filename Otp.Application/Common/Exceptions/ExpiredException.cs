@@ -3,17 +3,22 @@
 namespace Otp.Application.Common.Exceptions;
 
 [Serializable]
-public class ExpiredResourceException : Exception
+public sealed class ExpiredResourceException : Exception
 {
+	public ExpiredResourceException()
+	{
+	}
+	
 	public ExpiredResourceException(string message) : base(message)
 	{
 	}
 
-	public ExpiredResourceException(object entity) : base($"Entity {entity} has bad or invalid data")
+	public ExpiredResourceException(object entity) : base("Resource has expired or is no longer available.")
 	{
 	}
 
-	protected ExpiredResourceException(SerializationInfo info, StreamingContext context) : base(info, context)
+	protected ExpiredResourceException(SerializationInfo info, StreamingContext context)
+		: base(info, context)
 	{
 	}
 }

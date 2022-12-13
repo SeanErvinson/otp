@@ -1,6 +1,6 @@
 ﻿namespace Otp.Api.Options;
 
-public record AzureB2COptions
+public sealed record AzureB2COptions
 {
 	public const string Section = "AzureB2C";
 	public string Instance { get; init; } = default!;

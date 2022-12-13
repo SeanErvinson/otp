@@ -14,6 +14,7 @@ import { channelFilterAtom } from '../states/ChannelFilterAtom';
 import { statusFilterAtom } from '../states/StatusFilterAtom';
 import EmptyIcon from '@/components/misc/EmptyIcon';
 import TableContainer from '@/components/TableContainer/TableContainer';
+import MainContainer from '@/components/MainContainer/MainContainer';
 
 const Hello = ({ queryData }: { queryData: CursorResult<Log> }) => {
 	const [beforeCursor, setBeforeCursor] = useState<string | null>();
@@ -73,7 +74,7 @@ const Logs = () => {
 	}, []);
 
 	return (
-		<main id="usage">
+		<MainContainer id="usage">
 			<PageHeader title="Logs" />
 			<article className="flex flex-row gap-8">
 				<section className="flex flex-col gap-4">
@@ -97,7 +98,7 @@ const Logs = () => {
 					)}
 				</TableContainer>
 			</article>
-		</main>
+		</MainContainer>
 	);
 };
 

@@ -5,6 +5,10 @@ import { NavLink } from 'react-router-dom';
 import MenuIcon from '@/components/misc/MenuIcon';
 
 import LogoutButton from './LogoutButton';
+import DashboardIcon from '../misc/DashboardIcon';
+import AppsIcon from '../misc/AppsIcon';
+import BillingIcon from '../misc/BillingIcon';
+import LogsIcon from '../misc/LogsIcon';
 
 interface Props {
 	children: ReactChildren | ReactNode;
@@ -26,18 +30,30 @@ const Sidebar = (props: Props) => {
 			</div>
 			<div className="drawer-side">
 				<label htmlFor="drawer" className="drawer-overlay"></label>
-				<ul className="menu p-3 text-md overflow-y-auto w-56 bg-base-100 text-base-content">
+				<ul className="menu p-3 text-md overflow-y-auto w-64 bg-base-100 text-base-content">
 					<li>
-						<NavLink to="/">Dashboard</NavLink>
+						<NavLink to="/">
+							<DashboardIcon className="h-6 w-6 fill-current" /> Dashboard
+						</NavLink>
 					</li>
 					<li>
-						<NavLink to="/apps">Apps</NavLink>
+						<NavLink to="/apps">
+							<AppsIcon className="h-6 w-6 fill-current" />
+							Apps
+						</NavLink>
 					</li>
 					<li>
-						<NavLink to="/logs">Logs</NavLink>
+						<NavLink to="/logs">
+							<LogsIcon className="h-6 w-6 fill-current" />
+							Logs
+						</NavLink>
 					</li>
+
 					<li>
-						<NavLink to="/billing">Billing</NavLink>
+						<NavLink to="/billing">
+							<BillingIcon className="h-6 w-6 fill-current" />
+							Billing
+						</NavLink>
 					</li>
 					<div className="grow"></div>
 					<li>

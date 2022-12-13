@@ -3,7 +3,7 @@ using Otp.Core.Domains.Common.Models;
 
 namespace Otp.Core.Domains.Entities;
 
-public class CallbackEvent : TimedEntity
+public class CallbackEvent : TimedEntity<Guid>
 {
 	public Guid AppId { get; private set; }
 	public string? Message { get; set; }
@@ -25,7 +25,7 @@ public class CallbackEvent : TimedEntity
 		Guid requestId,
 		string contact,
 		CallbackEventType type,
-		string? message)
+		string? message) : base(Guid.NewGuid())
 	{
 		AppId = appId;
 		Channel = channel;

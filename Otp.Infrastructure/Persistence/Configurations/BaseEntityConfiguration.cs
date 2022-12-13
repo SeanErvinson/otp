@@ -4,7 +4,7 @@ using Otp.Core.Domains.Common.Models;
 
 namespace Otp.Infrastructure.Persistence.Configurations;
 
-public class BaseEntityConfiguration<T> : IEntityTypeConfiguration<T> where T : BaseEntity
+public class BaseEntityConfiguration<T, TKey> : IEntityTypeConfiguration<T> where T : BaseEntity<TKey>
 {
 	public virtual void Configure(EntityTypeBuilder<T> builder)
 	{

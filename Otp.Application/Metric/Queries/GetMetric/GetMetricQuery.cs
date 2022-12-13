@@ -12,41 +12,40 @@ public enum MetricInterval
 	Second
 }
 
-public record GetMetricQuery(string MetricName,
+public sealed record GetMetricQuery(string MetricName,
 	string TimeSpan,
 	MetricInterval? MetricInterval,
-	Guid? ResourceId) : IRequest<GetMetricResponse>
+	Guid? ResourceId) : IRequest<GetMetricResponse>;
+
+public class GetMetricQueryHandler : IRequestHandler<GetMetricQuery, GetMetricResponse>
 {
-	public class Handler : IRequestHandler<GetMetricQuery, GetMetricResponse>
+	private readonly IMediator _mediator;
+
+	public GetMetricQueryHandler(IMediator mediator)
 	{
-		private readonly IMediator _mediator;
+		_mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+	}
 
-		public Handler(IMediator mediator)
+	public async Task<GetMetricResponse> Handle(GetMetricQuery request, CancellationToken cancellationToken)
+	{
+		var (startDateTime, endDateTime) = ParseTimeSpan(request.TimeSpan);
+		var query = new MetricQuery(request.MetricName,
+			startDateTime,
+			endDateTime,
+			request.MetricInterval,
+			request.ResourceId);
+		IRequest<MetricData> command;
+
+		try
 		{
-			_mediator = mediator;
+			command = MetricStrategyFactory.GetMetricStrategy(query);
 		}
-
-		public async Task<GetMetricResponse> Handle(GetMetricQuery request, CancellationToken cancellationToken)
+		catch (NotSupportedException ex)
 		{
-			var (startDateTime, endDateTime) = ParseTimeSpan(request.TimeSpan);
-			var query = new MetricQuery(request.MetricName,
-				startDateTime,
-				endDateTime,
-				request.MetricInterval,
-				request.ResourceId);
-			IRequest<MetricData> command;
-
-			try
-			{
-				command = MetricStrategyFactory.GetMetricStrategy(query);
-			}
-			catch (NotSupportedException ex)
-			{
-				throw new InvalidRequestException(ex.Message);
-			}
-			var result = await _mediator.Send(command, cancellationToken);
-			return new GetMetricResponse(request.MetricName, result.Data);
+			throw new InvalidRequestException(ex.Message);
 		}
+		var result = await _mediator.Send(command, cancellationToken);
+		return new GetMetricResponse(request.MetricName, result.Data);
 	}
 
 	private static (DateTime startDateTime, DateTime endDateTime) ParseTimeSpan(string timeSpan)
@@ -67,5 +66,5 @@ public record GetMetricQuery(string MetricName,
 	}
 }
 
-public record MetricData(JsonElement Data);
-public record GetMetricResponse(string Name, JsonElement Data);
+public sealed record MetricData(JsonElement Data);
+public sealed record GetMetricResponse(string Name, JsonElement Data);
