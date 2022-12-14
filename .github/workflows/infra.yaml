@@ -32,12 +32,12 @@ jobs:
         uses: ./.github/workflows/pulumi.yaml
         with:
             command: preview
+            aws-region: ${{ secrets.AWS_REGION }}
         secrets:
             azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
             azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
             azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
             aws-role-id: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-            aws-region: ${{ secrets.AWS_REGION }}
             pulumi-passphrase: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
 
     up:
@@ -45,10 +45,10 @@ jobs:
         uses: ./.github/workflows/pulumi.yaml
         with:
             command: up
+            aws-region: ${{ secrets.AWS_REGION }}
         secrets:
             azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
             azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
             azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
             aws-role-id: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-            aws-region: ${{ secrets.AWS_REGION }}
             pulumi-passphrase: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
