@@ -17,8 +17,8 @@ return await Deployment.RunAsync(() =>
 	Output.All(accountId, region)
 		.Apply(t =>
 		{
-			Log.Info($"AccountId: {accountId}");
-			Log.Info($"Region: {region}");
+			Log.Info($"AccountId: {t[0]}");
+			Log.Info($"Region: {t[1]}");
 			return 1;
 		});
 
