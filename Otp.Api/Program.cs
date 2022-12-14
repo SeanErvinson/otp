@@ -13,21 +13,23 @@ using Otp.Infrastructure.Options;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateBootstrapLogger();
+	.WriteTo.Console()
+	.CreateBootstrapLogger();
 
 void DbMigrate(IApplicationBuilder applicationBuilder)
 {
-    using var scope = applicationBuilder.ApplicationServices.CreateScope();
-    var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
-    dbInitializer.Migrate();
-    dbInitializer.Seed();
+	using var scope = applicationBuilder.ApplicationServices.CreateScope();
+	var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+	dbInitializer.Migrate();
+	dbInitializer.Seed();
 }
 
 try
 {
 	var builder = WebApplication.CreateBuilder(args);
-	builder.Host.UseSerilog((context, services, configuration) =>
+	builder.Host.UseSerilog((context,
+		services,
+		configuration) =>
 	{
 		configuration.ReadFrom.Configuration(context.Configuration)
 			.ReadFrom.Services(services)
@@ -41,21 +43,27 @@ try
 		options.ReportApiVersions = true;
 		options.ApiVersionReader = new HeaderApiVersionReader("api-version");
 	});
-	builder.Services.AddOptions<StorageAccountOptions>().Bind(builder.Configuration.GetSection(StorageAccountOptions.Section));
-	builder.Services.AddHealthChecks(builder.Configuration);
+	builder.Services.AddControllers()
+		.AddJsonOptions(option =>
+		{
+			option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+			option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+		});
 	builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 	builder.Services.AddRouting(option =>
 	{
 		option.LowercaseUrls = true;
 		option.LowercaseQueryStrings = true;
 	});
+	builder.Services.AddEndpointsApiExplorer();
 	builder.Services.AddSingleton(new JsonSerializerOptions(JsonSerializerDefaults.Web));
 
+	builder.Services.AddHealthChecks(builder.Configuration);
 	builder.Services.AddSwagger(builder.Configuration);
 
-	builder.Services.AddHealthChecks(builder.Configuration);
-
-	builder.Host.UseSerilog((context, services, configuration) =>
+	builder.Host.UseSerilog((context,
+		services,
+		configuration) =>
 	{
 		configuration.ReadFrom.Configuration(context.Configuration)
 			.ReadFrom.Services(services);
@@ -63,15 +71,6 @@ try
 
 	builder.Services.AddOptions<StorageAccountOptions>().Bind(builder.Configuration.GetSection(StorageAccountOptions.Section));
 
-	builder.Services.AddControllers()
-		.AddJsonOptions(option =>
-		{
-			option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-			option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-		})
-		.AddFluentValidation();
-	builder.Services.AddEndpointsApiExplorer();
-	builder.Services.AddSwagger(builder.Configuration);
 	builder.Services.AddJwtBearerAuthentication(builder.Configuration, builder.Environment);
 
 	builder.Services.AddInfrastructure(builder.Configuration);
@@ -81,9 +80,8 @@ try
 	builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 	builder.Services.AddScoped<IAppContextService, AppContextService>();
 	builder.Services.AddScoped<IOtpContextService, OtpContextService>();
-	builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-    builder.Services.AddSwagger(builder.Configuration);
+	var app = builder.Build();
 
 	if (app.Environment.IsDevelopment())
 	{
@@ -104,11 +102,11 @@ try
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "Host terminated unexpectedly");
-    return 1;
+	Log.Fatal(ex, "Host terminated unexpectedly");
+	return 1;
 }
 finally
 {
-    Log.Information("Host is shutting down");
-    Log.CloseAndFlush();
+	Log.Information("Host is shutting down");
+	Log.CloseAndFlush();
 }
