@@ -32,7 +32,6 @@ jobs:
         uses: ./.github/workflows/pulumi.yaml
         with:
             command: preview
-            aws-region: ${{ secrets.AWS_REGION }}
         secrets:
             azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
             azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -45,7 +44,6 @@ jobs:
         uses: ./.github/workflows/pulumi.yaml
         with:
             command: up
-            aws-region: ${{ secrets.AWS_REGION }}
         secrets:
             azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
             azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
