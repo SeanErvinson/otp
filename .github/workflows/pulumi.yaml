@@ -37,8 +37,6 @@ jobs:
     pulumi:
         name: Pulumi ${{ inputs.command }}
         runs-on: ubuntu-latest
-        needs:
-            - preview
         steps:
             -   uses: actions/checkout@v3
             -   uses: actions/setup-dotnet@v3
