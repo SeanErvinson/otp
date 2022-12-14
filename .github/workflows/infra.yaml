@@ -49,6 +49,8 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: ${{ secrets.AWS_REGION }}
+      - name: List
+        run: ls -lah
       - uses: pulumi/actions@v3
         with:
           command: preview
