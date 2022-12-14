@@ -70,10 +70,11 @@ try
 	});
 
 	builder.Services.AddOptions<StorageAccountOptions>().Bind(builder.Configuration.GetSection(StorageAccountOptions.Section));
+	builder.Services.AddOptions<AwsCredentialOptions>().Bind(builder.Configuration.GetSection(AwsCredentialOptions.Section));
 
 	builder.Services.AddJwtBearerAuthentication(builder.Configuration, builder.Environment);
 
-	builder.Services.AddInfrastructure(builder.Configuration);
+	builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
 	builder.Services.AddApplication(builder.Configuration);
 
 	builder.Services.AddScoped<IDbInitializer, DbInitializer>();
