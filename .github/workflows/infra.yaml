@@ -29,7 +29,7 @@ permissions:
 jobs:
     preview:
         name: pulumi preview
-        uses: ./.github/workflows/pulumi.yaml@main
+        uses: ./.github/workflows/pulumi.yaml
         with:
             command: preview
         secrets:
@@ -41,7 +41,7 @@ jobs:
 
     up:
         name: pulumi up
-        uses: ./.github/workflows/pulumi.yaml@main
+        uses: ./.github/workflows/pulumi.yaml
         needs: 
             - preview
         with:
