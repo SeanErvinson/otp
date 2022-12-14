@@ -1,0 +1,66 @@
+name: pulumi
+
+on:
+    workflow_call: 
+        inputs: 
+            command:
+                type: string
+                required: true
+                default: preview
+                description: Possible values are preview, up and delete
+            dotnet-version:
+                type: string
+                default: 6.0.x
+                description: Dotnet version
+            aws-region:
+                type: string
+                default: ap-southeast-1
+                description: AWS Region
+        secrets: 
+            azure-client-id:
+                required: true
+                description: Azure Client Id
+            azure-tenant-id:
+                required: true
+                description: Azure Tenant Id
+            azure-subscription-id:
+                required: true
+                description: Azure Subscription Id
+            aws-role-id:
+                required: true
+                description: AWS GitHub Action role
+            pulumi-passphrase:
+                required: true
+                description: Secret used to sign the stack
+
+jobs:
+    pulumi:
+        name: Pulumi ${{ inputs.command }}
+        runs-on: ubuntu-latest
+        needs:
+            - preview
+        steps:
+            -   uses: actions/checkout@v3
+            -   uses: actions/setup-dotnet@v3
+                with:
+                    dotnet-version: ${{ inputs.dotnet-version }}
+            -   name: Configure Azure Credentials
+                uses: azure/login@v1
+                with:
+                    client-id: ${{ secrets.azure-client-id }}
+                    tenant-id: ${{ secrets.azure-tenant-id }}
+                    subscription-id: ${{ secrets.azure-subscription-id }}
+            -   name: Configure AWS Credentials
+                uses: aws-actions/configure-aws-credentials@v1
+                with:
+                    role-to-assume: ${{ secrets.aws-role-id }}
+                    aws-region: ${{ secrets.aws-region }}
+            -   uses: pulumi/actions@v3
+                with:
+                    command: up
+                    work-dir: infra
+                    comment-on-pr: true
+                    stack-name: aws-dev
+                    cloud-url: azblob://pulumi?storage_account=stodeploymentdata
+                env:
+                    PULUMI_CONFIG_PASSPHRASE: ${{ secrets.pulumi-passphrase }}
