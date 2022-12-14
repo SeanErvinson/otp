@@ -55,6 +55,7 @@ jobs:
           work-dir: ./infra
           comment-on-pr: true
           stack-name: aws-dev
+          upsert: true
           cloud-url: azblob://pulumi?storage_account=stodeploymentdata
         env:
           PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
