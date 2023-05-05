@@ -1,8 +1,7 @@
 import { oauthInstance, otpInstance, request } from '@/api/https';
 import { Channel, OtpRequestConfig } from '@/types/types';
 
-import { CursorResult } from './../types/types';
-import { MetricStrategy, MetricInterval, Log } from '../types/types';
+import { MetricStrategy, MetricInterval, Log , CursorResult } from '../types/types';
 
 export class OtpApi {
 	static getAppRecentCallbacks = (id: string): Promise<GetAppRecentCallbacksResponse[]> => {

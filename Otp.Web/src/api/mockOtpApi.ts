@@ -1,5 +1,6 @@
-import { UserConfig } from '@/hooks/useUserConfig';
 import { createServer, Response } from 'miragejs';
+
+import { UserConfig } from '@/hooks/useUserConfig';
 
 export const makeServer = () => {
 	const otpApiBaseUrl = import.meta.env.VITE_OTP_API_BASE_URL;
@@ -120,7 +121,7 @@ export const makeServer = () => {
 						requestedAt: new Date(),
 						clientInfo: {
 							ipAddress: '0.0.0.0',
-							referrer: 'http://localhost:3000/logs',
+							referrer: 'http://localhost:5173/logs',
 							userAgent:
 								'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.53 Safari/537.36',
 						},

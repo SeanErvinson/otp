@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom';
+
 import DangerButton from '@/components/Buttons/DangerButton';
 import { appsRoute } from '@/consts/endpoints';
-import { useNavigate } from 'react-router-dom';
+
 import useDeleteApp from '../../mutations/useDeleteApp';
 
 const DangerSection = ({ appId }: { appId: string }) => {

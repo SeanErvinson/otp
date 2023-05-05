@@ -1,9 +1,10 @@
+import { useQueryClient } from '@tanstack/react-query';
+
 import MainContainer from '@/components/Layouts/MainContainer';
 import SectionContainer from '@/components/Layouts/SettingsSection';
 import PageHeader from '@/components/PageHeader/PageHeader';
 import useSubscription from '@/hooks/useSubscription';
 import useUserConfig, { UserConfig, userConfigKeys } from '@/hooks/useUserConfig';
-import { useQueryClient } from '@tanstack/react-query';
 
 const RemainingCredit = ({ credit }: { credit: string }) => {
 	const queryClient = useQueryClient();

@@ -31,7 +31,7 @@ const LastSpanSelect = (props: Props) => {
 	};
 
 	const onClickDatePreset = (offsetBy: number) => {
-		var date = subtractDays(offsetBy);
+		const date = subtractDays(offsetBy);
 		setStartDate(date);
 		setEndDate(currentDate);
 		onDatePickerChange();
@@ -42,7 +42,7 @@ const LastSpanSelect = (props: Props) => {
 	};
 
 	const subtractDays = (offset: number) => {
-		var date = new Date();
+		const date = new Date();
 		date.setDate(date.getDate() - offset);
 		return date;
 	};

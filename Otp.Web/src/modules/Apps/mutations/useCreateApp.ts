@@ -1,5 +1,7 @@
-import { oauthInstance, request } from '@/api/https';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { oauthInstance, request } from '@/api/https';
+
 import appKeys from '../queries/appKeys';
 
 type CreateAppRequest = {

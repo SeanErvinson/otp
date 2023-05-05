@@ -1,8 +1,9 @@
 import Modal from '@/components/Modal/Modal';
 import useModal from '@/hooks/useModal';
 
-import ApiKeyPreview from './ApiKeyPreview';
 import useRegenerateAppApiKey from '../mutations/useRegenerateAppApiKey';
+
+import ApiKeyPreview from './ApiKeyPreview';
 
 interface Props {
 	appId: string;
@@ -21,7 +22,7 @@ const RegenerateApiButton = ({ appId }: Props) => {
 		mutation.mutate(appId);
 	};
 
-	let defaultComponent = mutation.data ? (
+	const defaultComponent = mutation.data ? (
 		<ApiKeyPreview apiKey={mutation.data.apiKey} onClose={handleOnClose} />
 	) : (
 		<>

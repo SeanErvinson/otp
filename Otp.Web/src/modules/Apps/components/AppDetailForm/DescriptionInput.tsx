@@ -1,5 +1,7 @@
-import XIcon from '@/components/misc/XIcon';
 import { UseFormRegister, FieldError, UseFormResetField } from 'react-hook-form';
+
+import XIcon from '@/components/misc/XIcon';
+
 import { Fields, FormData } from './AppDetailForm';
 
 const DescriptionInput = ({

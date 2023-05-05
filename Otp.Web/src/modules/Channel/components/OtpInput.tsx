@@ -1,5 +1,6 @@
-import useGeneratedId from '@/hooks/useGeneratedId';
 import React from 'react';
+
+import useGeneratedId from '@/hooks/useGeneratedId';
 
 interface Props {
 	name: string;
@@ -15,6 +16,7 @@ const OtpInput = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
 	return (
 		<input
 			type="tel"
+			title="otp-input"
 			id={generatedId(idPrefix)}
 			name={props.name}
 			ref={ref}
@@ -26,5 +28,5 @@ const OtpInput = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
 		/>
 	);
 });
-
+OtpInput.displayName = 'OtpInput';
 export default OtpInput;

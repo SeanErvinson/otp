@@ -10,6 +10,7 @@ import { TagInput } from '@/components/TagInput';
 import { ProblemDetails } from '@/types/types';
 
 import useCreateApp from '../../mutations/useCreateApp';
+
 import validationSchema from './validationSchema';
 
 type FormData = {
@@ -18,6 +19,7 @@ type FormData = {
 };
 
 interface Props {
+	onSubmit: (apiKey: string) => void;
 	onClose: () => void;
 }
 
@@ -48,11 +50,18 @@ const CreateAppForm = (props: Props) => {
 	};
 
 	const handleOnSubmit = (data: FormData) => {
-		mutation.mutate({
-			name: data.name,
-			tags: tags,
-			description: data.description,
-		});
+		mutation.mutate(
+			{
+				name: data.name,
+				tags: tags,
+				description: data.description,
+			},
+			{
+				onSuccess(data) {
+					props.onSubmit(data.apiKey);
+				},
+			},
+		);
 	};
 
 	return (
@@ -60,10 +69,11 @@ const CreateAppForm = (props: Props) => {
 			<h3 className="text-xl font-semibold">Create App</h3>
 			<form onSubmit={handleSubmit(handleOnSubmit)}>
 				<div className="form-control">
-					<label className="label">
+					<label className="label" htmlFor="name">
 						<span className="label-text">Name</span>
 					</label>
 					<input
+						id="name"
 						type="text"
 						placeholder="best-app"
 						className={`input input-bordered ${formErrors.name && 'input-error'}`}
@@ -80,12 +90,13 @@ const CreateAppForm = (props: Props) => {
 				</div>
 				<div className="form-control">
 					<div className="flex flex-row items-center justify-between">
-						<label className="label">
+						<label className="label" htmlFor="description">
 							<span className="label-text">Description</span>
 						</label>
 						<span className="label-text">{128 - descriptionWatch.length}</span>
 					</div>
 					<textarea
+						id="description"
 						className={`textarea h-24 textarea-bordered ${
 							formErrors.description && 'input-error'
 						}`}

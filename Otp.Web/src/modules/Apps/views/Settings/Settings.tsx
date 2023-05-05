@@ -2,13 +2,15 @@ import { useOutletContext } from 'react-router-dom';
 
 import LoadingIndicator from '@/components/LoadingIndicator/LoadingIndicator';
 import { AppDetail } from '@/types/types';
+import useSubscription from '@/hooks/useSubscription';
+
+import SectionContainer from '../../../../components/Layouts/SettingsSection';
 
 import ApiKeySection from './ApiKeySection';
 import BrandingSection from './BrandingSection';
 import CallbackSection from './CallbackSection';
-import SectionContainer from '../../../../components/Layouts/SettingsSection';
 import DangerSection from './DangerSection';
-import useSubscription from '@/hooks/useSubscription';
+
 
 const Settings = () => {
 	const app = useOutletContext<AppDetail | null>();

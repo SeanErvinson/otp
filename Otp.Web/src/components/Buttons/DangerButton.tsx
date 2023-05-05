@@ -1,5 +1,6 @@
 import useModal from '@/hooks/useModal';
-import ConfirmationModal, { ConfirmationProps } from '../Modal/ConfirmationModal';
+
+import ConfirmationModal from '../Modal/ConfirmationModal';
 
 interface ButtonProps {
 	label: string;
@@ -17,8 +18,11 @@ const DangerButton = (props: Props) => {
 
 	return (
 		<>
-			<button className="btn
-             btn-error" onClick={toggle}>
+			<button
+				className="btn
+             btn-error"
+				type="button"
+				onClick={toggle}>
 				{props.label}
 			</button>
 			{visible && (

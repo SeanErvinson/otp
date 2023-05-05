@@ -12,6 +12,7 @@ interface Props {
 }
 
 const CreateAppModal = (props: Props) => {
+	// TODO Consider replacing this with atom instead of passing
 	const [apiKey, setApiKey] = useState<string | undefined>();
 	const handleOnClose = () => {
 		props.onClose();
@@ -21,7 +22,7 @@ const CreateAppModal = (props: Props) => {
 		setApiKey(value);
 	};
 
-	let defaultComponent = apiKey ? (
+	const defaultComponent = apiKey ? (
 		<ApiKeyPreview apiKey={apiKey} onClose={handleOnClose} />
 	) : (
 		<CreateAppForm onClose={handleOnClose} onSubmit={handleOnSubmit} />
@@ -31,7 +32,7 @@ const CreateAppModal = (props: Props) => {
 		<Modal showModal={props.showModal} onClose={props.onClose}>
 			<div
 				className={`modal-box flex flex-col justify-between ${
-					apiKey && 'animate__animated animate__flipInY min-h-[21rem]'
+					apiKey ? 'animate__animated animate__flipInY min-h-[21rem]' : ''
 				}`}>
 				{defaultComponent}
 			</div>

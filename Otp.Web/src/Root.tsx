@@ -47,7 +47,7 @@ const Root = () => {
 					<Route path="" element={<Apps />} />
 					<Route path=":appId" element={<AppDetails />}>
 						<Route path="" element={<Settings />} />
-						<Route path="recent-callbacks" element={<RecentCallbacks />} />
+						{/* <Route path="recent-callbacks" element={<RecentCallbacks />} /> */}
 					</Route>
 				</Route>
 				<Route path="billing" element={<Billing />} />

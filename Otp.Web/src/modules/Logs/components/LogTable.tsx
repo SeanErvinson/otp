@@ -19,8 +19,9 @@ import { toLocalTime } from '@/utils/dayjsUtils';
 import { channelFilterAtom } from '../states/ChannelFilterAtom';
 import { statusFilterAtom } from '../states/StatusFilterAtom';
 import { logTablePaginationAtom } from '../states/LogTablePaginationAtom';
-import TimelineModal from './TimelineModal';
 import { logAtom } from '../states/LogAtom';
+
+import TimelineModal from './TimelineModal';
 
 interface Props {
 	logs: Log[];
@@ -151,9 +152,12 @@ const LogTable = (props: Props) => {
 			<table className="table w-full bg-base-200" {...getTableProps()}>
 				<thead>
 					{headerGroups.map(headerGroup => (
-						<tr {...headerGroup.getHeaderGroupProps()}>
+						<tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
 							{headerGroup.headers.map(column => (
-								<th className="bg-base-300" {...column.getHeaderProps()}>
+								<th
+									className="bg-base-300"
+									{...column.getHeaderProps()}
+									key={column.id}>
 									<div className="flex flex-row justify-between items-center">
 										{column.render('Header')}
 									</div>
@@ -168,10 +172,13 @@ const LogTable = (props: Props) => {
 						return (
 							<tr
 								{...row.getRowProps()}
+								key={row.id}
 								onClick={() => handleOnRowSelect(row.original)}
 								className="cursor-pointer">
 								{row.cells.map(cell => (
-									<td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+									<td {...cell.getCellProps()} key={cell.value.id}>
+										{cell.render('Cell')}
+									</td>
 								))}
 							</tr>
 						);

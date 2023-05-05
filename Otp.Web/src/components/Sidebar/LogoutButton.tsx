@@ -1,5 +1,5 @@
 import useModal from '@/hooks/useModal';
-import { MsalService } from '@/services/auth/msalService';
+import { MsalService } from '@/libs/azureB2C/msalService';
 
 import ConfirmationModal from '../Modal/ConfirmationModal';
 import LogoutIcon from '../misc/LogoutIcon';

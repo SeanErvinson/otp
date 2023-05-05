@@ -15,9 +15,6 @@ import LogTable from '../components/LogTable';
 import StatusColumnFilter from '../components/StatusColumnFilter';
 import { channelFilterAtom } from '../states/ChannelFilterAtom';
 import { statusFilterAtom } from '../states/StatusFilterAtom';
-import EmptyIcon from '@/components/misc/EmptyIcon';
-import TableContainer from '@/components/TableContainer/TableContainer';
-import MainContainer from '@/components/MainContainer/MainContainer';
 
 const Hello = ({ queryData }: { queryData: CursorResult<Log> }) => {
 	const [beforeCursor, setBeforeCursor] = useState<string | null>();

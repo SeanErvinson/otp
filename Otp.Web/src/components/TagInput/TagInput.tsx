@@ -45,21 +45,25 @@ const TagInput = ({ onUpdate, initialTags, autoFocus = false }: Props) => {
 	};
 
 	return (
-		<div className="input input-bordered tag-input bg-base-100 w-full">
+		<div className="input input-bordered tag-input w-full">
 			<ul className="flex items-center gap-1">
 				{tags.map(tag => (
 					<li key={nanoid()} className="badge badge-lg flex whitespace-nowrap">
 						{tag}&nbsp;
-						<span
+						<button
+							type="button"
+							title="Remove tag"
 							className="pl-1 self-center cursor-pointer"
 							onClick={() => removeTag(tag)}>
 							<XIcon className="inline-block w-4 h-4 stroke-current" />
-						</span>
+						</button>
 					</li>
 				))}
 			</ul>
 			<input
 				type="text"
+				title="tags"
+				className="bg-inherit"
 				autoFocus={autoFocus}
 				value={value}
 				onChange={e => setValue(e.target.value)}

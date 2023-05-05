@@ -17,7 +17,7 @@ const BrandingSection = () => {
 		event.preventDefault();
 		if (event.target.files) {
 			const file = event.target.files[0];
-			var url = URL.createObjectURL(file);
+			const url = URL.createObjectURL(file);
 			setCurrentBackgroundBlob(url);
 			setSelectedBackgroundBlob(file);
 		} else {
@@ -30,7 +30,7 @@ const BrandingSection = () => {
 		event.preventDefault();
 		if (event.target.files) {
 			const file = event.target.files[0];
-			var url = URL.createObjectURL(file);
+			const url = URL.createObjectURL(file);
 			setCurrentLogoBlob(url);
 			setSelectedLogoBlob(file);
 		} else {

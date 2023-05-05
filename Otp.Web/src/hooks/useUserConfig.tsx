@@ -1,7 +1,8 @@
+import { useAccount } from '@azure/msal-react';
+import { useQuery } from '@tanstack/react-query';
+
 import { oauthInstance, request } from '@/api/https';
 import { SubscriptionType } from '@/types/types';
-import { useAccount, useMsal } from '@azure/msal-react';
-import { useQuery } from '@tanstack/react-query';
 
 export const userConfigKeys = {
 	config: ['user', 'config'],

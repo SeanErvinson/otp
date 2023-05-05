@@ -1,5 +1,6 @@
-import Missing from '@/components/misc/Missing';
 import { Link } from 'react-router-dom';
+
+import Missing from '@/components/misc/Missing';
 
 const NotFound = () => {
 	return (

@@ -25,12 +25,14 @@ const ApiKeyPreview = (props: Props) => {
 			</div>
 			<div className="relative">
 				<input
+					title="API key"
 					type="text"
 					readOnly
 					defaultValue={props.apiKey}
 					className="w-full pr-16 input input-primary input-bordered"
 				/>
 				<button
+					type="button"
 					className={`absolute top-0 right-0 rounded-l-none btn btn-primary  ${
 						isCopying && 'tooltip tooltip-open'
 					}`}
@@ -46,7 +48,7 @@ const ApiKeyPreview = (props: Props) => {
 				</button>
 			</div>
 			<button className="btn btn-accent" type="button" onClick={props.onClose}>
-				Yes, I've copied it.
+				Yes, I&apos;ve copied it.
 			</button>
 		</>
 	);

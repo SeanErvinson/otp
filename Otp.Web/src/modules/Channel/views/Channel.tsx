@@ -8,9 +8,9 @@ import LoadingIndicator from '@/components/LoadingIndicator/LoadingIndicator';
 import { Loader } from '@/components/Loader';
 import { ProblemDetails } from '@/types/types';
 import { isValidGuid } from '@/utils/stringUtils';
+import { notFoundRoute } from '@/consts/endpoints';
 
 import OtpInputGroup from '../components/OtpInputGroup';
-import { notFoundRoute } from '@/consts/endpoints';
 
 const otpInputLength = 6;
 

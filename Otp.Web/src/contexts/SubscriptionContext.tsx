@@ -1,6 +1,7 @@
+import { createContext, ReactNode } from 'react';
+
 import useUserConfig from '@/hooks/useUserConfig';
 import { SubscriptionType } from '@/types/types';
-import { createContext, ReactNode } from 'react';
 
 type SubscriptionContextType = {
 	isAllowedTo: (subscription: SubscriptionType) => boolean;

@@ -1,6 +1,7 @@
+import { useQuery } from '@tanstack/react-query';
+
 import { oauthInstance, request } from '@/api/https';
 import { OtpRequest } from '@/types/types';
-import { useQuery } from '@tanstack/react-query';
 
 const fetchOtpDetail = (id: string | undefined): Promise<OtpRequest> => {
 	return typeof id === 'undefined'

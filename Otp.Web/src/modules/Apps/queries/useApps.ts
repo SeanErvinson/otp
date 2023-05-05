@@ -1,6 +1,8 @@
+import { useQuery } from '@tanstack/react-query';
+
 import { oauthInstance, request } from '@/api/https';
 import { PagedResult, App } from '@/types/types';
-import { useQuery } from '@tanstack/react-query';
+
 import appKeys from './appKeys';
 
 const fetchApps = (pageIndex: number): Promise<PagedResult<App>> => {

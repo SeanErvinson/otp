@@ -11,10 +11,10 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { makeServer } from '@/api/mockOtpApi';
 import queryClient from '@/api/queryClient';
-import msalInstance from '@/services/auth/msalInstance';
 
 import Root from './Root';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
+import msalInstance from './libs/azureB2C/msalInstance';
 
 if (import.meta.env.VITE_ENABLE_MOCK_SERVER) {
 	makeServer();

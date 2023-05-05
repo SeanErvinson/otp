@@ -6,6 +6,7 @@ import { AppDetail } from '@/types/types';
 
 import useSaveAppDescriptors from '../../mutations/useSaveAppDescriptors';
 import appKeys from '../../queries/appKeys';
+
 import DescriptionInput from './DescriptionInput';
 import NameInput from './NameInput';
 import TagsInput from './TagsInput';

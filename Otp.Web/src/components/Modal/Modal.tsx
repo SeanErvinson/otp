@@ -1,8 +1,8 @@
-import { ReactChild, ReactChildren, useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
 interface Props {
-	children: ReactChildren | ReactChild;
+	children: ReactNode;
 	showModal: boolean;
 	onClose: () => void;
 }
@@ -22,9 +22,12 @@ const Modal = (props: Props) => {
 	}, []);
 
 	return ReactDOM.createPortal(
-		<div id="confirmationModal" className={`modal ${props.showModal && 'modal-open'}`}>
+		<div
+			id="confirmationModal"
+			className={`modal ${props.showModal && 'modal-open'} text-base-content`}>
 			{props.children}
 		</div>,
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		document.getElementById('portal')!,
 	);
 };

@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 
-import { MsalService } from '@/services/auth/msalService';
+import { MsalService } from '@/libs/azureB2C/msalService';
 
 export const otpInstance = (key: string) => {
 	return axios.create({
@@ -16,14 +16,12 @@ export const oauthInstance = axios.create({
 });
 
 oauthInstance.interceptors.request.use(async config => {
-	var token = await MsalService.acquireAccessToken();
+	const token = await MsalService.acquireAccessToken();
 
-	if (!!token) {
-		config.headers = {
-			Authorization: `Bearer ${token}`,
-			Accept: 'application/json',
-			'Content-Type': 'application/json;charset=UTF-8',
-		};
+	if (token) {
+		config.headers.Authorization = `Bearer ${token}`;
+		config.headers.Accept = 'application/json';
+		config.headers['Content-Type'] = 'application/json;charset=UTF-8';
 	}
 
 	return config;

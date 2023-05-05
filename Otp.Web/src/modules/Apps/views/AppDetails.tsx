@@ -5,10 +5,10 @@ import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { notFoundRoute } from '@/consts/endpoints';
 import LoadingIndicator from '@/components/LoadingIndicator/LoadingIndicator';
 import { ProblemDetails } from '@/types/types';
+import MainContainer from '@/components/Layouts/MainContainer';
 
 import AppDetailForm from '../components/AppDetailForm/AppDetailForm';
 import useAppDetails from '../queries/useAppDetails';
-import MainContainer from '@/components/Layouts/MainContainer';
 
 const AppDetails = () => {
 	const { appId } = useParams();

@@ -77,11 +77,12 @@ const AppsTable = (props: Props) => {
 		<table className="table w-full bg-base-200" {...getTableProps()}>
 			<thead>
 				{headerGroups.map(headerGroup => (
-					<tr {...headerGroup.getHeaderGroupProps()}>
+					<tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
 						{headerGroup.headers.map(column => (
 							<th
 								className="bg-base-300"
-								{...column.getHeaderProps(column.getSortByToggleProps())}>
+								{...column.getHeaderProps(column.getSortByToggleProps())}
+								key={column.id}>
 								<div className="flex flex-row justify-between items-center">
 									{column.render('Header')}
 									{column.isSorted && <SortIcon className="w-4" />}
@@ -95,9 +96,11 @@ const AppsTable = (props: Props) => {
 				{rows.map(row => {
 					prepareRow(row);
 					return (
-						<tr {...row.getRowProps()}>
+						<tr {...row.getRowProps()} key={row.id}>
 							{row.cells.map(cell => (
-								<td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+								<td {...cell.getCellProps()} key={cell.value.id}>
+									{cell.render('Cell')}
+								</td>
 							))}
 						</tr>
 					);

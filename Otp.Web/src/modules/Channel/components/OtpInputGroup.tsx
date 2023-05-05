@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
-import React from 'react';
-import { useRef } from 'react';
+import React, { useRef } from 'react';
+
 import OtpInput from './OtpInput';
 
 interface Props {
@@ -21,7 +21,7 @@ const OtpInputGroup = ({ onSetValue, inputLength = 6 }: Props) => {
 		);
 
 		if (input.nextElementSibling && input.value) {
-			var position = parseInt(input.name);
+			const position = parseInt(input.name);
 			otpInputRefs.current[position + 1].focus();
 			otpInputRefs.current[position + 1].select();
 		}
@@ -38,7 +38,7 @@ const OtpInputGroup = ({ onSetValue, inputLength = 6 }: Props) => {
 	const handleBackspace = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key !== 'Backspace') return;
 		const input = e.target as HTMLInputElement;
-		var position = parseInt(input.name);
+		const position = parseInt(input.name);
 		if (position - 1 < 0) return;
 
 		if (position == otpInputRefs.current.length - 1) {

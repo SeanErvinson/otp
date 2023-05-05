@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
+
 import Modal from './Modal';
 
 export interface ConfirmationProps {
@@ -62,6 +63,7 @@ const ConfirmationModal = (props: ConfirmationProps) => {
 				</div>
 			</div>
 		</Modal>,
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		document.getElementById('portal')!,
 	);
 };

@@ -1,5 +1,6 @@
-import useGeneratedId from '@/hooks/useGeneratedId';
 import { ChangeEvent, useEffect, useState } from 'react';
+
+import useGeneratedId from '@/hooks/useGeneratedId';
 
 interface Props {
 	name: string;
@@ -45,7 +46,7 @@ const PillRadioGroup = (props: Props) => {
 							<label
 								key={index}
 								className={`label cursor-pointer whitespace-nowrap ${
-									selectedSelection === value ? 'bg-base-200' : ''
+									selectedSelection === value ? 'bg-gray-200' : ''
 								}`}>
 								<span className="text-xs px-2">{label}</span>
 								<input

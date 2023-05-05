@@ -5,10 +5,10 @@ import SingleStat from '@/components/SIngleStat/SingleStat';
 import PageHeader from '@/components/PageHeader/PageHeader';
 import { CountMetric } from '@/types/types';
 import DateUtils from '@/utils/dateUtils';
-
-import ChannelUsageChart from '../components/ChannelUsageChart';
 import MainContainer from '@/components/Layouts/MainContainer';
 import useSubscription from '@/hooks/useSubscription';
+
+import ChannelUsageChart from '../components/ChannelUsageChart';
 
 const refreshInterval = 10000;
 

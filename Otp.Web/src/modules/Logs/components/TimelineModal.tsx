@@ -8,9 +8,9 @@ import RefetchIcon from '@/components/misc/RefetchIcon';
 import XIcon from '@/components/misc/XIcon';
 import { dateFormat, dateTimeFormat, timelineTimeFormat } from '@/consts/date';
 import { toLocalTime } from '@/utils/dayjsUtils';
+import { EventStatus } from '@/types/types';
 
 import { logAtom } from '../states/LogAtom';
-import { EventStatus } from '@/types/types';
 import useOtpDetails from '../queries/useOtpDetails';
 
 interface Props {
@@ -148,8 +148,12 @@ const TimelineModal = (props: Props) => {
 									{toLocalTime(new Date(), dateFormat)}
 								</h2>
 								<ul id="timeline-entries">
-									{otpDetailQuery.data.timeline.map(event => (
-										<TimeEntryItem date={event.occuredAt} title={event.state} />
+									{otpDetailQuery.data.timeline.map((event, index) => (
+										<TimeEntryItem
+											date={event.occuredAt}
+											key={index}
+											title={event.state}
+										/>
 									))}
 								</ul>
 							</div>
@@ -159,10 +163,11 @@ const TimelineModal = (props: Props) => {
 									{toLocalTime(new Date(), dateFormat)}
 								</h2>
 								<ul id="attempt-entries">
-									{otpDetailQuery.data.attempts.map(attempt => (
+									{otpDetailQuery.data.attempts.map((attempt, index) => (
 										<TimeEntryItem
+											key={index}
 											date={attempt.attemptedOn}
-											title={attempt.attemptStatus.toLocaleString()}
+											title={attempt.attemptStatus.toString()}
 										/>
 									))}
 								</ul>

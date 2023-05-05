@@ -1,6 +1,3 @@
-import XIcon from '@/components/misc/XIcon';
-import { TagCollection } from '@/components/TagCollection';
-import { TagInput } from '@/components/TagInput';
 import { useState, useEffect } from 'react';
 import {
 	UseFormRegister,
@@ -8,6 +5,11 @@ import {
 	UseFormSetValue,
 	UseFormResetField,
 } from 'react-hook-form';
+
+import XIcon from '@/components/misc/XIcon';
+import { TagCollection } from '@/components/TagCollection';
+import { TagInput } from '@/components/TagInput';
+
 import { Fields, FormData } from './AppDetailForm';
 
 const TagsInput = ({
